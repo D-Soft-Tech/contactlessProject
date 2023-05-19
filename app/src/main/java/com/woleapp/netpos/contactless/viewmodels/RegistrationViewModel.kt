@@ -43,6 +43,8 @@ class RegistrationViewModel : ViewModel() {
     fun register(context:Context, deviceSerialId: String) {
         if (BuildConfig.FLAVOR.contains("providus") || BuildConfig.FLAVOR.contains("providussoftpos") ||
             BuildConfig.FLAVOR.contains("fcmb")|| BuildConfig.FLAVOR.contains("fcmbeasypay")||
+            BuildConfig.FLAVOR.contains("easyfcmb")||
+            BuildConfig.FLAVOR.contains("easypayfcmb")||
             BuildConfig.FLAVOR.contains("easypay")) {
 //            activity?.getFragmentManager()?.popBackStack()
             if (registrationModel.value?.allFieldsFilled() == false) {
@@ -64,6 +66,10 @@ class RegistrationViewModel : ViewModel() {
                 } else if (BuildConfig.FLAVOR.contains("easypay")) {
                     dialogView.pdf.fromAsset("qlick.pdf").load()
                 }else if (BuildConfig.FLAVOR.contains("fcmbeasypay")) {
+                    dialogView.pdf.fromAsset("qlick.pdf").load()
+                }else if (BuildConfig.FLAVOR.contains("easyfcmb")) {
+                    dialogView.pdf.fromAsset("qlick.pdf").load()
+                }else if (BuildConfig.FLAVOR.contains("easypayfcmb")) {
                     dialogView.pdf.fromAsset("qlick.pdf").load()
                 }
                 dialogView.accept_button.setOnClickListener {

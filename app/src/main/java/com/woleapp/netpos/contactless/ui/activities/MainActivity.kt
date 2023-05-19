@@ -67,6 +67,7 @@ import com.woleapp.netpos.contactless.util.AppConstants.WRITE_PERMISSION_REQUEST
 import com.woleapp.netpos.contactless.util.Mappers.mapTransactionResponseToQrTransaction
 import com.woleapp.netpos.contactless.util.RandomPurposeUtil.dateStr2Long
 import com.woleapp.netpos.contactless.util.RandomPurposeUtil.getCurrentDateTime
+import com.woleapp.netpos.contactless.util.RandomPurposeUtil.observeServerResponse
 import com.woleapp.netpos.contactless.util.RandomPurposeUtil.observeServerResponseActivity
 import com.woleapp.netpos.contactless.util.RandomPurposeUtil.showSnackBar
 import com.woleapp.netpos.contactless.util.Singletons.gson
@@ -123,7 +124,7 @@ class MainActivity @Inject constructor() :
     private val scanQrViewModel by viewModels<ScanQrViewModel>()
     private val qrPinBlock: QrPasswordPinBlockDialog = QrPasswordPinBlockDialog()
     private var amountToPayInDouble: Double? = 0.0
-
+    private var qrData: QrScannedDataModel? = null
     private val notificationModel: NotificationViewModel by viewModels()
     private lateinit var firebaseInstance: FirebaseMessaging
     private lateinit var deviceNotSupportedAlertDialog: AlertDialog
@@ -297,8 +298,8 @@ class MainActivity @Inject constructor() :
             STRING_QR_READ_RESULT_REQUEST_KEY,
             this,
         ) { _, bundle ->
-            val data = bundle.getParcelable<QrScannedDataModel>(STRING_QR_READ_RESULT_BUNDLE_KEY)
-            data?.let {
+             qrData = bundle.getParcelable<QrScannedDataModel>(STRING_QR_READ_RESULT_BUNDLE_KEY)
+            qrData?.let {
                 if (it.card_scheme.contains(
                         "verve",
                         true,
@@ -310,6 +311,19 @@ class MainActivity @Inject constructor() :
                 }
             }
         }
+
+        supportFragmentManager.setFragmentResultListener(
+            AppConstants.PIN_BLOCK_RK,
+            this
+        ) { _, bundle ->
+            Log.d("TRANSACTIONFRAGMENT", "DATAFRAGEMNT")
+            val pinFromPinBlockDialog = bundle.getString(AppConstants.PIN_BLOCK_BK)
+            pinFromPinBlockDialog?.let {
+                Log.d("PINBLOCKFRAGMENT", "PINBLOCK")
+                qrData?.let { it1 -> formatPinAndSendToServer(it, amountToPayInDouble, it1) }
+            }
+        }
+
         resultLauncher =
             registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
                 if (result.resultCode == Activity.RESULT_OK) {
@@ -1037,6 +1051,43 @@ class MainActivity @Inject constructor() :
                 actionToPerformWithTheReceivedToken(token)
             },
         )
+    }
+
+    private fun formatPinAndSendToServer(
+        pin: String,
+        amountDouble: Double?,
+        qrData: QrScannedDataModel
+    ) {
+        val formattedPadding = RandomPurposeUtil.stringToBase64(pin).removeSuffix('\n'.toString())
+       // val formattedPadding = pin
+        if (pin.length == 4) {
+            amountDouble?.let {
+                qrAmountDialogForVerveCard.cancel()
+                val qrDataToSendToBackend =
+                    PostQrToServerModel(
+                        it,
+                        qrData.data,
+                        merchantId = UtilityParam.STRING_MERCHANT_ID,
+                        padding = formattedPadding,
+                        naration = requestNarration
+                    )
+                scanQrViewModel.setScannedQrIsVerveCard(true)
+                scanQrViewModel.saveTheQrToSharedPrefs(qrDataToSendToBackend.copy(orderId = AppConstants.getGUID()))
+                Log.d("FORMATPIN", "FORMATPINRESULT")
+                scanQrViewModel.postScannedQrRequestToServer(qrDataToSendToBackend)
+                observeServerResponseActivity(
+                    this,
+                    this,
+                    scanQrViewModel.sendQrToServerResponseVerve,
+                    LoadingDialog(),
+                    supportFragmentManager
+                ) {
+                    addFragmentWithoutRemove(
+                        EnterOtpFragment()
+                    )
+                }
+            }
+        }
     }
 
     private fun getIntentDataSentInFromFirebaseService() {

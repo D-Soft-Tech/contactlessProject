@@ -9,6 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.setFragmentResultListener
 import androidx.recyclerview.widget.GridLayoutManager
 import com.danbamitale.epmslib.entities.*
 import com.danbamitale.epmslib.extensions.formatCurrencyAmount
@@ -72,35 +73,35 @@ class TransactionsFragment @Inject constructor() : BaseFragment() {
             "$it:${Singletons.getCurrentlyLoggedInUser()?.terminal_id}:${UtilityParam.STRING_MPGS_TAG}"
         } ?: ""
 
-        requireActivity().supportFragmentManager.setFragmentResultListener(
-            STRING_QR_READ_RESULT_REQUEST_KEY,
-            requireActivity(),
-        ) { _, bundle ->
-             qrData = bundle.getParcelable<QrScannedDataModel>(STRING_QR_READ_RESULT_BUNDLE_KEY)
-            qrData?.let {
-                if (it.card_scheme.contains(
-                        "verve",
-                        true,
-                    )
-                ) {
-                    showAmountDialogForVerveCard()
-                } else {
-                    showAmountDialog(it)
-                }
-            }
-        }
+//        requireActivity().supportFragmentManager.setFragmentResultListener(
+//            STRING_QR_READ_RESULT_REQUEST_KEY,
+//            requireActivity(),
+//        ) { _, bundle ->
+//             qrData = bundle.getParcelable<QrScannedDataModel>(STRING_QR_READ_RESULT_BUNDLE_KEY)
+//            qrData?.let {
+//                if (it.card_scheme.contains(
+//                        "verve",
+//                        true,
+//                    )
+//                ) {
+//                    showAmountDialogForVerveCard()
+//                } else {
+//                    showAmountDialog(it)
+//                }
+//            }
+//        }
 
-        childFragmentManager.setFragmentResultListener(
-            PIN_BLOCK_RK,
-            this
-        ) { _, bundle ->
-            Log.d("TRANSACTIONFRAGMENT", "DATAFRAGEMNT")
-            val pinFromPinBlockDialog = bundle.getString(PIN_BLOCK_BK)
-            pinFromPinBlockDialog?.let {
-                Log.d("PINBLOCKFRAGMENT", "PINBLOCK")
-                qrData?.let { it1 -> formatPinAndSendToServer(it, amountToPayInDouble, it1) }
-            }
-        }
+//        requireActivity().supportFragmentManager.setFragmentResultListener(
+//            PIN_BLOCK_RK,
+//            requireActivity()
+//        ) { _, bundle ->
+//            Log.d("TRANSACTIONFRAGMENT", "DATAFRAGEMNT")
+//            val pinFromPinBlockDialog = bundle.getString(PIN_BLOCK_BK)
+//            pinFromPinBlockDialog?.let {
+//                Log.d("PINBLOCKFRAGMENT", "PINBLOCK")
+//                qrData?.let { it1 -> formatPinAndSendToServer(it, amountToPayInDouble, it1) }
+//            }
+//        }
     }
 
     override fun onCreateView(
