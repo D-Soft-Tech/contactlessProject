@@ -79,7 +79,7 @@ class QrPasswordPinBlockDialog : DialogFragment() {
                     .show()
                 return@setOnClickListener
             }
-            setFragmentResult(PIN_BLOCK_RK, bundleOf(PIN_BLOCK_BK to etPinEt.text.toString()))
+            requireActivity().supportFragmentManager.setFragmentResult(PIN_BLOCK_RK, bundleOf(PIN_BLOCK_BK to etPinEt.text.toString()))
             dialog?.cancel()
             dialog?.dismiss()
             dismiss()

@@ -83,6 +83,7 @@ class LoginFragment : BaseFragment() {
             if (BuildConfig.FLAVOR.contains("firstbank")||BuildConfig.FLAVOR.contains("providus")||BuildConfig.FLAVOR.contains("providussoftpos")||
                 BuildConfig.FLAVOR.contains("wemabank")||BuildConfig.FLAVOR.contains("fcmb")||
                 BuildConfig.FLAVOR.contains("easypay")||BuildConfig.FLAVOR.contains("fcmbeasypay")||
+                BuildConfig.FLAVOR.contains("easypayfcmb")|| BuildConfig.FLAVOR.contains("easyfcmb")||
                 BuildConfig.FLAVOR.contains("zenith")){
                 showFragment(
                     NewOrExistingFragment(),
