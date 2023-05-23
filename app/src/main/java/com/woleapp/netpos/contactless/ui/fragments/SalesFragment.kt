@@ -40,7 +40,7 @@ class SalesFragment : BaseFragment() {
     companion object {
         fun newInstance(
             transactionType: TransactionType = TransactionType.PURCHASE,
-            isVend: Boolean = false
+            isVend: Boolean = false,
         ): SalesFragment =
             SalesFragment().apply {
                 arguments = Bundle().apply {
@@ -64,14 +64,14 @@ class SalesFragment : BaseFragment() {
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View {
         binding = FragmentSalesBinding.inflate(inflater, container, false)
         transactionType = TransactionType.valueOf(
             arguments?.getString(
                 TRANSACTION_TYPE,
-                TransactionType.PURCHASE.name
-            )!!
+                TransactionType.PURCHASE.name,
+            )!!,
         )
         if (transactionType == TransactionType.PURCHASE_WITH_CASH_BACK) {
             binding.cashbackInputLayout.isVisible = true
@@ -106,24 +106,19 @@ class SalesFragment : BaseFragment() {
                 showSnackBar(s)
             }
         }
-        /*viewModel.getCardData.observe(viewLifecycleOwner){event ->
-            event.getContentIfNotHandled()?.let {
-                quickPay()
-            }
-        }*/
         viewModel.getCardData.observe(viewLifecycleOwner) { event ->
             event.getContentIfNotHandled()?.let { shouldGetCardData ->
                 if (shouldGetCardData) {
                     showCardDialog(
                         requireActivity(),
-                        viewLifecycleOwner
+                        viewLifecycleOwner,
                     ).observe(viewLifecycleOwner) { event ->
                         event.getContentIfNotHandled()?.let {
                             Timber.e(it.toString())
                             nfcCardReaderViewModel.initiateNfcPayment(
                                 viewModel.amountLong,
                                 viewModel.cashbackLong,
-                                it
+                                it,
                             )
                         }
                     }
@@ -174,7 +169,7 @@ class SalesFragment : BaseFragment() {
                 if (it) {
                     NetPosTerminalConfig.init(
                         requireContext().applicationContext,
-                        configureSilently = true
+                        configureSilently = true,
                     )
                 }
             }
@@ -190,7 +185,7 @@ class SalesFragment : BaseFragment() {
                     Toast.makeText(
                         requireContext(),
                         error.message,
-                        Toast.LENGTH_LONG
+                        Toast.LENGTH_LONG,
                     )
                         .show()
                 }
@@ -207,40 +202,6 @@ class SalesFragment : BaseFragment() {
         return binding.root
     }
 
-    /*private fun quickPay() {
-        viewModel.setAccountType(IsoAccountType.SAVINGS)
-        viewModel.cardData = CardData(
-            track2Data = "5199110748591994D2012221000013772F",
-            nibssIccSubset = "9F26087BCB3647E84652A29F2701809F10120110A040002A0400000000000000000000FF9F370451271F779F360201E3950500802480009A032009179C01009F02060000000010005F2A020566820239009F1A0205669F34034203009F3303E0F9C89F3501229F1E0831323334353637388407A00000000410109F090200009F03060000000000005F340100",
-            panSequenceNumber = "000",
-            posEntryMode = "051"
-        ).apply {
-            pinBlock = TripleDES.encrypt(
-                "0425A8EF8B7A6E66",
-                NetPosTerminalConfig.getKeyHolder()!!.clearPinKey
-            )
-        }
-        viewModel.makePayment(requireContext(), transactionType)
-    }*/
-
-    /*private fun quickPay() {
-        viewModel.setAccountType(IsoAccountType.SAVINGS)
-        viewModel.setCardScheme("Master Card")
-        viewModel.setCustomerName("SUBAIR/BABATUNDE")
-        viewModel.cardData = CardData(
-            track2Data = "5399834599607066D22032210014182625",
-            nibssIccSubset = "9F2608F564EF96AC6AFE8F9F2701809F10120110A04003220000000000000000000000FF9F3704BAD5E42A9F3602030A950500000480009A032012039C01009F02060000000010005F2A020566820239009F1A0205669F34034203009F3303E068C89F3501229F1E0842313739314531588407A00000000410109F090200029F03060000000000005F340101",
-            panSequenceNumber = "001",
-            posEntryMode = "051"
-        ).apply {
-            pinBlock = TripleDES.encrypt(
-                "0420BDCBA669F8F9",
-                NetPosTerminalConfig.getKeyHolder()!!.clearPinKey
-            )
-        }
-        viewModel.makePayment(requireContext(), transactionType)
-    }*/
-
     private fun showSnackBar(message: String) {
         if (message == "Transaction not approved") {
             AlertDialog.Builder(requireContext())
@@ -253,10 +214,10 @@ class SalesFragment : BaseFragment() {
 
         Snackbar.make(
             requireActivity().findViewById(
-                R.id.container_main
+                R.id.container_main,
             ),
             message,
-            Snackbar.LENGTH_LONG
+            Snackbar.LENGTH_LONG,
         ).show()
     }
 
@@ -321,7 +282,7 @@ class SalesFragment : BaseFragment() {
                         Toast.makeText(
                             context,
                             "Did not receive amount after waiting",
-                            Toast.LENGTH_LONG
+                            Toast.LENGTH_LONG,
                         ).show()
                         compositeDisposable.clear()
                         requireActivity().onBackPressed()
@@ -331,7 +292,7 @@ class SalesFragment : BaseFragment() {
                     Toast.makeText(
                         requireContext(),
                         "Error ${it.localizedMessage}",
-                        Toast.LENGTH_SHORT
+                        Toast.LENGTH_SHORT,
                     ).show()
                     Timber.e("Error: ${it.localizedMessage}")
                     requireActivity().onBackPressed()

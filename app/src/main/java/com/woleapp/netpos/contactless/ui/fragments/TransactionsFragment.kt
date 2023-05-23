@@ -38,10 +38,9 @@ import dagger.hilt.android.AndroidEntryPoint
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import timber.log.Timber
-import javax.inject.Inject
 
 @AndroidEntryPoint
-class TransactionsFragment @Inject constructor() : BaseFragment() {
+class TransactionsFragment : BaseFragment() {
 
     private lateinit var adapter: ServiceAdapter
     private var _binding: FragmentTransactionsBinding? = null

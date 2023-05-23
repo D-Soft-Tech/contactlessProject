@@ -25,7 +25,6 @@ import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import timber.log.Timber
 import java.util.*
-import kotlin.collections.ArrayList
 
 class NipNotificationFragment : BaseFragment() {
     private lateinit var binding: FragmentNipNotificationsBinding
@@ -47,7 +46,7 @@ class NipNotificationFragment : BaseFragment() {
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View {
         binding = FragmentNipNotificationsBinding.inflate(inflater, container, false)
         adapter = ServiceAdapter {
@@ -58,8 +57,8 @@ class NipNotificationFragment : BaseFragment() {
                 }
                 1 -> addFragmentWithoutRemove(
                     NipNotificationListFragment.newInstance(
-                        NipNotificationListFragment.LAST_TWO
-                    )
+                        NipNotificationListFragment.LAST_TWO,
+                    ),
                 )
                 2 -> {
                     showCalendarDialog()
@@ -87,13 +86,13 @@ class NipNotificationFragment : BaseFragment() {
                 addFragmentWithoutRemove(
                     NipNotificationListFragment.newInstance(
                         NipNotificationListFragment.END_OF_DAY,
-                        Calendar.getInstance().apply { set(i, i2, i3) }.timeInMillis
-                    )
+                        Calendar.getInstance().apply { set(i, i2, i3) }.timeInMillis,
+                    ),
                 )
             },
             calendar.get(Calendar.YEAR),
             calendar.get(Calendar.MONTH),
-            calendar.get(Calendar.DAY_OF_MONTH)
+            calendar.get(Calendar.DAY_OF_MONTH),
         ).show()
     }
 
@@ -124,7 +123,7 @@ class NipNotificationFragment : BaseFragment() {
                     Toast.makeText(
                         requireContext(),
                         "Nip Error: ${it.localizedMessage}",
-                        Toast.LENGTH_SHORT
+                        Toast.LENGTH_SHORT,
                     ).show()
                 }
             }
@@ -135,7 +134,7 @@ class NipNotificationFragment : BaseFragment() {
         val bankDetailsBinding: LayoutBankDetailsBinding = LayoutBankDetailsBinding.inflate(
             layoutInflater,
             null,
-            false
+            false,
         )
         val bottomSheetDialog = BottomSheetDialog(requireContext(), R.style.SheetDialog)
         bottomSheetDialog.setCancelable(false)
@@ -144,11 +143,6 @@ class NipNotificationFragment : BaseFragment() {
         val bank = user.bank ?: ""
         val accountNumber = user.account_number ?: ""
         val accountName = user.business_name ?: ""
-//        val bank ="GTB"
-//        val accountNumber = "0239952959"
-//        val accountName = "EasyPOS"
-        // val accountNumber2 = "2684362099"
-        // val bank2 = "FCMB"
         val accountNumber2 = ""
         val bank2 = ""
         bankDetailsBinding.accountNumber2.text = accountNumber2
@@ -162,12 +156,12 @@ class NipNotificationFragment : BaseFragment() {
             copyTextToClipboard(
                 requireContext(),
                 "Account Number",
-                accountNumber
+                accountNumber,
             )
             Toast.makeText(
                 requireContext(),
                 "Account number copied to clipboard",
-                Toast.LENGTH_SHORT
+                Toast.LENGTH_SHORT,
             )
                 .show()
         }
@@ -175,12 +169,12 @@ class NipNotificationFragment : BaseFragment() {
             copyTextToClipboard(
                 requireContext(),
                 "Account Number",
-                accountNumber2
+                accountNumber2,
             )
             Toast.makeText(
                 requireContext(),
                 "Account number copied to clipboard",
-                Toast.LENGTH_SHORT
+                Toast.LENGTH_SHORT,
             ).show()
         }
         bankDetailsBinding.tap.setOnClickListener {

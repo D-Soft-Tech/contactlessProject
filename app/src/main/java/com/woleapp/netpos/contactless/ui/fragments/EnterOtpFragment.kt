@@ -35,7 +35,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class EnterOtpFragment @Inject constructor() : BaseFragment() {
+class EnterOtpFragment : BaseFragment() {
     private lateinit var resendCode: TextView
     private lateinit var otpView: PinView
     private lateinit var otpResentConfirmationText: TextView

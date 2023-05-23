@@ -18,7 +18,7 @@ class BillsFragment : BaseFragment() {
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View {
         binding = FragmentTransactionsBinding.inflate(inflater, container, false)
         binding.rvTransactionsHeader.text = getString(R.string.bills)

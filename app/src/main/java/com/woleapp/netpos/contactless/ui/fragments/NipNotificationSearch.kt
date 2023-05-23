@@ -9,7 +9,6 @@ import com.woleapp.netpos.contactless.databinding.FragmentNipNotificationSearchB
 import com.woleapp.netpos.contactless.model.*
 import com.woleapp.netpos.contactless.mqtt.MqttHelper
 import com.woleapp.netpos.contactless.network.StormApiClient
-
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import timber.log.Timber
@@ -21,7 +20,7 @@ class NipNotificationSearch : BaseFragment() {
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View {
         binding = FragmentNipNotificationSearchBinding.inflate(inflater, container, false)
         return binding.root
@@ -30,17 +29,16 @@ class NipNotificationSearch : BaseFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.nip.root.visibility = View.GONE
-        //val userToken = Prefs.getString(PREF_USER_TOKEN, "")
-        //val user = Singletons.getCurrentlyLoggedInUser()
         event = MqttEvent<NipEvent>()
             .apply {
                 this.geo = "lat:51.507351-long:-0.127758"
             }
         binding.searchButton.setOnClickListener {
-            if (binding.sessionCode.text.toString().isEmpty())
+            if (binding.sessionCode.text.toString().isEmpty()) {
                 return@setOnClickListener
+            }
             val subscribe = StormApiClient.getNipInstance().getNotificationByReference(
-                binding.sessionCode.text.toString()
+                binding.sessionCode.text.toString(),
             ).subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnSubscribe { binding.progressCircular.visibility = View.VISIBLE }
@@ -61,34 +59,14 @@ class NipNotificationSearch : BaseFragment() {
                             binding.nip.root.visibility = View.VISIBLE
                             binding.nip.print.setOnClickListener { _ ->
                                 Timber.e("print nip")
-//                                it.first().print(
-//                                    requireContext(),
-//                                    object : POIPrinterManage.IPrinterListener {
-//                                        override fun onError(p0: Int, p1: String?) {
-//                                            Timber.e("printer error")
-//                                            Toast.makeText(
-//                                                requireContext(),
-//                                                "Printer Error",
-//                                                Toast.LENGTH_SHORT
-//                                            ).show()
-//                                        }
-//
-//                                        override fun onFinish() {
-//                                            Timber.e("on finish")
-//                                        }
-//
-//                                        override fun onStart() {
-//                                            Timber.e("on start")
-//                                        }
-//
-//                                    })
                             }
-                        } else
+                        } else {
                             Toast.makeText(
                                 requireContext(),
-                                "Bank transfer with ref: ${binding.sessionCode.text.toString()} not found",
-                                Toast.LENGTH_SHORT
+                                "Bank transfer with ref: ${binding.sessionCode.text} not found",
+                                Toast.LENGTH_SHORT,
                             ).show()
+                        }
                     }
                     val let = throwable?.let {
                         event.apply {
@@ -102,7 +80,7 @@ class NipNotificationSearch : BaseFragment() {
                         Toast.makeText(
                             requireContext(),
                             "Error: ${it.localizedMessage}",
-                            Toast.LENGTH_SHORT
+                            Toast.LENGTH_SHORT,
                         ).show()
                     }
                 }

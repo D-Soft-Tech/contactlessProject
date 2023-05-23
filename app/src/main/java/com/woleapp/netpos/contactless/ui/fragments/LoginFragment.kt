@@ -112,7 +112,6 @@ class LoginFragment : BaseFragment() {
                     .setMessage("Device has NFC support and is enabled")
                     .setPositiveButton("Close") { dialog, _ ->
                         dialog.dismiss()
-                        // finish()
                     }.show()
             } else {
                 android.app.AlertDialog.Builder(requireContext())
@@ -169,7 +168,6 @@ class LoginFragment : BaseFragment() {
                             )
                             this.status = "SUCCESS"
                         }
-                        // MqttHelper.init(applicationContext, event, MqttTopics.AUTHENTICATION)
                         finish()
                     }
                 }

@@ -22,7 +22,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class CompleteQrPaymentWebViewFragment @Inject constructor() : Fragment() {
+class CompleteQrPaymentWebViewFragment : Fragment() {
     private lateinit var binding: FragmentCompleteQrPaymentWebViewBinding
     private lateinit var wbView: WebView
     private val viewModel by activityViewModels<ScanQrViewModel>()
@@ -63,8 +63,6 @@ class CompleteQrPaymentWebViewFragment @Inject constructor() : Fragment() {
                 }
             },
         )
-
-        // Inflate the layout for this fragment
         return binding.root
     }
 

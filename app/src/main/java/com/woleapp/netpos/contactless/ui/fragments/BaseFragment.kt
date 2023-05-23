@@ -8,7 +8,7 @@ open class BaseFragment : Fragment() {
     fun addFragmentWithoutRemove(
         fragment: Fragment,
         containerViewId: Int = R.id.container_main,
-        fragmentName: String? = null
+        fragmentName: String? = null,
     ) {
         val tag = fragment.javaClass.simpleName
         requireActivity().supportFragmentManager.beginTransaction().apply {
@@ -16,7 +16,7 @@ open class BaseFragment : Fragment() {
                 R.anim.right_to_left,
                 R.anim.left_to_right,
                 R.anim.right_to_left,
-                R.anim.left_to_right
+                R.anim.left_to_right,
             )
             add(containerViewId, fragment, fragmentName)
             addToBackStack(tag)
@@ -26,7 +26,7 @@ open class BaseFragment : Fragment() {
     open fun showFragment(
         fragment: Fragment,
         containerViewId: Int = R.id.container_main,
-        fragmentName: String? = null
+        fragmentName: String? = null,
     ) {
         val tag = fragment.javaClass.simpleName
         requireActivity().supportFragmentManager.beginTransaction().apply {
@@ -34,7 +34,7 @@ open class BaseFragment : Fragment() {
                 R.anim.right_to_left,
                 R.anim.left_to_right,
                 R.anim.right_to_left,
-                R.anim.left_to_right
+                R.anim.left_to_right,
             )
             replace(containerViewId, fragment, fragmentName)
             addToBackStack(tag)

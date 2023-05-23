@@ -79,11 +79,10 @@ import pub.devrel.easypermissions.EasyPermissions
 import timber.log.Timber
 import java.io.File
 import java.util.*
-import javax.inject.Inject
 
 @Suppress("DEPRECATION")
 @AndroidEntryPoint
-class MainActivity @Inject constructor() :
+class MainActivity :
     AppCompatActivity(),
     EasyPermissions.PermissionCallbacks,
     NfcAdapter.ReaderCallback {
@@ -96,7 +95,6 @@ class MainActivity @Inject constructor() :
     private lateinit var qrPdfView: LayoutQrReceiptPdfBinding
     private lateinit var dialogContactlessReaderBinding: DialogContatclessReaderBinding
     private val viewModel by viewModels<NfcCardReaderViewModel>()
-    private val nfcCardReaderViewModel by viewModels<NfcCardReaderViewModel>()
     private val transactionViewModel by viewModels<TransactionsViewModel>()
     private val contactlessKernel: ContactlessKernel by lazy {
         ContactlessKernel.getInstance(applicationContext)
@@ -581,7 +579,6 @@ class MainActivity @Inject constructor() :
             0f,
             locationListener,
         )
-        // locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER)
         locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER)
     }
 
@@ -1030,7 +1027,6 @@ class MainActivity @Inject constructor() :
                     return@OnCompleteListener
                 }
 
-                // Get new FCM registration token
                 val token = task.result
                 actionToPerformWithTheReceivedToken(token)
             },
@@ -1043,7 +1039,6 @@ class MainActivity @Inject constructor() :
         qrData: QrScannedDataModel,
     ) {
         val formattedPadding = RandomPurposeUtil.stringToBase64(pin).removeSuffix('\n'.toString())
-        // val formattedPadding = pin
         if (pin.length == 4) {
             amountDouble?.let {
                 qrAmountDialogForVerveCard.cancel()

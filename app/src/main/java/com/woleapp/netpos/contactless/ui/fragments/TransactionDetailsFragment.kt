@@ -34,7 +34,7 @@ class TransactionDetailsFragment : BaseFragment() {
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View {
         binding = FragmentTransactionDetailsBinding.inflate(inflater, container, false)
             .apply {
@@ -137,7 +137,7 @@ class TransactionDetailsFragment : BaseFragment() {
                 if (it) {
                     NetPosTerminalConfig.init(
                         requireContext().applicationContext,
-                        configureSilently = true
+                        configureSilently = true,
                     )
                 }
             }
@@ -169,7 +169,7 @@ class TransactionDetailsFragment : BaseFragment() {
                     Toast.makeText(
                         requireContext(),
                         error.message,
-                        Toast.LENGTH_LONG
+                        Toast.LENGTH_LONG,
                     )
                         .show()
                 }
@@ -189,7 +189,7 @@ class TransactionDetailsFragment : BaseFragment() {
         actionAfterCardRead = action
         showCardDialog(
             requireActivity(),
-            viewLifecycleOwner
+            viewLifecycleOwner,
         ).observe(viewLifecycleOwner) { event ->
             event.getContentIfNotHandled()?.let {
                 nfcCardReaderViewModel.initiateNfcPayment(10, 0, it)
@@ -208,10 +208,10 @@ class TransactionDetailsFragment : BaseFragment() {
         }
         Snackbar.make(
             requireActivity().findViewById(
-                R.id.container_main
+                R.id.container_main,
             ),
             message,
-            Snackbar.LENGTH_LONG
+            Snackbar.LENGTH_LONG,
         ).show()
     }
 }
