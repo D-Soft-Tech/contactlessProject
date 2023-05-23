@@ -1,24 +1,15 @@
 package com.woleapp.netpos.contactless.ui.fragments
 
-import android.Manifest
-import android.content.Context
 import android.content.Intent
-import android.content.pm.PackageManager
-import android.media.audiofx.BassBoost
 import android.nfc.NfcManager
-import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
-import android.telephony.TelephonyManager
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.app.ActivityCompat
 import androidx.fragment.app.viewModels
 import com.google.gson.JsonObject
 import com.woleapp.netpos.contactless.BuildConfig
@@ -35,7 +26,6 @@ import com.woleapp.netpos.contactless.util.RandomPurposeUtil.getDeviceId
 import com.woleapp.netpos.contactless.util.UtilityParam
 import com.woleapp.netpos.contactless.viewmodels.AuthViewModel
 
-
 class LoginFragment : BaseFragment() {
 
     private val viewModel by viewModels<AuthViewModel>()
@@ -45,7 +35,7 @@ class LoginFragment : BaseFragment() {
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View {
         binding = FragmentLoginBinding.inflate(inflater, container, false).apply {
             lifecycleOwner = viewLifecycleOwner
@@ -74,27 +64,28 @@ class LoginFragment : BaseFragment() {
             appCredentials = credentials
         }
         val uniqueNumber = getDeviceId(requireContext()).toString()
-     //   Log.d("IMEI", uniqueNumber)
+        //   Log.d("IMEI", uniqueNumber)
         binding.btnLogin.setOnClickListener {
             viewModel.login(uniqueNumber)
         }
 
         binding.register.setOnClickListener {
-            if (BuildConfig.FLAVOR.contains("firstbank")||BuildConfig.FLAVOR.contains("providus")||BuildConfig.FLAVOR.contains("providussoftpos")||
-                BuildConfig.FLAVOR.contains("wemabank")||BuildConfig.FLAVOR.contains("fcmb")||
-                BuildConfig.FLAVOR.contains("easypay")||BuildConfig.FLAVOR.contains("fcmbeasypay")||
-                BuildConfig.FLAVOR.contains("easypayfcmb")|| BuildConfig.FLAVOR.contains("easyfcmb")||
-                BuildConfig.FLAVOR.contains("zenith")){
+            if (BuildConfig.FLAVOR.contains("firstbank") || BuildConfig.FLAVOR.contains("providus") || BuildConfig.FLAVOR.contains("providussoftpos") ||
+                BuildConfig.FLAVOR.contains("wemabank") || BuildConfig.FLAVOR.contains("fcmb") ||
+                BuildConfig.FLAVOR.contains("easypay") || BuildConfig.FLAVOR.contains("fcmbeasypay") ||
+                BuildConfig.FLAVOR.contains("easypayfcmb") || BuildConfig.FLAVOR.contains("easyfcmb") ||
+                BuildConfig.FLAVOR.contains("zenith")
+            ) {
                 showFragment(
                     NewOrExistingFragment(),
                     containerViewId = R.id.auth_container,
-                    fragmentName = "NewOrExisting Fragment"
+                    fragmentName = "NewOrExisting Fragment",
                 )
-            }else{
+            } else {
                 showFragment(
                     RegisterFragment(),
                     containerViewId = R.id.auth_container,
-                    fragmentName = "Register Fragment"
+                    fragmentName = "Register Fragment",
                 )
             }
         }
@@ -131,7 +122,7 @@ class LoginFragment : BaseFragment() {
                         dialog.dismiss()
                         startActivityForResult(
                             Intent(android.provider.Settings.ACTION_NFC_SETTINGS),
-                            0
+                            0,
                         )
                     }.show()
             }
@@ -164,7 +155,7 @@ class LoginFragment : BaseFragment() {
                             Intent(this, MainActivity::class.java).apply {
                                 flags =
                                     Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                            }
+                            },
                         )
                         NetPosTerminalConfig.init(applicationContext)
                         val event = MqttEvent<AuthenticationEventData>().apply {
@@ -174,7 +165,7 @@ class LoginFragment : BaseFragment() {
                             this.data = AuthenticationEventData(
                                 this.business_name!!,
                                 this.storm_id!!,
-                                this.deviceSerial!!
+                                this.deviceSerial!!,
                             )
                             this.status = "SUCCESS"
                         }
@@ -192,6 +183,4 @@ class LoginFragment : BaseFragment() {
             }
         }
     }
-
 }
-

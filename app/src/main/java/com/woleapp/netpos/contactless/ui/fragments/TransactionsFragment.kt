@@ -9,7 +9,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.activityViewModels
-import androidx.fragment.app.setFragmentResultListener
 import androidx.recyclerview.widget.GridLayoutManager
 import com.danbamitale.epmslib.entities.*
 import com.danbamitale.epmslib.extensions.formatCurrencyAmount
@@ -30,10 +29,6 @@ import com.woleapp.netpos.contactless.nibss.NetPosTerminalConfig
 import com.woleapp.netpos.contactless.ui.dialog.LoadingDialog
 import com.woleapp.netpos.contactless.ui.dialog.QrPasswordPinBlockDialog
 import com.woleapp.netpos.contactless.util.*
-import com.woleapp.netpos.contactless.util.AppConstants.PIN_BLOCK_BK
-import com.woleapp.netpos.contactless.util.AppConstants.PIN_BLOCK_RK
-import com.woleapp.netpos.contactless.util.AppConstants.STRING_QR_READ_RESULT_BUNDLE_KEY
-import com.woleapp.netpos.contactless.util.AppConstants.STRING_QR_READ_RESULT_REQUEST_KEY
 import com.woleapp.netpos.contactless.util.AppConstants.getGUID
 import com.woleapp.netpos.contactless.util.RandomPurposeUtil.observeServerResponse
 import com.woleapp.netpos.contactless.util.RandomPurposeUtil.stringToBase64
@@ -52,7 +47,6 @@ class TransactionsFragment @Inject constructor() : BaseFragment() {
     private var _binding: FragmentTransactionsBinding? = null
     private val binding get() = _binding!!
 
-    //  private lateinit var resultLauncher: ActivityResultLauncher<Intent>
     private val scanQrViewModel by activityViewModels<ScanQrViewModel>()
     private lateinit var qrAmoutDialogBinding: QrAmoutDialogBinding
     private lateinit var verveCardQrAmountDialogBinding: LayoutVerveCardQrAmountDialogBinding
@@ -72,36 +66,6 @@ class TransactionsFragment @Inject constructor() : BaseFragment() {
         requestNarration = Singletons.getCurrentlyLoggedInUser()?.mid?.let {
             "$it:${Singletons.getCurrentlyLoggedInUser()?.terminal_id}:${UtilityParam.STRING_MPGS_TAG}"
         } ?: ""
-
-//        requireActivity().supportFragmentManager.setFragmentResultListener(
-//            STRING_QR_READ_RESULT_REQUEST_KEY,
-//            requireActivity(),
-//        ) { _, bundle ->
-//             qrData = bundle.getParcelable<QrScannedDataModel>(STRING_QR_READ_RESULT_BUNDLE_KEY)
-//            qrData?.let {
-//                if (it.card_scheme.contains(
-//                        "verve",
-//                        true,
-//                    )
-//                ) {
-//                    showAmountDialogForVerveCard()
-//                } else {
-//                    showAmountDialog(it)
-//                }
-//            }
-//        }
-
-//        requireActivity().supportFragmentManager.setFragmentResultListener(
-//            PIN_BLOCK_RK,
-//            requireActivity()
-//        ) { _, bundle ->
-//            Log.d("TRANSACTIONFRAGMENT", "DATAFRAGEMNT")
-//            val pinFromPinBlockDialog = bundle.getString(PIN_BLOCK_BK)
-//            pinFromPinBlockDialog?.let {
-//                Log.d("PINBLOCKFRAGMENT", "PINBLOCK")
-//                qrData?.let { it1 -> formatPinAndSendToServer(it, amountToPayInDouble, it1) }
-//            }
-//        }
     }
 
     override fun onCreateView(
@@ -113,16 +77,13 @@ class TransactionsFragment @Inject constructor() : BaseFragment() {
         adapter = ServiceAdapter {
             val nextFrag: Any? = when (it.id) {
                 0 -> {
-//                    nfcCardReaderViewModel.iccCardHelperLiveData.removeObservers(viewLifecycleOwner)
                     showFragment(SalesFragment.newInstance())
                 }
                 1 -> {
-                    // nfcCardReaderViewModel.iccCardHelperLiveData.removeObservers(viewLifecycleOwner)
                     showFragment(TransactionHistoryFragment.newInstance(action = HISTORY_ACTION_REFUND))
                 }
                 8 -> showFragment(TransactionHistoryFragment.newInstance(action = HISTORY_ACTION_REVERSAL))
                 7 -> {
-                    // nfcCardReaderViewModel.iccCardHelperLiveData.removeObservers(viewLifecycleOwner)
                     showFragment(SalesFragment.newInstance(TransactionType.PURCHASE_WITH_CASH_BACK))
                 }
                 2 -> {
@@ -133,31 +94,17 @@ class TransactionsFragment @Inject constructor() : BaseFragment() {
                     getBalance()
                     null
                 }
-
-//                {
-// //                     NetPosBarcodeSdk
-//                    // QRFragment()
-//                    NetPosBarcodeSdk.startScan(requireContext(), resultLauncher)
-// //                    addFragmentWithoutRemove(FragmentBarCodeScanner())
-//                    null
-//                }
                 5 -> showFragment(ReprintFragment())
 
                 3 -> {
-                    //    if (!BuildConfig.FLAVOR.contains("providus")){
                     parentFragmentManager.beginTransaction()
                         .replace(R.id.container_main, SettingsFragment())
                         .addToBackStack(null)
                         .commit()
-//                    } else {
-//                    }
                 }
                 6 -> showFragment(SalesFragment.newInstance(isVend = true))
                 else -> showFragment(SalesFragment.newInstance(TransactionType.CASH_ADVANCE))
             }
-//            nextFrag?.let { fragment ->
-//                addFragmentWithoutRemove(fragment)
-//            }
         }
 
         qrAmoutDialogBinding = QrAmoutDialogBinding.inflate(inflater, null, false)
@@ -210,20 +157,15 @@ class TransactionsFragment @Inject constructor() : BaseFragment() {
         val listOfService = ArrayList<Service>()
             .apply {
                 add(Service(0, "Purchase", R.drawable.purchase))
-             //   add(Service(0, "Purchase", R.drawable.ic_purchase))
-//                    if (!BuildConfig.FLAVOR.contains("providus")) {
-//                        add(Service(7, "Purchase With Cashback", R.drawable.ic_purchase))
-//                    }
                 if (!BuildConfig.FLAVOR.contains("providus") || !BuildConfig.FLAVOR.contains("providussoftpos")) {
-                        add(Service(7, "Purchase With Cashback", R.drawable.purchase))
-                    }
+                    add(Service(7, "Purchase With Cashback", R.drawable.purchase))
+                }
                 add(Service(3, "Settings", R.drawable.ic_baseline_settings))
                 if (BuildConfig.FLAVOR.contains("polaris")) {
                     remove(Service(3, "Settings", R.drawable.ic_baseline_settings))
                 }
                 add(Service(4, "Balance Enquiry", R.drawable.ic_write))
                 add(Service(5, "Reprint", R.drawable.ic_print))
-                // add(Service(6, "VEND", R.drawable.ic_vend))
             }
         adapter.submitList(listOfService)
     }
@@ -421,7 +363,7 @@ class TransactionsFragment @Inject constructor() : BaseFragment() {
     private fun formatPinAndSendToServer(
         pin: String,
         amountDouble: Double?,
-        qrData: QrScannedDataModel
+        qrData: QrScannedDataModel,
     ) {
         val formattedPadding = stringToBase64(pin).removeSuffix('\n'.toString())
         if (pin.length == 4) {
@@ -433,7 +375,7 @@ class TransactionsFragment @Inject constructor() : BaseFragment() {
                         qrData.data,
                         merchantId = UtilityParam.STRING_MERCHANT_ID,
                         padding = formattedPadding,
-                        naration = requestNarration
+                        naration = requestNarration,
                     )
                 scanQrViewModel.setScannedQrIsVerveCard(true)
                 scanQrViewModel.saveTheQrToSharedPrefs(qrDataToSendToBackend.copy(orderId = getGUID()))
@@ -441,10 +383,10 @@ class TransactionsFragment @Inject constructor() : BaseFragment() {
                 observeServerResponse(
                     scanQrViewModel.sendQrToServerResponseVerve,
                     LoadingDialog(),
-                    requireActivity().supportFragmentManager
+                    requireActivity().supportFragmentManager,
                 ) {
                     addFragmentWithoutRemove(
-                        EnterOtpFragment()
+                        EnterOtpFragment(),
                     )
                 }
             }

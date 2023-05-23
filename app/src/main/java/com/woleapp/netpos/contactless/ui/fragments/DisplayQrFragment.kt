@@ -16,12 +16,17 @@ import com.woleapp.netpos.contactless.databinding.FragmentDisplayQrBinding
 import com.woleapp.netpos.contactless.model.PayWithQrRequest
 import com.woleapp.netpos.contactless.model.User
 import com.woleapp.netpos.contactless.util.*
+import com.woleapp.netpos.contactless.util.AppConstants.CONTACTLESS_TRANSACTION_DEFAULT_EMAIL
 import com.woleapp.netpos.contactless.util.RandomPurposeUtil.alertDialog
 import com.woleapp.netpos.contactless.util.RandomPurposeUtil.observeServerResponse
+import com.woleapp.netpos.contactless.util.Singletons.getCurrentlyLoggedInUser
+import com.woleapp.netpos.contactless.util.Singletons.getNetPlusPayMid
+import com.woleapp.netpos.contactless.util.Singletons.gson
 import com.woleapp.netpos.contactless.viewmodels.ContactlessQrPaymentViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import io.reactivex.Scheduler
 import io.reactivex.disposables.CompositeDisposable
+import timber.log.Timber
 import javax.inject.Inject
 import javax.inject.Named
 
@@ -50,8 +55,9 @@ class DisplayQrFragment : BaseFragment() {
     lateinit var mainThreadScheduler: Scheduler
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?,
     ): View {
         // Inflate the layout for this fragment
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_display_qr, container, false)
@@ -62,11 +68,11 @@ class DisplayQrFragment : BaseFragment() {
         super.onViewCreated(view, savedInstanceState)
         initViews()
         initPartnerID()
-        val user = Singletons.gson.fromJson(Prefs.getString(PREF_USER, ""), User::class.java)
+        val user = gson.fromJson(Prefs.getString(PREF_USER, ""), User::class.java)
         netposID = user.netplus_id
         userTID = user.terminal_id
         name = user.business_name
-        email = "contactless@gmail.com"
+        email = CONTACTLESS_TRANSACTION_DEFAULT_EMAIL
 
         loader = alertDialog(requireContext())
 
@@ -82,7 +88,6 @@ class DisplayQrFragment : BaseFragment() {
     }
 
     private fun register() {
-
         when {
             amount.text.toString().isEmpty() -> {
                 showToast(getString(R.string.all_please_enter_amount))
@@ -117,12 +122,15 @@ class DisplayQrFragment : BaseFragment() {
         loader.show()
         val paymentWithQr = PayWithQrRequest(
             terminalId = userTID.toString(),
-            netposId = netposID.toString(),
+            netposId = getCurrentlyLoggedInUser()?.netplus_id ?: "",
             amount = amount.text.toString(),
             name = name.toString(),
             email = email.toString(),
-            bank = partnerID
+            bank = partnerID,
+            NPmerchantId = getNetPlusPayMid(),
         )
+
+        Timber.tag("CHECK_MID").d(gson.toJson(paymentWithQr))
 
         observeServerResponse(
             viewModel.paymentWithQr(paymentWithQr),
@@ -134,20 +142,28 @@ class DisplayQrFragment : BaseFragment() {
             showFragment(
                 DisplayQrResultFragment(),
                 containerViewId = R.id.container_main,
-                fragmentName = "Display QR Result"
+                fragmentName = "Display QR Result",
             )
         }
     }
 
     private fun initPartnerID() {
-        val bankList = mapOf("firstbank" to "firstbank", "netpos" to "netpos", "fcmb" to "fcmb",
-            "easypay" to "fcmb","fcmbeasypay" to "fcmb","easypayfcmb" to "fcmb","easyfcmb" to "fcmb",
-            "providus" to "providus", "providussoftpos" to "providus", "wemabank" to "wemabank", "zenith" to "zenith")
+        val bankList = mapOf(
+            "firstbank" to "firstbank",
+            "netpos" to "netpos",
+            "fcmb" to "fcmb",
+            "easypay" to "fcmb",
+            "fcmbeasypay" to "fcmb",
+            "easypayfcmb" to "fcmb",
+            "easyfcmb" to "fcmb",
+            "providus" to "providus",
+            "providussoftpos" to "providus",
+            "wemabank" to "wemabank",
+            "zenith" to "zenith",
+        )
 
-        for (element in bankList) {
-            if (element.key == BuildConfig.FLAVOR){
-                partnerID = element.value
-            }
+        bankList.forEach { (key, value) ->
+            if (key == BuildConfig.FLAVOR) partnerID = value
         }
     }
 }

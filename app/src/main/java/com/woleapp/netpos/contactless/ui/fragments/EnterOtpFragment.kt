@@ -15,7 +15,6 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.activityViewModels
 import com.chaos.view.PinView
 import com.google.gson.Gson
-import com.woleapp.netpos.contactless.BuildConfig
 import com.woleapp.netpos.contactless.R
 import com.woleapp.netpos.contactless.databinding.LayoutEnterOtpFragmentBinding
 import com.woleapp.netpos.contactless.model.QrTransactionResponseModel
@@ -52,7 +51,7 @@ class EnterOtpFragment @Inject constructor() : BaseFragment() {
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View {
         // Inflate the layout for this fragment
         binding =
@@ -68,7 +67,7 @@ class EnterOtpFragment @Inject constructor() : BaseFragment() {
             requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         inputMethodManager.toggleSoftInput(
             InputMethodManager.SHOW_FORCED,
-            InputMethodManager.HIDE_IMPLICIT_ONLY
+            InputMethodManager.HIDE_IMPLICIT_ONLY,
         )
         otpView.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
@@ -82,13 +81,13 @@ class EnterOtpFragment @Inject constructor() : BaseFragment() {
                         observeServerResponse(
                             viewModel.transactionResponseFromVerve,
                             LoadingDialog(),
-                            requireActivity().supportFragmentManager
+                            requireActivity().supportFragmentManager,
                         ) {
                             val transactionResponseFromVerve =
                                 viewModel.transactionResponseFromVerve.value!!.data!!
                             val transResp: QrTransactionResponseModel = try {
                                 formatFailedVerveTransRespToExtractIswResponse(
-                                    transactionResponseFromVerve as VerveTransactionResponse
+                                    transactionResponseFromVerve as VerveTransactionResponse,
                                 ).mapToQrTransactionResponseModel()
                             } catch (e: Exception) {
                                 (transactionResponseFromVerve as VerveTransactionResponse).mapToQrTransactionResponseModel()
@@ -99,16 +98,16 @@ class EnterOtpFragment @Inject constructor() : BaseFragment() {
                                     "",
                                     terminalId = Singletons.getCurrentlyLoggedInUser()?.terminal_id
                                         ?: "",
-                                    merchantId = UtilityParam.STRING_MERCHANT_ID
+                                    merchantId = UtilityParam.STRING_MERCHANT_ID,
                                 )
                             requireActivity().supportFragmentManager.setFragmentResult(
                                 QR_TRANSACTION_RESULT_REQUEST_KEY,
-                                bundleOf(QR_TRANSACTION_RESULT_BUNDLE_KEY to formattedTransactionResp)
+                                bundleOf(QR_TRANSACTION_RESULT_BUNDLE_KEY to formattedTransactionResp),
                             )
                             requireActivity().supportFragmentManager.popBackStack()
                             responseModal.show(
                                 requireActivity().supportFragmentManager,
-                                STRING_QR_RESPONSE_MODAL_DIALOG_TAG
+                                STRING_QR_RESPONSE_MODAL_DIALOG_TAG,
                             )
                         }
                     }
@@ -122,7 +121,7 @@ class EnterOtpFragment @Inject constructor() : BaseFragment() {
         val spannableText = customSpannableString(
             resendCodeText,
             resendCodeText.indexOf("Resend it"),
-            resendCodeText.length
+            resendCodeText.length,
         ) {
             val qrDataToResend = viewModel.retrieveQrPostPayloadFromSharedPrefs()
             qrDataToResend?.let {
@@ -131,7 +130,7 @@ class EnterOtpFragment @Inject constructor() : BaseFragment() {
                 observeServerResponse(
                     viewModel.sendQrToServerResponse,
                     LoadingDialog(),
-                    requireActivity().supportFragmentManager
+                    requireActivity().supportFragmentManager,
                 ) {
                     otpResentConfirmationText.visibility = View.VISIBLE
                 }

@@ -15,9 +15,8 @@ import javax.inject.Inject
 @HiltViewModel
 class ContactlessQrPaymentViewModel @Inject constructor(
     private val contactlessQrPaymentRepository: ContactlessQrPaymentRepository,
-    private val disposable: CompositeDisposable
+    private val disposable: CompositeDisposable,
 ) : ViewModel() {
-
 
     fun paymentWithQr(payWithQrRequest: PayWithQrRequest) =
         contactlessQrPaymentRepository.payWithQr(payWithQrRequest)
@@ -34,10 +33,8 @@ class ContactlessQrPaymentViewModel @Inject constructor(
         Prefs.putString(AppConstants.PAYMENT_WITH_QR_STRING, gson.toJson(data))
     }
 
-
     override fun onCleared() {
         super.onCleared()
         disposable.clear()
     }
 }
-

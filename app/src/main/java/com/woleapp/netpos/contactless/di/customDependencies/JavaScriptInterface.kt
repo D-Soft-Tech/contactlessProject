@@ -13,7 +13,6 @@ import com.woleapp.netpos.contactless.util.Singletons
 import com.woleapp.netpos.contactless.util.UtilityParam
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
-import javax.inject.Inject
 
 class JavaScriptInterface @AssistedInject constructor(
     @Assisted private val fragmentManager: FragmentManager,
@@ -23,8 +22,7 @@ class JavaScriptInterface @AssistedInject constructor(
     @Assisted("acsUrl") private val acsUrl: String,
     @Assisted("transId") private val transId: String,
 ) {
-    @Inject
-    lateinit var responseModal: ResponseModal
+    private val responseModal: ResponseModal = ResponseModal()
     private val webViewBaseUrl =
         UtilityParam.STRING_WEB_VIEW_BASE_URL + UtilityParam.STRING_MERCHANT_ID + "/"
 

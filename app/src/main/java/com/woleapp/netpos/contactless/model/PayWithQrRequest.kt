@@ -6,5 +6,6 @@ data class PayWithQrRequest(
     val amount: String,
     val name: String,
     val email: String,
-    val bank: String
+    val bank: String,
+    val NPmerchantId: String
 )

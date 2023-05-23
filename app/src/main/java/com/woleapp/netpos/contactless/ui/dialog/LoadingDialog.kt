@@ -8,19 +8,14 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.DialogFragment
 import com.woleapp.netpos.contactless.R
 import com.woleapp.netpos.contactless.databinding.LayoutLoadingDialogBinding
-import kotlinx.android.synthetic.main.dialog_print_type.*
-import kotlinx.android.synthetic.main.layout_loading_dialog.*
-import javax.inject.Inject
-import javax.inject.Singleton
 
-@Singleton
-class LoadingDialog @Inject constructor() : DialogFragment() {
+class LoadingDialog : DialogFragment() {
     private lateinit var binding: LayoutLoadingDialogBinding
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View {
         binding =
             DataBindingUtil.inflate(inflater, R.layout.layout_loading_dialog, container, false)
@@ -34,5 +29,4 @@ class LoadingDialog @Inject constructor() : DialogFragment() {
             isCancelable = false
         }
     }
-
 }

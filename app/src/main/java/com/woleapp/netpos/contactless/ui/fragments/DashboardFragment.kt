@@ -29,7 +29,6 @@ import com.woleapp.netpos.contactless.nibss.NetPosTerminalConfig
 import com.woleapp.netpos.contactless.util.*
 import com.woleapp.netpos.contactless.viewmodels.NfcCardReaderViewModel
 import com.woleapp.netpos.contactless.viewmodels.SalesViewModel
-import com.woleapp.netpos.contactless.viewmodels.TransactionsViewModel
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
@@ -49,7 +48,6 @@ class DashboardFragment : BaseFragment() {
     private lateinit var binding: FragmentDashboardBinding
     private lateinit var adapter: ServiceAdapter
     private var compositeDisposable = CompositeDisposable()
-    private val transactionViewModel by activityViewModels<TransactionsViewModel>()
     private val nfcCardReaderViewModel by activityViewModels<NfcCardReaderViewModel>()
     private var observer: ((Event<ICCCardHelper>) -> Unit)? = null
     private val viewModel by activityViewModels<SalesViewModel>()
@@ -64,7 +62,6 @@ class DashboardFragment : BaseFragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?,
     ): View {
-        //   Log.d("MID", "------->${Singletons.getCurrentlyLoggedInUser()?.netplus_id}")
         binding = FragmentDashboardBinding.inflate(inflater, container, false)
         transactionType = TransactionType.PURCHASE
         isVend = arguments?.getBoolean("IS_VEND", false) ?: false
@@ -75,13 +72,13 @@ class DashboardFragment : BaseFragment() {
         }
         printerErrorDialog = AlertDialog.Builder(requireContext())
             .apply {
-                setTitle("Printer Error")
+                setTitle(getString(R.string.printer_error))
                 setIcon(R.drawable.ic_warning)
-                setPositiveButton("Send Receipt") { d, _ ->
+                setPositiveButton(getString(R.string.send_receipt_2)) { d, _ ->
                     d.cancel()
                     viewModel.showReceiptDialog()
                 }
-                setNegativeButton("Dismiss") { d, _ ->
+                setNegativeButton(getString(R.string.dismiss)) { d, _ ->
                     d.cancel()
                     viewModel.finish()
                 }
@@ -193,10 +190,8 @@ class DashboardFragment : BaseFragment() {
         adapter = ServiceAdapter {
             when (it.id) {
                 0 -> showFragment(TransactionsFragment())
-                // 1 -> getBalance()
                 2 -> showFragment(NipNotificationFragment.newInstance())
                 3 -> showFragment(BillsFragment())
-                // 4 -> showCalendarDialog()
                 5 -> {
                     parentFragmentManager.beginTransaction()
                         .replace(R.id.container_main, SettingsFragment())
@@ -207,215 +202,13 @@ class DashboardFragment : BaseFragment() {
                     sendPayload()
                 }
             }
-            // showFragment(nextFrag)
         }
 
         progressDialog = ProgressDialog(requireContext())
-
-//        observer = { event ->
-//            event.getContentIfNotHandled()?.let {
-//                it.error?.let { error ->
-//                    Timber.e(error)
-//                    Toast.makeText(requireContext(), error.localizedMessage, Toast.LENGTH_SHORT)
-//                        .show()
-//                }
-//                it.cardData?.let { cardData ->
-//                    checkBalance(cardData, it.accountType!!)
-//                }
-//            }
-//        }
         return binding.root
     }
 
-    override fun onDetach() {
-        super.onDetach()
-        Timber.e("dashboard detached")
-    }
-
-//    override fun onStop() {
-//        super.onStop()
-//        Timber.e("on stop")
-//        nfcCardReaderViewModel.iccCardHelperLiveData.removeObservers(viewLifecycleOwner)
-//    }
-//
-//    override fun onStart() {
-//        super.onStart()
-//        Timber.e("on start")
-//        observer?.let {
-//            Timber.e("add obs")
-//            nfcCardReaderViewModel.iccCardHelperLiveData.observe(viewLifecycleOwner, it)
-//        }
-//    }
-//
-//    private fun getBalance() {
-//        showCardDialog(
-//            requireActivity(),
-//            viewLifecycleOwner
-//        ).observe(viewLifecycleOwner) { event ->
-//            event.getContentIfNotHandled()?.let {
-//                nfcCardReaderViewModel.initiateNfcPayment(10, 0, it)
-//            }
-//        }
-//    }
-//
-//    private fun checkBalance(
-//        cardData: CardData,
-//        accountType: IsoAccountType = IsoAccountType.DEFAULT_UNSPECIFIED
-//    ) {
-//        if (NetPosTerminalConfig.getKeyHolder() == null) {
-//            Toast.makeText(requireContext(), "Terminal not configured", Toast.LENGTH_LONG).show()
-//            return
-//        }
-//
-//        val hostConfig = HostConfig(
-//            NetPosTerminalConfig.getTerminalId(),
-//            NetPosTerminalConfig.connectionData,
-//            NetPosTerminalConfig.getKeyHolder()!!,
-//            NetPosTerminalConfig.getConfigData()!!
-//        )
-//        val requestData =
-//            TransactionRequestData(TransactionType.BALANCE, 0L, accountType = accountType)
-//        progressDialog.setMessage("Checking Balance...")
-//        progressDialog.show()
-//        val processor = TransactionProcessor(hostConfig)
-//        // processor.
-//        val disposable = processor.processTransaction(requireContext(), requestData, cardData)
-//            .subscribeOn(Schedulers.io())
-//            .observeOn(AndroidSchedulers.mainThread())
-//            .subscribe { response, error ->
-//                if (progressDialog.isShowing) {
-//                    progressDialog.dismiss()
-//                }
-//                error?.let {
-//                    it.printStackTrace()
-//                    Toast.makeText(
-//                        requireContext(),
-//                        "Error ${it.localizedMessage}",
-//                        Toast.LENGTH_SHORT
-//                    ).show()
-//                }
-//
-//                response?.let {
-//                    if (it.responseCode == "A3") {
-//                        Prefs.remove(PREF_CONFIG_DATA)
-//                        Prefs.remove(PREF_KEYHOLDER)
-//                        NetPosTerminalConfig.init(
-//                            requireContext().applicationContext,
-//                            configureSilently = true
-//                        )
-//                    }
-//
-//                    val me = it.buildSMSText("Account Balance Check")
-//
-//                    val messageString = if (it.isApproved) {
-//                        "Account Balance:\n " + it.accountBalances.joinToString("\n") { accountBalance ->
-//                            "${accountBalance.accountType}, ${
-//                            accountBalance.amount.div(100).formatCurrencyAmount()
-//                            }"
-//                        }
-//                    } else {
-//                        "${it.responseMessage}(${it.responseCode})"
-//                    }
-//
-//                    showMessage(
-//                        if (it.isApproved) "Approved" else "Declined",
-//                        messageString,
-//                        me.toString()
-//                    )
-//                }
-//            }
-//
-//        // compositeDisposable.add(disposable)
-//    }
-//
-//    private fun showMessage(s: String, vararg messageString: String) {
-//        AlertDialog.Builder(requireContext())
-//            .apply {
-//                setTitle(s)
-//                setMessage(messageString.first())
-//                setPositiveButton("Ok") { dialog, _ ->
-//                    dialog.dismiss()
-//                    nfcCardReaderViewModel.prepareSMS(messageString.reversed().joinToString("\n"))
-//                }
-//                create().show()
-//            }
-//    }
-//
-//    private fun showEndOfDayBottomSheetDialog(transactions: List<TransactionResponse>) {
-//        val approvedList = transactions.filter { it.responseCode == "00" }
-//        val declinedList = transactions.filter { it.responseCode != "00" }
-//        val endOfDay =
-//            LayoutPrintEndOfDayBinding.inflate(LayoutInflater.from(requireContext()), null, false)
-//        endOfDay.apply {
-//            approvedCount.text = approvedList.size.toString()
-//            declinedCount.text = declinedList.size.toString()
-//            totalTransactions.text =
-//                getString(R.string.total_transaction_count, transactions.size.toString())
-//            print.setOnClickListener {
-//                when (chipGroup.checkedChipId) {
-//                    R.id.print_approved -> approvedList
-//                    R.id.print_declined -> declinedList
-//                    else -> transactions
-//                }.apply {
-//                    if (isEmpty()) {
-//                        Toast.makeText(
-//                            requireContext(),
-//                            "No transactions to print",
-//                            Toast.LENGTH_SHORT
-//                        ).show()
-//                    }
-//                }
-//            }
-//        }
-//        val bottomSheet = BottomSheetDialog(requireContext(), R.style.SheetDialog)
-//            .apply {
-//                dismissWithAnimation = true
-//                setCancelable(false)
-//                setContentView(endOfDay.root)
-//                show()
-//            }
-//        endOfDay.view.setOnClickListener {
-//            transactionViewModel.setEndOfDayList(transactions)
-//            bottomSheet.dismiss()
-//            showFragment(TransactionHistoryFragment.newInstance(HISTORY_ACTION_EOD))
-//        }
-//        endOfDay.closeButton.setOnClickListener {
-//            bottomSheet.dismiss()
-//        }
-//    }
-//
-//    private fun getEndOfDayTransactions(timestamp: Long? = null) {
-//        Toast.makeText(requireContext(), "Please wait", Toast.LENGTH_LONG).show()
-//        val livedata = AppDatabase.getDatabaseInstance(requireContext())
-//            .transactionResponseDao()
-//            .getEndOfDayTransaction(
-//                getBeginningOfDay(timestamp),
-//                getEndOfDayTimeStamp(timestamp),
-//                NetPosTerminalConfig.getTerminalId()
-//            )
-//        livedata.observe(viewLifecycleOwner) {
-//            showEndOfDayBottomSheetDialog(it)
-//            livedata.removeObservers(viewLifecycleOwner)
-//        }
-//    }
-//
-//    private fun showCalendarDialog() {
-//        val calendar = Calendar.getInstance()
-//        DatePickerDialog(
-//            requireContext(),
-//            { _, i, i2, i3 ->
-//                getEndOfDayTransactions(
-//                    Calendar.getInstance().apply { set(i, i2, i3) }.timeInMillis
-//                )
-//            },
-//            calendar.get(Calendar.YEAR),
-//            calendar.get(Calendar.MONTH),
-//            calendar.get(Calendar.DAY_OF_MONTH)
-//        ).show()
-//    }
-
     private fun sendPayload() {
-        // val user = Singletons.gson.fromJson(Prefs.getString(PREF_USER, ""), User::class.java)
         val event = MqttEvent<AuthenticationEventData>()
         val authEventData =
             AuthenticationEventData(event.business_name!!, event.storm_id!!, event.deviceSerial!!)
@@ -428,7 +221,6 @@ class DashboardFragment : BaseFragment() {
             this.data = authEventData
         }
         MqttHelper.sendPayload(MqttTopics.AUTHENTICATION, event)
-        // Timber.e(Singletons.gson.toJson(event))
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -447,8 +239,6 @@ class DashboardFragment : BaseFragment() {
                 }
             }
         }
-        // binding.rvDashboard.layoutManager = GridLayoutManager(context, 2)
-        // binding.rvDashboard.adapter = adapter
     }
 
     private fun setServices() {
@@ -456,8 +246,6 @@ class DashboardFragment : BaseFragment() {
             .apply {
                 add(Service(0, "Transaction", R.drawable.ic_trans))
                 add(Service(1, "Balance Inquiry", R.drawable.ic_write))
-                // add(Service(2, "Bank Transfer", R.drawable.ic_lending))
-                // add(Service(3, "Pay Bills", R.drawable.ic_bill))
                 add(Service(4, "View End Of Day Transactions", R.drawable.ic_print))
                 add(Service(5, "Settings", R.drawable.ic_baseline_settings))
             }
@@ -482,7 +270,12 @@ class DashboardFragment : BaseFragment() {
             var reader: BufferedReader? = null
             Observable.fromCallable {
                 socket.soTimeout = 120_000
-                socket.connect(InetSocketAddress(UtilityParam.VEND_IP, UtilityParam.VEND_PORT.toInt()))
+                socket.connect(
+                    InetSocketAddress(
+                        UtilityParam.VEND_IP,
+                        UtilityParam.VEND_PORT.toInt(),
+                    ),
+                )
                 printWriter = PrintWriter(socket.getOutputStream(), true)
                 reader = BufferedReader(InputStreamReader(socket.getInputStream()))
                 val firstData = reader?.readLine()
@@ -557,12 +350,6 @@ class DashboardFragment : BaseFragment() {
         ).show()
     }
 
-    override fun onResume() {
-        super.onResume()
-        val pref = Prefs.getString(PREF_PRINTER_SETTINGS, "nothing comes")
-        Timber.d("THE_PREFS_GOTTEN======>%s", pref)
-    }
-
     private fun checkBalance(
         cardData: CardData,
         accountType: IsoAccountType = IsoAccountType.DEFAULT_UNSPECIFIED,
@@ -583,8 +370,7 @@ class DashboardFragment : BaseFragment() {
         progressDialog!!.setMessage("Checking Balance...")
         progressDialog.show()
         val processor = TransactionProcessor(hostConfig)
-        // processor.
-        val disposable = processor.processTransaction(requireContext(), requestData, cardData)
+        processor.processTransaction(requireContext(), requestData, cardData)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe { response, error ->
@@ -629,8 +415,6 @@ class DashboardFragment : BaseFragment() {
                     )
                 }
             }
-
-        // compositeDisposable.add(disposable)
     }
 
     private fun showMessage(s: String, vararg messageString: String) {
