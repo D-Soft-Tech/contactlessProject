@@ -44,17 +44,6 @@ class NetPosApp : Application() {
             .setUseDefaultSharedPreference(true)
             .build()
         initVisaLib()
-        // TimeZone.setDefault(TimeZone.getTimeZone("GMT+8"));
-//        RxJavaPlugins.setErrorHandler {
-//            Timber.e("Error: ${it.localizedMessage}")
-//        }
-        /*Thread.setDefaultUncaughtExceptionHandler { _, e ->
-            Timber.e("LMAOOOOO, e wan crash")
-            Timber.e(e)
-            throw e
-        }*/
-//        ProcessLifecycleOwner.get().lifecycle
-//            .addObserver(AppLifeCycleObserver())
     }
 
     private fun initVisaLib() {
@@ -78,7 +67,7 @@ class NetPosApp : Application() {
             0x00.toByte(),
             0x00.toByte(),
             0x50.toByte(),
-            0x01.toByte()
+            0x01.toByte(),
         ) // Additional Terminal Capabilities
         val mercahnt = "NetPOS Contactless"
         val merchantByte = mercahnt.toByteArray()
@@ -95,7 +84,7 @@ class NetPosApp : Application() {
         builder = StringBuilder()
         nfcProvider =
             NfcProvider(
-                context
+                context,
             )
         val cardCommProviderStub =
             CardCommProviderStub()
@@ -103,8 +92,8 @@ class NetPosApp : Application() {
         configuration
             .withResourceProvider(
                 ResourceProviderImplementation(
-                    this.applicationContext
-                )
+                    this.applicationContext,
+                ),
             )
             .withLogger(logger)
             .withCardCommunication(nfcProvider, cardCommProviderStub)
@@ -112,8 +101,8 @@ class NetPosApp : Application() {
             .withUnpredictableNumberProvider(UnpredictableNumberImplementation())
             .withMessageDisplayProvider(
                 DisplayImplementation(
-                    logger
-                )
+                    logger,
+                ),
             )
         transactionsApi = configuration.initializeLibrary()
         configuration.selectProfile("MPOS")

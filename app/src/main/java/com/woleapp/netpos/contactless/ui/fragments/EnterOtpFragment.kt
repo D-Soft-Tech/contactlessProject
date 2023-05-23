@@ -42,9 +42,6 @@ class EnterOtpFragment : BaseFragment() {
     private lateinit var binding: LayoutEnterOtpFragmentBinding
 
     @Inject
-    lateinit var responseModal: ResponseModal
-
-    @Inject
     lateinit var gson: Gson
     private val viewModel by activityViewModels<ScanQrViewModel>()
 
@@ -105,7 +102,7 @@ class EnterOtpFragment : BaseFragment() {
                                 bundleOf(QR_TRANSACTION_RESULT_BUNDLE_KEY to formattedTransactionResp),
                             )
                             requireActivity().supportFragmentManager.popBackStack()
-                            responseModal.show(
+                            ResponseModal().show(
                                 requireActivity().supportFragmentManager,
                                 STRING_QR_RESPONSE_MODAL_DIALOG_TAG,
                             )

@@ -1,7 +1,6 @@
 package com.woleapp.netpos.contactless.di.appModule
 
 import com.google.gson.Gson
-import com.woleapp.netpos.contactless.BuildConfig
 import com.woleapp.netpos.contactless.network.*
 import com.woleapp.netpos.contactless.util.UtilityParam
 import dagger.Module
@@ -71,7 +70,7 @@ object AppModule {
     @Named("defaultOkHttp")
     fun providesOKHTTPClient(
         @Named("loggingInterceptor") loggingInterceptor: Interceptor,
-        @Named("headerInterceptor") headerInterceptor: Interceptor
+        @Named("headerInterceptor") headerInterceptor: Interceptor,
     ): OkHttpClient =
         OkHttpClient().newBuilder()
             .connectTimeout(70, TimeUnit.SECONDS)
@@ -86,7 +85,7 @@ object AppModule {
     @Singleton
     @Named("otpOkHttp")
     fun providesOKHTTPClientForGetVerveOtp(
-        @Named("loggingInterceptor") loggingInterceptor: Interceptor
+        @Named("loggingInterceptor") loggingInterceptor: Interceptor,
     ): OkHttpClient =
         OkHttpClient().newBuilder()
             .connectTimeout(70, TimeUnit.SECONDS)
@@ -101,7 +100,7 @@ object AppModule {
     @Named("defaultRetrofit")
     fun providesRetrofit(
         @Named("defaultOkHttp") okhttp: OkHttpClient,
-        @Named("defaultBaseUrl") baseUrl: String
+        @Named("defaultBaseUrl") baseUrl: String,
     ): Retrofit =
         Retrofit.Builder()
             .addConverterFactory(GsonConverterFactory.create())
@@ -115,7 +114,7 @@ object AppModule {
     @Named("otpRetrofit")
     fun providesRetrofitForVerveOtp(
         @Named("otpOkHttp") okhttp: OkHttpClient,
-        @Named("otpBaseUrl") otpBaseUrl: String
+        @Named("otpBaseUrl") otpBaseUrl: String,
     ): Retrofit =
         Retrofit.Builder()
             .addConverterFactory(GsonConverterFactory.create())
@@ -129,7 +128,7 @@ object AppModule {
     @Named("contactlessRegRetrofit")
     fun providesRetrofitForContactlessReg(
         @Named("otpOkHttp") okhttp: OkHttpClient,
-        @Named("contactlessRegBaseUrl") contactlessRegBaseUrl: String
+        @Named("contactlessRegBaseUrl") contactlessRegBaseUrl: String,
     ): Retrofit =
         Retrofit.Builder()
             .addConverterFactory(GsonConverterFactory.create())
@@ -143,7 +142,7 @@ object AppModule {
     @Named("contactlessQrPaymentRetrofit")
     fun providesRetrofitForContactlessQrPayment(
         @Named("otpOkHttp") okhttp: OkHttpClient,
-        @Named("contactlessQrPaymentBaseUrl") contactlessQrPaymentBaseUrl: String
+        @Named("contactlessQrPaymentBaseUrl") contactlessQrPaymentBaseUrl: String,
     ): Retrofit =
         Retrofit.Builder()
             .addConverterFactory(GsonConverterFactory.create())
@@ -151,12 +150,13 @@ object AppModule {
             .baseUrl(contactlessQrPaymentBaseUrl)
             .client(okhttp)
             .build()
+
     @Provides
     @Singleton
     @Named("notificationRetrofit")
     fun providesRetrofitForNotificationService(
         @Named("otpOkHttp") okhttp: OkHttpClient,
-        @Named("notificationBaseUrl") notificationBaseUrl: String
+        @Named("notificationBaseUrl") notificationBaseUrl: String,
     ): Retrofit =
         Retrofit.Builder()
             .addConverterFactory(GsonConverterFactory.create())
@@ -168,36 +168,32 @@ object AppModule {
     @Provides
     @Singleton
     fun providesQrService(
-        @Named("defaultRetrofit") retrofit: Retrofit
+        @Named("defaultRetrofit") retrofit: Retrofit,
     ): QrService = retrofit.create(QrService::class.java)
 
     @Provides
     @Singleton
     fun providesVerveOtpService(
-        @Named("otpRetrofit") retrofit: Retrofit
+        @Named("otpRetrofit") retrofit: Retrofit,
     ): VerveOtpService = retrofit.create(VerveOtpService::class.java)
-
 
     @Provides
     @Singleton
     fun providesContactlessRegService(
-        @Named("contactlessRegRetrofit") retrofit: Retrofit
+        @Named("contactlessRegRetrofit") retrofit: Retrofit,
     ): AccountLookUpService = retrofit.create(AccountLookUpService::class.java)
-
 
     @Provides
     @Singleton
     fun providesContactlessQrPaymentService(
-        @Named("contactlessQrPaymentRetrofit") retrofit: Retrofit
+        @Named("contactlessQrPaymentRetrofit") retrofit: Retrofit,
     ): QrPaymentService = retrofit.create(QrPaymentService::class.java)
-
 
     @Provides
     @Singleton
     fun providesNotificationService(
-        @Named("notificationRetrofit") retrofit: Retrofit
+        @Named("notificationRetrofit") retrofit: Retrofit,
     ): NotificationService = retrofit.create(NotificationService::class.java)
-
 
     @Provides
     @Singleton
