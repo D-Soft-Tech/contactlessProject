@@ -61,7 +61,6 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
         // message, here is where that should be initiated. See sendNotification method below.
         remoteMessage.data["TransactionNotification"]?.let {
             val transactionNotificationFromFirebase = remoteMessage.data["TransactionNotification"]
-
             val temporalTransaction: FirebaseNotificationModelResponse =
                 gson.fromJson(
                     transactionNotificationFromFirebase,
@@ -69,11 +68,14 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
                 )
 
             sendNotification(
-                "${
-                    temporalTransaction.amount.toDouble().formatCurrencyAmountUsingCurrentModule()
-                } Received \nFrom: ${temporalTransaction.customerName}   (${
-                    temporalTransaction.maskedPan
-                })",
+                getString(
+                    R.string.notification_message_body,
+                    temporalTransaction.amount.toDouble()
+                        .formatCurrencyAmountUsingCurrentModule(),
+                    temporalTransaction.status,
+                    temporalTransaction.customerName,
+                    temporalTransaction.maskedPan,
+                ),
             )
         }
     }

@@ -9,6 +9,7 @@ import com.woleapp.netpos.contactless.ui.dialog.ResponseModal
 import com.woleapp.netpos.contactless.util.AppConstants.QR_TRANSACTION_RESULT_BUNDLE_KEY
 import com.woleapp.netpos.contactless.util.AppConstants.QR_TRANSACTION_RESULT_REQUEST_KEY
 import com.woleapp.netpos.contactless.util.AppConstants.STRING_QR_RESPONSE_MODAL_DIALOG_TAG
+import com.woleapp.netpos.contactless.util.AppConstants.SEPARATOR
 import com.woleapp.netpos.contactless.util.Singletons
 import com.woleapp.netpos.contactless.util.UtilityParam
 import dagger.assisted.Assisted
@@ -28,7 +29,7 @@ class JavaScriptInterface @AssistedInject constructor(
 
     @JavascriptInterface
     fun sendValueToWebView() =
-        "$termUrl<======>$md<======>$cReq<======>$acsUrl<======>$transId<======>$webViewBaseUrl"
+        "$termUrl + $SEPARATOR + $md + $SEPARATOR + $cReq + $SEPARATOR + $acsUrl + $SEPARATOR + $transId + $SEPARATOR + $webViewBaseUrl"
 
     @JavascriptInterface
     fun webViewCallback(webViewResponse: String) {

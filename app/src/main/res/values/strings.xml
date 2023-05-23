@@ -239,4 +239,5 @@ Nullam purus nulla, elementum nec tempor eget, rutrum et risus. Nullam ut suscip
     <string name="send_receipt_2">Send Receipt</string>
     <string name="printer_error">Printer Error</string>
     <string name="easy_perms_rationale">Accept Location and Storage Permissions</string>
+    <string name="notification_message_body">%1$s - <b>%2$s</b> \nFrom <b>%3$s</b>   (%4$s)</string>
 </resources>

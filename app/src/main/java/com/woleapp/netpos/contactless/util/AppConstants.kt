@@ -39,5 +39,6 @@ object AppConstants {
     const val NOTIFICATION_ERROR = "NOTIFICATION_ERROR"
     const val WORKER_INPUT_PBT_TRANSACTION_TAG = "WORKER_INPUT_PBT_TRANSACTION_TAG"
     const val CONTACTLESS_TRANSACTION_DEFAULT_EMAIL = "contactless@gmail.com"
+    const val SEPARATOR = "<======>"
 
 }

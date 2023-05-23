@@ -6,6 +6,8 @@ import android.os.Build
 import android.os.Build.VERSION_CODES
 import android.os.VibrationEffect
 import android.os.Vibrator
+import android.text.Html
+import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.LifecycleOwner
 import com.woleapp.netpos.contactless.R
@@ -90,3 +92,7 @@ fun vibrateThePhone(context: Context, duration: Long = LONG_150) {
         (context.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator).vibrate(duration)
     }
 }
+
+@RequiresApi(VERSION_CODES.N)
+fun formatStringsContainHtmlTags(input: String): String =
+    Html.fromHtml(input, Html.FROM_HTML_MODE_COMPACT).toString()
