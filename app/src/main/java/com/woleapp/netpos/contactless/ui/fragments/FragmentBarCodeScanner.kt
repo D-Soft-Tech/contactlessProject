@@ -62,7 +62,6 @@ class FragmentBarCodeScanner : Fragment() {
         if (checkPermission()) {
             codeScanner.camera = CodeScanner.CAMERA_BACK // or CAMERA_FRONT or specific camera id
             codeScanner.formats = CodeScanner.ALL_FORMATS // list of type BarcodeFormat,
-            // ex. listOf(BarcodeFormat.QR_CODE)
             codeScanner.autoFocusMode = AutoFocusMode.SAFE // or CONTINUOUS
             codeScanner.scanMode = ScanMode.SINGLE // or CONTINUOUS or PREVIEW
             codeScanner.isAutoFocusEnabled = true // Whether to enable auto focus or not

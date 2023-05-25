@@ -6,10 +6,11 @@ import javax.inject.Singleton
 
 @Singleton
 class ContactlessQrPaymentRepository @Inject constructor(
-    private val qrPaymentService: QrPaymentService
+    private val qrPaymentService: QrPaymentService,
 ) {
-    fun payWithQr(payWithQrRequest: PayWithQrRequest
-    ) = qrPaymentService.payWithQr(payWithQrRequest
+    fun payWithQr(
+        payWithQrRequest: PayWithQrRequest,
+    ) = qrPaymentService.payWithQr(
+        payWithQrRequest,
     )
-
 }

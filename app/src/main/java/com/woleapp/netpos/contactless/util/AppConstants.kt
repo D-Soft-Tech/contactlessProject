@@ -38,5 +38,8 @@ object AppConstants {
     const val INT_FIREBASE_PENDING_INTENT_REQUEST_CODE = 772
     const val NOTIFICATION_ERROR = "NOTIFICATION_ERROR"
     const val WORKER_INPUT_PBT_TRANSACTION_TAG = "WORKER_INPUT_PBT_TRANSACTION_TAG"
+    const val CONTACTLESS_TRANSACTION_DEFAULT_EMAIL = "contactless@gmail.com"
+    const val SEPARATOR = "<======>"
+    const val MERCHANT_QR_PREFIX = "MERCHANT_DISPLAY_QR==="
 
 }

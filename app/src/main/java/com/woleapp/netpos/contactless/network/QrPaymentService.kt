@@ -1,6 +1,5 @@
 package com.woleapp.netpos.contactless.network
 
-
 import com.woleapp.netpos.contactless.model.PayWithQrRequest
 import io.reactivex.Single
 import retrofit2.Response
@@ -11,7 +10,6 @@ interface QrPaymentService {
 
     @POST("contactlessQr")
     fun payWithQr(
-        @Body payWithQrRequest: PayWithQrRequest
+        @Body payWithQrRequest: PayWithQrRequest,
     ): Single<Response<String>>
-
 }

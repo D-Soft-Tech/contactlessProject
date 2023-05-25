@@ -81,36 +81,69 @@ class AuthViewModel : ViewModel() {
                 Prefs.putString(PREF_USER_TOKEN, userToken)
                 val userTokenDecoded = JWT(userToken)
                 val user = User().apply {
+                    this.netplusPayMid = if (userTokenDecoded.claims.containsKey("netplusPayMid")) {
+                        userTokenDecoded.getClaim("netplusPayMid").asString()
+                    } else {
+                        null
+                    }
                     this.business_address =
-                        if (userTokenDecoded.claims.containsKey("business_address")) userTokenDecoded.getClaim(
-                            "business_address"
-                        ).asString() else " "
+                        if (userTokenDecoded.claims.containsKey("business_address")) {
+                            userTokenDecoded.getClaim(
+                                "business_address",
+                            ).asString()
+                        } else {
+                            " "
+                        }
                     this.terminal_id =
-                        if (userTokenDecoded.claims.containsKey("terminalId")) userTokenDecoded.getClaim(
-                            "terminalId"
-                        ).asString() else " "
+                        if (userTokenDecoded.claims.containsKey("terminalId")) {
+                            userTokenDecoded.getClaim(
+                                "terminalId",
+                            ).asString()
+                        } else {
+                            " "
+                        }
                     this.business_name =
-                        if (userTokenDecoded.claims.containsKey("businessName")) userTokenDecoded.getClaim(
-                            "businessName"
-                        ).asString() else " "
+                        if (userTokenDecoded.claims.containsKey("businessName")) {
+                            userTokenDecoded.getClaim(
+                                "businessName",
+                            ).asString()
+                        } else {
+                            " "
+                        }
                     this.netplus_id =
-                        if (userTokenDecoded.claims.containsKey("stormId")) userTokenDecoded.getClaim(
-                            "stormId"
-                        ).asString() else " "
+                        if (userTokenDecoded.claims.containsKey("stormId")) {
+                            userTokenDecoded.getClaim(
+                                "stormId",
+                            ).asString()
+                        } else {
+                            " "
+                        }
                     this.mid =
-                        if (userTokenDecoded.claims.containsKey("mid")) userTokenDecoded.getClaim("mid")
-                            .asString() else " "
+                        if (userTokenDecoded.claims.containsKey("mid")) {
+                            userTokenDecoded.getClaim("mid")
+                                .asString()
+                        } else {
+                            " "
+                        }
                     this.partnerId =
-                        if (userTokenDecoded.claims.containsKey("partnerId")) userTokenDecoded.getClaim(
-                            "partnerId"
-                        ).asString() else " "
+                        if (userTokenDecoded.claims.containsKey("partnerId")) {
+                            userTokenDecoded.getClaim(
+                                "partnerId",
+                            ).asString()
+                        } else {
+                            " "
+                        }
                     this.email =
-                        if (userTokenDecoded.claims.containsKey("email")) userTokenDecoded.getClaim(
-                            "email"
-                        ).asString() else " "
+                        if (userTokenDecoded.claims.containsKey("email")) {
+                            userTokenDecoded.getClaim(
+                                "email",
+                            ).asString()
+                        } else {
+                            " "
+                        }
                 }
-                Timber.d("USER------> ${user}")
-                Log.d("ANOTHERUSER---", user.toString())
+
+                Timber.tag("LoggedInUser==>").d(gson.toJson(user))
                 Single.just(user)
             }.subscribeOn(Schedulers.io())
             .doFinally { authInProgress.postValue(false) }
@@ -137,7 +170,7 @@ class AuthViewModel : ViewModel() {
                                     ?: "Login Failed"
                             } catch (e: Exception) {
                                 "login failed"
-                            }
+                            },
                         )
                         Timber.e(errorMessage)
                     }

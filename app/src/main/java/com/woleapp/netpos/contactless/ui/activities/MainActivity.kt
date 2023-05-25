@@ -67,7 +67,6 @@ import com.woleapp.netpos.contactless.util.AppConstants.WRITE_PERMISSION_REQUEST
 import com.woleapp.netpos.contactless.util.Mappers.mapTransactionResponseToQrTransaction
 import com.woleapp.netpos.contactless.util.RandomPurposeUtil.dateStr2Long
 import com.woleapp.netpos.contactless.util.RandomPurposeUtil.getCurrentDateTime
-import com.woleapp.netpos.contactless.util.RandomPurposeUtil.observeServerResponse
 import com.woleapp.netpos.contactless.util.RandomPurposeUtil.observeServerResponseActivity
 import com.woleapp.netpos.contactless.util.RandomPurposeUtil.showSnackBar
 import com.woleapp.netpos.contactless.util.Singletons.gson
@@ -80,11 +79,10 @@ import pub.devrel.easypermissions.EasyPermissions
 import timber.log.Timber
 import java.io.File
 import java.util.*
-import javax.inject.Inject
 
 @Suppress("DEPRECATION")
 @AndroidEntryPoint
-class MainActivity @Inject constructor() :
+class MainActivity :
     AppCompatActivity(),
     EasyPermissions.PermissionCallbacks,
     NfcAdapter.ReaderCallback {
@@ -97,7 +95,6 @@ class MainActivity @Inject constructor() :
     private lateinit var qrPdfView: LayoutQrReceiptPdfBinding
     private lateinit var dialogContactlessReaderBinding: DialogContatclessReaderBinding
     private val viewModel by viewModels<NfcCardReaderViewModel>()
-    private val nfcCardReaderViewModel by viewModels<NfcCardReaderViewModel>()
     private val transactionViewModel by viewModels<TransactionsViewModel>()
     private val contactlessKernel: ContactlessKernel by lazy {
         ContactlessKernel.getInstance(applicationContext)
@@ -147,12 +144,6 @@ class MainActivity @Inject constructor() :
             )
             1 -> {
                 dismissProgressDialogIfShowing()
-//                NetPosTerminalConfig.getKeyHolder()?.let {
-//                    NetPosSdk.writeTpkKey(
-//                        DeviceConfig.TPKIndex,
-//                        it.clearPinKey
-//                    )
-//                }
             }
         }
         checkTokenExpiry()
@@ -273,7 +264,7 @@ class MainActivity @Inject constructor() :
         ) {
             EasyPermissions.requestPermissions(
                 this,
-                "Accept Location and Storage Permissions",
+                getString(R.string.easy_perms_rationale),
                 1,
                 Manifest.permission.ACCESS_COARSE_LOCATION,
                 Manifest.permission.ACCESS_FINE_LOCATION,
@@ -298,7 +289,7 @@ class MainActivity @Inject constructor() :
             STRING_QR_READ_RESULT_REQUEST_KEY,
             this,
         ) { _, bundle ->
-             qrData = bundle.getParcelable<QrScannedDataModel>(STRING_QR_READ_RESULT_BUNDLE_KEY)
+            qrData = bundle.getParcelable<QrScannedDataModel>(STRING_QR_READ_RESULT_BUNDLE_KEY)
             qrData?.let {
                 if (it.card_scheme.contains(
                         "verve",
@@ -314,12 +305,10 @@ class MainActivity @Inject constructor() :
 
         supportFragmentManager.setFragmentResultListener(
             AppConstants.PIN_BLOCK_RK,
-            this
+            this,
         ) { _, bundle ->
-            Log.d("TRANSACTIONFRAGMENT", "DATAFRAGEMNT")
             val pinFromPinBlockDialog = bundle.getString(AppConstants.PIN_BLOCK_BK)
             pinFromPinBlockDialog?.let {
-                Log.d("PINBLOCKFRAGMENT", "PINBLOCK")
                 qrData?.let { it1 -> formatPinAndSendToServer(it, amountToPayInDouble, it1) }
             }
         }
@@ -375,11 +364,8 @@ class MainActivity @Inject constructor() :
                     R.id.transaction -> {
                         showFragment(TransactionsFragment(), "Transactions")
                     }
-//                    R.id.balanceEnquiry -> {
-//                        getBalance()
-//                    }
                     R.id.scanQR -> {
-                        showFragment(FragmentBarCodeScannerRefactored(), "Scan QR")
+                        showFragment(ScanQrCodeLandingPage(), "ScanQRLandingPage")
                     }
                     R.id.endOfDay -> {
                         showFragment(TransactionsFragment(), "Transactions")
@@ -524,12 +510,13 @@ class MainActivity @Inject constructor() :
         qrAmountDialogForVerveCard = androidx.appcompat.app.AlertDialog.Builder(this).apply {
             setView(verveCardQrAmountDialogBinding.root)
         }.create()
-        deviceNotSupportedAlertDialog = AlertDialog.Builder(this).setTitle("NFC Message").setCancelable(false)
-            .setMessage("Device dose not have NFC support")
-            .setPositiveButton("Close") { dialog, _ ->
-                dialog.dismiss()
-                // finish()
-            }.create()
+        deviceNotSupportedAlertDialog =
+            AlertDialog.Builder(this).setTitle("NFC Message").setCancelable(false)
+                .setMessage("Device dose not have NFC support")
+                .setPositiveButton("Close") { dialog, _ ->
+                    dialog.dismiss()
+                    // finish()
+                }.create()
         val terminalId = Singletons.getCurrentlyLoggedInUser()?.terminal_id.toString()
         val userName = Singletons.getCurrentlyLoggedInUser()?.netplus_id.toString()
         firebaseInstance = FirebaseMessaging.getInstance()
@@ -592,13 +579,10 @@ class MainActivity @Inject constructor() :
             0f,
             locationListener,
         )
-        // locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER)
         locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER)
     }
 
     private fun showPinDialog(pan: String) {
-        Timber.e("pan from show pin dialog")
-        Timber.e(pan)
         PasswordDialog(
             this,
             pan,
@@ -718,8 +702,6 @@ class MainActivity @Inject constructor() :
                 receiptPdf = createPdf(binding, this)
                 receiptAlertDialog.apply {
                     receiptDialogBinding.sendButton.text = "Share"
-//                    receiptDialogBinding.shareButton.visibility = View.GONE
-//                    receiptDialogBinding.shareLayout.visibility = View.VISIBLE
                     receiptDialogBinding.telephoneWrapper.visibility = View.INVISIBLE
                     receiptDialogBinding.transactionContent.text =
                         qrTransaction.buildSMSTextForQrTransaction()
@@ -757,9 +739,6 @@ class MainActivity @Inject constructor() :
             else -> {
                 receiptPdf = createPdf(binding, this)
                 receiptAlertDialog.apply {
-//                    receiptDialogBinding.shareButton.visibility = View.GONE
-//                    receiptDialogBinding.shareLayout.visibility = View.VISIBLE
-//                    receiptDialogBinding.shareButton.text = "Download and Share"
                     receiptDialogBinding.sendButton.text = "Download and Share"
                     receiptDialogBinding.telephoneWrapper.visibility = View.INVISIBLE
                     receiptDialogBinding.transactionContent.text =
@@ -799,7 +778,10 @@ class MainActivity @Inject constructor() :
         ).show()
     }
 
-    private fun getEndOfDayTransactions(timestamp: Long? = null, actionToTake: (transactions: List<TransactionResponse>) -> Unit) {
+    private fun getEndOfDayTransactions(
+        timestamp: Long? = null,
+        actionToTake: (transactions: List<TransactionResponse>) -> Unit,
+    ) {
         Toast.makeText(this, "Please wait", Toast.LENGTH_LONG).show()
         val livedata =
             AppDatabase.getDatabaseInstance(this).transactionResponseDao().getEndOfDayTransaction(
@@ -1042,11 +1024,9 @@ class MainActivity @Inject constructor() :
         firebaseMessagingInstance.token.addOnCompleteListener(
             OnCompleteListener { task ->
                 if (!task.isSuccessful) {
-                    //   Log.w(TAG1, "Fetching FCM registgitration token failed", task.exception)
                     return@OnCompleteListener
                 }
 
-                // Get new FCM registration token
                 val token = task.result
                 actionToPerformWithTheReceivedToken(token)
             },
@@ -1056,10 +1036,9 @@ class MainActivity @Inject constructor() :
     private fun formatPinAndSendToServer(
         pin: String,
         amountDouble: Double?,
-        qrData: QrScannedDataModel
+        qrData: QrScannedDataModel,
     ) {
         val formattedPadding = RandomPurposeUtil.stringToBase64(pin).removeSuffix('\n'.toString())
-       // val formattedPadding = pin
         if (pin.length == 4) {
             amountDouble?.let {
                 qrAmountDialogForVerveCard.cancel()
@@ -1069,21 +1048,20 @@ class MainActivity @Inject constructor() :
                         qrData.data,
                         merchantId = UtilityParam.STRING_MERCHANT_ID,
                         padding = formattedPadding,
-                        naration = requestNarration
+                        naration = requestNarration,
                     )
                 scanQrViewModel.setScannedQrIsVerveCard(true)
                 scanQrViewModel.saveTheQrToSharedPrefs(qrDataToSendToBackend.copy(orderId = AppConstants.getGUID()))
-                Log.d("FORMATPIN", "FORMATPINRESULT")
                 scanQrViewModel.postScannedQrRequestToServer(qrDataToSendToBackend)
                 observeServerResponseActivity(
                     this,
                     this,
                     scanQrViewModel.sendQrToServerResponseVerve,
                     LoadingDialog(),
-                    supportFragmentManager
+                    supportFragmentManager,
                 ) {
                     addFragmentWithoutRemove(
-                        EnterOtpFragment()
+                        EnterOtpFragment(),
                     )
                 }
             }
@@ -1096,11 +1074,23 @@ class MainActivity @Inject constructor() :
                 .let { intentExtra ->
                     if (intentAction == STRING_FIREBASE_INTENT_ACTION) {
                         if (intentExtra) {
+                            if (receiptAlertDialog.isShowing) {
+                                receiptAlertDialog.dismiss()
+                            }
                             val currentDateTime = getCurrentDateTime()
-                            getEndOfDayTransactions(dateStr2Long(currentDateTime, "yyyy-MM-dd hh:mm a")) {
+                            getEndOfDayTransactions(
+                                dateStr2Long(
+                                    currentDateTime,
+                                    "yyyy-MM-dd hh:mm a",
+                                ),
+                            ) {
                                 transactionViewModel.setEndOfDayList(it)
                                 deviceNotSupportedAlertDialog.dismiss()
-                                addFragmentWithoutRemove(TransactionHistoryFragment.newInstance(HISTORY_ACTION_EOD))
+                                addFragmentWithoutRemove(
+                                    TransactionHistoryFragment.newInstance(
+                                        HISTORY_ACTION_EOD,
+                                    ),
+                                )
                             }
                         }
                     }

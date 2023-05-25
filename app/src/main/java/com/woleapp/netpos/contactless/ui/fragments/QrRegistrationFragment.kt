@@ -18,7 +18,6 @@ import com.woleapp.netpos.contactless.databinding.FragmentCreateZenithMerchantBi
 import com.woleapp.netpos.contactless.model.LoadingState
 import com.woleapp.netpos.contactless.model.ZenithMCCDto
 import com.woleapp.netpos.contactless.viewmodels.QRViewModel
-
 import timber.log.Timber
 
 class QrRegistrationFragment : BaseFragment() {
@@ -37,7 +36,7 @@ class QrRegistrationFragment : BaseFragment() {
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View {
         binding = FragmentCreateZenithMerchantBinding.inflate(inflater, container, false)
             .apply {
@@ -58,8 +57,8 @@ class QrRegistrationFragment : BaseFragment() {
         mccDialogBinding.mccList.addItemDecoration(
             DividerItemDecoration(
                 requireContext(),
-                DividerItemDecoration.VERTICAL
-            )
+                DividerItemDecoration.VERTICAL,
+            ),
         )
         mccDialogBinding.mccList.adapter = adapter
         val states = requireContext().resources.getStringArray(R.array.ng_states)
@@ -68,36 +67,32 @@ class QrRegistrationFragment : BaseFragment() {
                 parent: AdapterView<*>?,
                 view: View?,
                 position: Int,
-                id: Long
+                id: Long,
             ) {
                 viewModel.clearSelectedCity()
                 binding.citySpinner.adapter = ArrayAdapter(
                     requireContext(),
                     android.R.layout.simple_spinner_dropdown_item,
-                    ArrayList<String>()
+                    ArrayList<String>(),
                 )
                 viewModel.getCities(state = states[position])
             }
 
             override fun onNothingSelected(parent: AdapterView<*>?) {
-
             }
-
         }
         binding.citySpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(
                 parent: AdapterView<*>?,
                 view: View?,
                 position: Int,
-                id: Long
+                id: Long,
             ) {
                 viewModel.setSelectedCity(position)
             }
 
             override fun onNothingSelected(parent: AdapterView<*>?) {
-
             }
-
         }
 
         viewModel.zenithCityList.observe(viewLifecycleOwner) { event ->
@@ -105,7 +100,8 @@ class QrRegistrationFragment : BaseFragment() {
                 val cityAdapter = ArrayAdapter(
                     requireContext(),
                     android.R.layout.simple_spinner_dropdown_item,
-                    it.map { city -> city.cityName })
+                    it.map { city -> city.cityName },
+                )
                 binding.citySpinner.adapter = cityAdapter
             }
         }
@@ -114,7 +110,7 @@ class QrRegistrationFragment : BaseFragment() {
         binding.statesSpinner.adapter = statesAdapter
         mccAlertDialog = AlertDialog.Builder(
             requireContext(),
-            android.R.style.Theme_Material_Light_NoActionBar_Fullscreen
+            android.R.style.Theme_Material_Light_NoActionBar_Fullscreen,
         ).setView(mccDialogBinding.root)
             .create()
         binding.getMCC.setOnClickListener {
@@ -132,13 +128,15 @@ class QrRegistrationFragment : BaseFragment() {
                         Toast.makeText(
                             requireContext(),
                             "An error occurred while fetching",
-                            Toast.LENGTH_SHORT
+                            Toast.LENGTH_SHORT,
                         ).show()
                     }
-                    LoadingState.LOADING_MORE -> mccDialogBinding.loadingMore.visibility =
-                        View.VISIBLE
-                    LoadingState.LOADING_INITIAL -> mccDialogBinding.progressHorizontal.visibility =
-                        View.VISIBLE
+                    LoadingState.LOADING_MORE ->
+                        mccDialogBinding.loadingMore.visibility =
+                            View.VISIBLE
+                    LoadingState.LOADING_INITIAL ->
+                        mccDialogBinding.progressHorizontal.visibility =
+                            View.VISIBLE
                 }
                 Timber.e(it.loadingState.name)
             }
@@ -160,7 +158,6 @@ class QrRegistrationFragment : BaseFragment() {
                 }
                 return false
             }
-
         })
         viewModel.message.observe(viewLifecycleOwner) { event ->
             event.getContentIfNotHandled()?.let {
@@ -169,8 +166,9 @@ class QrRegistrationFragment : BaseFragment() {
         }
         viewModel.zenithQrRegistrationDone.observe(viewLifecycleOwner) { event ->
             event.getContentIfNotHandled()?.let {
-                if (it)
+                if (it) {
                     requireActivity().onBackPressed()
+                }
             }
         }
         return binding.root

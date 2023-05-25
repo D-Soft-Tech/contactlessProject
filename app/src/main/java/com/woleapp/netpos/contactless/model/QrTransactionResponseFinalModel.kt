@@ -13,7 +13,7 @@ data class QrTransactionResponseFinalModel(
     val currency_code: String,
     var customerName: String,
     val email: String,
-    val message: String,
+    val message: String? = "",
     val narration: String,
     val rrnOrderId: String,
     val result: String,

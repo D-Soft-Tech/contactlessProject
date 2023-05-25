@@ -33,17 +33,16 @@ class PasswordDialog2 : DialogFragment() {
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View {
         binding = DataBindingUtil.inflate(
             inflater,
             R.layout.layout_randomized_pin_block,
             container,
-            false
+            false,
         )
 
         dialog?.requestWindowFeature(Window.FEATURE_NO_TITLE)
-//        dialog?.setContentView(view)
         val window = dialog?.window
         val wlp = window!!.attributes
         wlp.gravity = Gravity.CENTER
@@ -51,7 +50,7 @@ class PasswordDialog2 : DialogFragment() {
         window.attributes = wlp
         dialog?.window!!.setLayout(
             ViewGroup.LayoutParams.MATCH_PARENT,
-            ViewGroup.LayoutParams.MATCH_PARENT
+            ViewGroup.LayoutParams.MATCH_PARENT,
         )
         window.setGravity(Gravity.BOTTOM)
 

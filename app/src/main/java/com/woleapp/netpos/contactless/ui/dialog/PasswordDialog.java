@@ -171,18 +171,6 @@ public class PasswordDialog {
 
     public void showDialog() {
         dialog.show();
-//        handler = new Handler(Looper.getMainLooper()) {
-//            @Override
-//            public void handleMessage(Message mesg) {
-//                throw new RuntimeException();
-//            }
-//        };
-//
-//        try {
-//            Looper.getMainLooper().loop();
-//        } catch (RuntimeException e2) {
-//            e2.printStackTrace();
-//        }
     }
 
     private byte[] intToBytes(int value) {

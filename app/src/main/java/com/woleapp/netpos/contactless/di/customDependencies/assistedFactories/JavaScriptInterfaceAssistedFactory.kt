@@ -13,6 +13,6 @@ interface JavaScriptInterfaceAssistedFactory {
         @Assisted("md") md: String,
         @Assisted("cReq") paReq: String,
         @Assisted("acsUrl") acsUrl: String,
-        @Assisted("transId") transId: String
+        @Assisted("transId") transId: String,
     ): JavaScriptInterface
 }

@@ -10,12 +10,12 @@ fun TransactionResponse.buildSMSText(s: String? = null): StringBuilder = StringB
     append("Response Code: $responseCode\n")
     append(
         "Message: ${
-        try {
-            if (responseMessage.contains("length=0; index=-1")) "Processing Error" else responseMessage
-        } catch (e: java.lang.Exception) {
-            ""
-        }
-        }\n"
+            try {
+                if (responseMessage.contains("length=0; index=-1")) "Processing Error" else responseMessage
+            } catch (e: java.lang.Exception) {
+                ""
+            }
+        }\n",
     )
     append("Amount: ${amount.div(100).formatCurrencyAmount("\u20A6")}\n")
     if (otherAmount > 0) {
@@ -26,12 +26,12 @@ fun TransactionResponse.buildSMSText(s: String? = null): StringBuilder = StringB
         append("Remark: $it\n")
     }
     append("Auth Code: $authCode\n")
-    if (RRN.isNotEmpty()){
+    if (RRN.isNotEmpty()) {
         append("RRN: $RRN\n")
     }
     append("STAN: $STAN\n")
     append("Card: $cardLabel - $maskedPan\n")
-    if (cardHolder.isNotEmpty()){
+    if (cardHolder.isNotEmpty()) {
         append("Card Owner: $cardHolder\n")
     }
     append("Merchant: ${Singletons.getCurrentlyLoggedInUser()?.business_name}\n")
@@ -44,21 +44,20 @@ fun QrTransactionResponseFinalModel.buildSMSTextForQrTransaction(): StringBuilde
         append("Response Code: $responseCode\n")
         append(
             "Message: ${
-            try {
-                if (message.contains("length=0; index=-1")) "Processing Error" else message
-            } catch (e: java.lang.Exception) {
-                ""
-            }
-            }\n"
+                try {
+                    if (message!!.contains("length=0; index=-1")) "Processing Error" else message
+                } catch (e: java.lang.Exception) {
+                    ""
+                }
+            }\n",
         )
         append("Narration: $narration\n")
         append("Amount: ${amount.toDouble().formatCurrencyAmount("\u20A6")}\n")
         append("Date/Time: $transmissionDateTime\n")
-//    append("Auth Code: $authCode\n")
         append("OrderId: $rrnOrderId\n")
         append("Transaction Id: $transIdStan\n")
 //    append("Card: $cardLabel - $maskedPan\n")
-        if (cardHolder.isNotEmpty()){
+        if (cardHolder.isNotEmpty()) {
             append("Card Owner: $cardHolder\n")
         }
         append("Merchant: ${Singletons.getCurrentlyLoggedInUser()?.business_name}\n")
@@ -79,11 +78,11 @@ fun TransactionResponse.builder() = StringBuilder().apply {
     }
     append("RESPONSE CODE: ").append(responseCode).append("\n").append(
         " : ${
-        try {
-            responseMessage
-        } catch (ex: Exception) {
-            "Error"
-        }
-        }"
+            try {
+                responseMessage
+            } catch (ex: Exception) {
+                "Error"
+            }
+        }",
     )
 }

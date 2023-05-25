@@ -47,7 +47,7 @@ class NipNotificationListFragment : BaseFragment() {
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View {
         binding = FragmentNipNotificationListBinding.inflate(inflater, container, false)
         adapter = NipAdapter {
@@ -66,23 +66,13 @@ class NipNotificationListFragment : BaseFragment() {
         binding.notificationList.addItemDecoration(
             DividerItemDecoration(
                 requireContext(),
-                DividerItemDecoration.VERTICAL
-            )
+                DividerItemDecoration.VERTICAL,
+            ),
         )
         getNotifications()
         binding.printAll.setOnClickListener {
             adapter.currentList.let {
                 if (it.isEmpty().not()) {
-//                    it.printAllNotifications(requireContext())
-//                        .subscribeOn(Schedulers.io())
-//                        .observeOn(AndroidSchedulers.mainThread())
-//                        .subscribe({
-//
-//                        }, { throwable ->
-//                            Timber.e(throwable.localizedMessage)
-//                        }, {
-//
-//                        })
                 }
             }
         }
@@ -102,7 +92,7 @@ class NipNotificationListFragment : BaseFragment() {
                 nipService.getEndOfDayNotifications(
                     NetPosTerminalConfig.getTerminalId(),
                     format.format(getBeginningOfDay(time)),
-                    format.format(getEndOfDayTimeStamp(time))
+                    format.format(getEndOfDayTimeStamp(time)),
                 )
             }
             else -> nipService.getLastTwoTransfers(NetPosTerminalConfig.getTerminalId())
@@ -113,8 +103,9 @@ class NipNotificationListFragment : BaseFragment() {
             .doFinally { binding.refresh.isRefreshing = false }
             .subscribe { notifications, throwable ->
                 notifications?.let {
-                    if (it.isEmpty())
+                    if (it.isEmpty()) {
                         Toast.makeText(requireContext(), "No Bank transfers", Toast.LENGTH_LONG).show()
+                    }
                     adapter.submitList(it)
                 }
                 throwable?.let {
@@ -126,7 +117,7 @@ class NipNotificationListFragment : BaseFragment() {
                     Toast.makeText(
                         requireContext(),
                         "Message: ${it.localizedMessage}",
-                        Toast.LENGTH_SHORT
+                        Toast.LENGTH_SHORT,
                     ).show()
                 }
             }
@@ -153,7 +144,6 @@ object NipItemCallBack : DiffUtil.ItemCallback<NipNotification>() {
         val isSourceSame = oldItem.sourceAccountNumber == newItem.sourceAccountNumber
         return isAmountSame && isDateSame && isSourceSame
     }
-
 }
 
 typealias NipNotificationItemClickListener = (NipNotification) -> Unit
@@ -165,8 +155,8 @@ class NipAdapter(private val nipNotificationItemClickListener: NipNotificationIt
             LayoutNipNotificationItemBinding.inflate(
                 LayoutInflater.from(parent.context),
                 parent,
-                false
-            )
+                false,
+            ),
         )
     }
 
@@ -176,7 +166,6 @@ class NipAdapter(private val nipNotificationItemClickListener: NipNotificationIt
         }
         holder.bind(getItem(position))
     }
-
 }
 
 class NipViewHolder(val binding: LayoutNipNotificationItemBinding) :
@@ -188,5 +177,4 @@ class NipViewHolder(val binding: LayoutNipNotificationItemBinding) :
             nip = newItem
         }
     }
-
 }

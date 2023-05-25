@@ -10,8 +10,8 @@ class TransactionStatusFragment : BaseFragment() {
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
+        savedInstanceState: Bundle?,
+    ): View {
         val binding = FragmentTransactionStatusBinding.inflate(inflater, container, false)
         return binding.root
     }

@@ -15,19 +15,15 @@ import com.pixplicity.easyprefs.library.Prefs
 import com.woleapp.netpos.contactless.BuildConfig
 import com.woleapp.netpos.contactless.R
 import com.woleapp.netpos.contactless.databinding.FragmentExisitingCustomersRegistrationBinding
-import com.woleapp.netpos.contactless.model.Data
 import com.woleapp.netpos.contactless.model.ExistingAccountRegisterRequest
-import com.woleapp.netpos.contactless.ui.dialog.LoadingDialog
 import com.woleapp.netpos.contactless.util.*
 import com.woleapp.netpos.contactless.util.AppConstants.SAVED_ACCOUNT_NUM_SIGNED_UP
 import com.woleapp.netpos.contactless.util.RandomPurposeUtil.alertDialog
 import com.woleapp.netpos.contactless.util.RandomPurposeUtil.getDeviceId
 import com.woleapp.netpos.contactless.util.RandomPurposeUtil.observeServerResponse
-import com.woleapp.netpos.contactless.util.Singletons.gson
 import com.woleapp.netpos.contactless.viewmodels.ContactlessRegViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.dialog_terms_and_conditions.view.*
-import timber.log.Timber
 
 @AndroidEntryPoint
 class ExistingCustomersRegistrationFragment : BaseFragment() {
@@ -46,23 +42,21 @@ class ExistingCustomersRegistrationFragment : BaseFragment() {
     private lateinit var partnerID: String
     private lateinit var actNumber: String
     private lateinit var deviceSerialID: String
-   // private lateinit var customerData: Data
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View {
         // Inflate the layout for this fragment
         binding = DataBindingUtil.inflate(
             inflater,
             R.layout.fragment_exisiting_customers_registration,
             container,
-            false
+            false,
         )
         return binding.root
     }
-
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -76,36 +70,34 @@ class ExistingCustomersRegistrationFragment : BaseFragment() {
         initPartnerID()
         val newActNumber =
             Prefs.getString(AppConstants.SAVED_ACCOUNT_NUM_SIGNED_UP, "")
-        //val phoneNumber = newPoneNumber.replace("^\"|\"$", "")
-        actNumber =  newActNumber.substring(1, newActNumber.length-1)
+        // val phoneNumber = newPoneNumber.replace("^\"|\"$", "")
+        actNumber = newActNumber.substring(1, newActNumber.length - 1)
 
         val newBusinessName =
             Prefs.getString(AppConstants.BUSINESS_NAME, "")
-        val businessName = newBusinessName.substring(1, newBusinessName.length-1)
+        val businessName = newBusinessName.substring(1, newBusinessName.length - 1)
 
         val newBusinessAddress =
             Prefs.getString(AppConstants.BUSINESS_ADDRESS, "")
-        val businessAddress = newBusinessAddress.substring(1, newBusinessAddress.length-1)
+        val businessAddress = newBusinessAddress.substring(1, newBusinessAddress.length - 1)
 
         val newEmail =
             Prefs.getString(AppConstants.EMAIL_ADDRESS, "")
-        val email = newEmail.substring(1, newEmail.length-1)
+        val email = newEmail.substring(1, newEmail.length - 1)
 
         val newPhone =
             Prefs.getString(AppConstants.PHONE_NUMBER, "")
-        val phone = newPhone.substring(1, newPhone.length-1)
+        val phone = newPhone.substring(1, newPhone.length - 1)
 
         val newContactInfo =
             Prefs.getString(AppConstants.FULL_NAME, "")
-        val contactInfo = newContactInfo.substring(1, newContactInfo.length-1).replace("\\u0026", "&")
-
+        val contactInfo = newContactInfo.substring(1, newContactInfo.length - 1).replace("\\u0026", "&")
 
         binding.businessName.setText(businessName.replace("\\u0026", "&"))
         binding.contactInfo.setText(contactInfo)
         binding.address.setText(businessAddress.replace("\\u0026", "&"))
         binding.phone.setText(phone)
         binding.email.setText(email.replace("\\u0026", "&"))
-
 
         loader = alertDialog(requireContext())
 
@@ -118,12 +110,14 @@ class ExistingCustomersRegistrationFragment : BaseFragment() {
         val bankList = mapOf("firstbank" to "7FD43DF1-633F-4250-8C6F-B49DBB9650EA", "fcmb" to "1B0E68FD-7676-4F2C-883D-3931C3564190",
             "easypay" to "1B0E68FD-7676-4F2C-883D-3931C3564190",
             "fcmbeasypay" to "1B0E68FD-7676-4F2C-883D-3931C3564190", "easyfcmb" to "1B0E68FD-7676-4F2C-883D-3931C3564190",
-            "providus" to "8B26F328-040F-4F27-A5BC-4414AB9D1EFA","providussoftpos" to "8B26F328-040F-4F27-A5BC-4414AB9D1EFA",
-            "wemabank" to "1E3D050B-6995-495F-982A-0511114959C8", "zenith" to "3D9B3E2D-5171-4D6A-99CC-E2799D16DD56")
+            "providus" to "8B26F328-040F-4F27-A5BC-4414AB9D1EFA", "providussoftpos" to "8B26F328-040F-4F27-A5BC-4414AB9D1EFA",
+            "wemabank" to "1E3D050B-6995-495F-982A-0511114959C8", "zenith" to "3D9B3E2D-5171-4D6A-99CC-E2799D16DD56",
+        )
 
         for (element in bankList) {
-            if (element.key == BuildConfig.FLAVOR)
+            if (element.key == BuildConfig.FLAVOR) {
                 partnerID = element.value
+            }
         }
     }
 
@@ -141,7 +135,6 @@ class ExistingCustomersRegistrationFragment : BaseFragment() {
     }
 
     private fun register() {
-
         when {
             businessNameView.text.toString().isEmpty() -> {
                 showToast(getString(R.string.all_please_enter_business_name))
@@ -166,13 +159,13 @@ class ExistingCustomersRegistrationFragment : BaseFragment() {
             }
             !validatePasswordMismatch(
                 passwordView.text.toString(),
-                confirmPasswordView.text.toString()
+                confirmPasswordView.text.toString(),
             ) -> {
                 showToast(getString(R.string.all_password_mismatch))
             }
             else -> {
                 if (validateSignUpFieldsOnTextChange()) {
-                    if (BuildConfig.FLAVOR.contains("providus")|| BuildConfig.FLAVOR.contains("providussoftpos")) {
+                    if (BuildConfig.FLAVOR.contains("providus") || BuildConfig.FLAVOR.contains("providussoftpos")) {
                         activity?.getFragmentManager()?.popBackStack()
                         val dialogView: View = LayoutInflater.from(requireContext())
                             .inflate(R.layout.dialog_terms_and_conditions, null)
@@ -182,17 +175,17 @@ class ExistingCustomersRegistrationFragment : BaseFragment() {
 
                         val alertDialog: AlertDialog = dialogBuilder.create()
                         alertDialog.show()
-                        if (BuildConfig.FLAVOR.contains("providus") || BuildConfig.FLAVOR.contains("providussoftpos")){
+                        if (BuildConfig.FLAVOR.contains("providus") || BuildConfig.FLAVOR.contains("providussoftpos")) {
                             dialogView.pdf.fromAsset("providus.pdf").load()
-                        }else if (BuildConfig.FLAVOR.contains("fcmb")){
+                        } else if (BuildConfig.FLAVOR.contains("fcmb")) {
                             dialogView.pdf.fromAsset("qlick.pdf").load()
-                        }else if (BuildConfig.FLAVOR.contains("easypay")){
+                        } else if (BuildConfig.FLAVOR.contains("easypay")) {
                             dialogView.pdf.fromAsset("qlick.pdf").load()
-                        }else if (BuildConfig.FLAVOR.contains("fcmbeasypay")){
+                        } else if (BuildConfig.FLAVOR.contains("fcmbeasypay")) {
                             dialogView.pdf.fromAsset("qlick.pdf").load()
-                        }else if (BuildConfig.FLAVOR.contains("easyfcmb")){
+                        } else if (BuildConfig.FLAVOR.contains("easyfcmb")) {
                             dialogView.pdf.fromAsset("qlick.pdf").load()
-                        }else if (BuildConfig.FLAVOR.contains("easypayfcmb")){
+                        } else if (BuildConfig.FLAVOR.contains("easypayfcmb")) {
                             dialogView.pdf.fromAsset("qlick.pdf").load()
                         }
                         dialogView.accept_button.setOnClickListener {
@@ -285,7 +278,7 @@ class ExistingCustomersRegistrationFragment : BaseFragment() {
                 }
                 !validatePasswordMismatch(
                     binding.password.text.toString().trim(),
-                    binding.confirmPassword.text.toString().trim()
+                    binding.confirmPassword.text.toString().trim(),
                 ) -> {
                     binding.confirmPasswordField.error =
                         getString(R.string.all_password_mismatch)
@@ -310,22 +303,22 @@ class ExistingCustomersRegistrationFragment : BaseFragment() {
             contactInformation = contactName.text.toString().trim(),
             username = emailView.text.toString().trim(),
             password = passwordView.text.toString().trim(),
-            phoneNumber = phoneNumber.text.toString().trim()
+            phoneNumber = phoneNumber.text.toString().trim(),
         )
         viewModel.registerExistingAccount(
             existingAccountRegReq,
             partnerId = partnerID,
-            deviceSerialId = deviceSerialID
+            deviceSerialId = deviceSerialID,
         )
         observeServerResponse(
             viewModel.existingRegRequestResponse,
             loader,
-            requireActivity().supportFragmentManager
+            requireActivity().supportFragmentManager,
         ) {
             showFragment(
                 LoginFragment(),
                 containerViewId = R.id.auth_container,
-                fragmentName = "Login Fragment"
+                fragmentName = "Login Fragment",
             )
         }
     }

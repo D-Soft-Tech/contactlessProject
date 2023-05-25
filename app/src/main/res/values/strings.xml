@@ -227,8 +227,17 @@ Nullam purus nulla, elementum nec tempor eget, rutrum et risus. Nullam ut suscip
     <string name="pdf">PDF</string>
     <string name="transacion_received">NetPos Transaction Notification!</string>
     <string name="camera_perm_rationale">You need to allow access permissions before you can scan the QR inorder for the customer to make the payment</string>
-    <string name="ok">Ok</string>
+    <string name="ok">OK</string>
     <string name="perm_denied">Permission Denied</string>
     <string name="perm_granted">Permission Granted</string>
     <string name="scanner_closed">Scanner closed</string>
+    <string name="how_to_scan">Enclose the Qr Code within the scanner to scan the QR code and complete the payment afterwards</string>
+    <string name="proceed_to_scanner">Proceed to Scanner</string>
+    <string name="scanner_image">Scanner Image</string>
+    <string name="how_to_scan_heading">How to Scan</string>
+    <string name="dismiss">Dismiss</string>
+    <string name="send_receipt_2">Send Receipt</string>
+    <string name="printer_error">Printer Error</string>
+    <string name="easy_perms_rationale">Accept Location and Storage Permissions</string>
+    <string name="notification_message_body">%1$s - <b>%2$s</b> \nFrom <b>%3$s</b>   (%4$s)</string>
 </resources>

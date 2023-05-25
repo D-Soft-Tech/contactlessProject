@@ -41,7 +41,6 @@ class QRFragment : BaseFragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?,
     ): View {
-        Timber.d("QR_FRAGMENT===>THIS_IS_CALLED")
         binding = FragmentTransactionsBinding.inflate(inflater, container, false)
         binding.rvTransactionsHeader.text = getString(R.string.qr_payment)
         adapter = ServiceAdapter {
@@ -209,7 +208,6 @@ class QRFragment : BaseFragment() {
             .apply {
                 add(Service(0, "MasterPass QR", R.drawable.masterpass))
                 add(Service(1, "NIBSS QR", R.drawable.ic_qr_code))
-                // add(Service(2, "Zenith QR", R.drawable.ic_zenith_logo))
             }
         adapter.submitList(listOfService)
     }

@@ -1,6 +1,7 @@
 package com.woleapp.netpos.contactless.util
 
 import com.danbamitale.epmslib.entities.ConfigData
+import com.danbamitale.epmslib.entities.KeyHolder
 import com.danbamitale.epmslib.entities.TransactionResponse
 import com.danbamitale.epmslib.entities.responseMessage
 import com.google.gson.Gson
@@ -39,6 +40,8 @@ object Singletons {
     fun getCurrentlyLoggedInUser(): User? =
         gson.fromJson(Prefs.getString(PREF_USER, ""), User::class.java)
 
+    fun getNetPlusPayMid(): String = getCurrentlyLoggedInUser()?.netplusPayMid ?: UtilityParam.STRING_MERCHANT_ID
+
     fun getSavedConfigurationData(): ConfigurationData {
         return ConfigurationData(
             UtilityParam.CONFIGURATION_DATA_IP,
@@ -46,16 +49,10 @@ object Singletons {
             Keys.posvasLiveKey1,
             Keys.posvasLiveKey2,
         )
-//        return ConfigurationData(
-//            "196.6.103.10",
-//            "55533",
-//            "5D25072F04832A2329D93E4F91BA23A2",
-//            "86CBCDE3B0A22354853E04521686863D"
-//        )
     }
 
-    fun getKeyHolder(): com.danbamitale.epmslib.entities.KeyHolder? =
-        gson.fromJson(Prefs.getString(PREF_KEYHOLDER, null), com.danbamitale.epmslib.entities.KeyHolder::class.java)
+    fun getKeyHolder(): KeyHolder? =
+        gson.fromJson(Prefs.getString(PREF_KEYHOLDER, null), KeyHolder::class.java)
 
     fun getConfigData(): ConfigData? =
         gson.fromJson(Prefs.getString(PREF_CONFIG_DATA, null), ConfigData::class.java)

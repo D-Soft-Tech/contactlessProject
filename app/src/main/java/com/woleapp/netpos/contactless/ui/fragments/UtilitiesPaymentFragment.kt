@@ -58,7 +58,7 @@ class UtilitiesPaymentFragment : BaseFragment() {
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View {
         if (checkBillsPaymentToken().not()) getBillsToken(StormApiClient.getInstance())
         val dialogUtilitiesBinding = DialogBinding.inflate(inflater, null, false)
@@ -111,7 +111,7 @@ class UtilitiesPaymentFragment : BaseFragment() {
                 if (it) {
                     NetPosTerminalConfig.init(
                         requireContext().applicationContext,
-                        configureSilently = true
+                        configureSilently = true,
                     )
                 }
             }
@@ -121,7 +121,7 @@ class UtilitiesPaymentFragment : BaseFragment() {
             event.getContentIfNotHandled()?.let {
                 showCardDialog(
                     requireActivity(),
-                    viewLifecycleOwner
+                    viewLifecycleOwner,
                 ).observe(viewLifecycleOwner) { event ->
                     event.getContentIfNotHandled()?.let {
                         nfcCardReaderViewModel.initiateNfcPayment(10, 0, it)
@@ -137,7 +137,7 @@ class UtilitiesPaymentFragment : BaseFragment() {
                     Toast.makeText(
                         requireContext(),
                         error.localizedMessage,
-                        Toast.LENGTH_SHORT
+                        Toast.LENGTH_SHORT,
                     )
                         .show()
                 }
@@ -163,12 +163,12 @@ class UtilitiesPaymentFragment : BaseFragment() {
                         Toast.makeText(
                             requireContext(),
                             "Please enter a valid phone number",
-                            Toast.LENGTH_LONG
+                            Toast.LENGTH_LONG,
                         ).show()
                         return@setOnClickListener
                     }
                     viewModel.sendSmS(
-                        receiptDialogBinding.telephone.text.toString()
+                        receiptDialogBinding.telephone.text.toString(),
                     )
                     progress.visibility = View.VISIBLE
                     sendButton.isEnabled = false
@@ -229,7 +229,7 @@ class UtilitiesPaymentFragment : BaseFragment() {
 
         Singletons.getCurrentlyLoggedInUser()!!.netplus_id
         viewModel.message.observe(
-            viewLifecycleOwner
+            viewLifecycleOwner,
         ) { event ->
             event.getContentIfNotHandled()?.let {
                 Toast.makeText(context, it, Toast.LENGTH_SHORT).show()
@@ -247,7 +247,9 @@ class UtilitiesPaymentFragment : BaseFragment() {
             event.getContentIfNotHandled()?.let {
                 if (it) {
                     showProgressBar()
-                } else dismissProgressBar()
+                } else {
+                    dismissProgressBar()
+                }
             }
         }
         viewModel.result.observe(viewLifecycleOwner) { event ->
@@ -276,12 +278,12 @@ class UtilitiesPaymentFragment : BaseFragment() {
                                 copyTextToClipboard(
                                     requireContext(),
                                     "token",
-                                    data.token!!
+                                    data.token!!,
                                 )
                                 Toast.makeText(
                                     requireContext(),
                                     "Token copied to clipboard",
-                                    Toast.LENGTH_SHORT
+                                    Toast.LENGTH_SHORT,
                                 ).show()
                             }
                             copyTextToClipboard(requireContext(), "token", data.token!!)
@@ -329,7 +331,7 @@ class UtilitiesPaymentFragment : BaseFragment() {
             ServicesSpinnerAdapter(
                 requireContext(),
                 electricityBillers.map { it.billerName },
-                electricityBillers.map { it.imageUrl }
+                electricityBillers.map { it.imageUrl },
             )
         val meterTypeSpinnerAdapter =
             ServicesSpinnerAdapter(requireContext(), listOf("prepaid", "postpaid"))
@@ -350,7 +352,7 @@ class UtilitiesPaymentFragment : BaseFragment() {
                     parent: AdapterView<*>?,
                     view: View?,
                     position: Int,
-                    id: Long
+                    id: Long,
                 ) {
                     selected = position
                     binding.meterType.setSelection(0)
@@ -365,7 +367,7 @@ class UtilitiesPaymentFragment : BaseFragment() {
                 parent: AdapterView<*>?,
                 view: View?,
                 position: Int,
-                id: Long
+                id: Long,
             ) {
                 when (position) {
                     0 -> {
@@ -397,7 +399,7 @@ class UtilitiesPaymentFragment : BaseFragment() {
         val selectNetworkSpinnerAdapter = ServicesSpinnerAdapter(
             requireContext(),
             mobileOperatorsBillers.map { it.biller_code },
-            mobileOperatorsBillers.map { it.imageUrl }
+            mobileOperatorsBillers.map { it.imageUrl },
         )
         val dataPlanList = DataGenerator.getServiceProviderPlans(context)
 
@@ -413,7 +415,7 @@ class UtilitiesPaymentFragment : BaseFragment() {
                     parent: AdapterView<*>?,
                     view: View?,
                     position: Int,
-                    id: Long
+                    id: Long,
                 ) {
                     viewModel.setUtilityPackage("${dataPlanList[selectedNetwork][position].data} - ${dataPlanList[selectedNetwork][position].duration}")
                     airtimeOrDataBinding.priceTextbox.setText(dataPlanList[selectedNetwork][position].price)
@@ -428,7 +430,7 @@ class UtilitiesPaymentFragment : BaseFragment() {
                     parent: AdapterView<*>?,
                     view: View?,
                     position: Int,
-                    id: Long
+                    id: Long,
                 ) {
                     val visibility = when (position) {
                         0 -> {
@@ -460,13 +462,13 @@ class UtilitiesPaymentFragment : BaseFragment() {
                     parent: AdapterView<*>?,
                     view: View?,
                     position: Int,
-                    id: Long
+                    id: Long,
                 ) {
                     selectedNetwork = position
                     val dataBundleTypeSpinnerAdapter =
                         ServicesSpinnerAdapter(
                             context!!,
-                            dataPlanList[position].map { "${it.data} - ${it.duration}" }
+                            dataPlanList[position].map { "${it.data} - ${it.duration}" },
                         )
                     airtimeOrDataBinding.selectDataBundleSpinner.adapter =
                         dataBundleTypeSpinnerAdapter
@@ -492,7 +494,7 @@ class UtilitiesPaymentFragment : BaseFragment() {
             ServicesSpinnerAdapter(
                 requireContext(),
                 internetBiller.map { it.biller_name },
-                internetBiller.map { it.imageUrl }
+                internetBiller.map { it.imageUrl },
             )
 
         internetSubscriptionBinding.providerSpinner.adapter = internetProviderSpinnerAdapter
@@ -509,7 +511,7 @@ class UtilitiesPaymentFragment : BaseFragment() {
                     parent: AdapterView<*>?,
                     view: View?,
                     position: Int,
-                    id: Long
+                    id: Long,
                 ) {
                     selected = position
                     val packageSpinnerAdapter =
@@ -519,14 +521,14 @@ class UtilitiesPaymentFragment : BaseFragment() {
                                 ServicesSpinnerAdapter(
                                     context!!,
                                     smileInternetList
-                                        .map { it.bundleName }
+                                        .map { it.bundleName },
                                 )
                             }
                             1 -> {
                                 viewModel.setUtilityProvider("SPECTRANET")
                                 ServicesSpinnerAdapter(
                                     context!!,
-                                    spectranetInternetList.map { it.planName }
+                                    spectranetInternetList.map { it.planName },
                                 )
                             }
                             else -> ServicesSpinnerAdapter(context!!, ArrayList())
@@ -543,7 +545,7 @@ class UtilitiesPaymentFragment : BaseFragment() {
                     parent: AdapterView<*>?,
                     view: View?,
                     position: Int,
-                    id: Long
+                    id: Long,
                 ) {
                     val priceToPay = when (selected) {
                         0 -> {
@@ -576,7 +578,7 @@ class UtilitiesPaymentFragment : BaseFragment() {
             ServicesSpinnerAdapter(
                 requireContext(),
                 cableTvBiller.map { it.biller_name },
-                cableTvBiller.map { it.imageUrl }
+                cableTvBiller.map { it.imageUrl },
             )
 
         val plans: Biller.BillerPlans = DataGenerator.getBillerPlans(context)
@@ -594,7 +596,7 @@ class UtilitiesPaymentFragment : BaseFragment() {
                     parent: AdapterView<*>?,
                     view: View?,
                     position: Int,
-                    id: Long
+                    id: Long,
                 ) {
                     selectedCategory = position
                     val tvPackageAdapter = when (position) {
@@ -624,7 +626,7 @@ class UtilitiesPaymentFragment : BaseFragment() {
                     parent: AdapterView<*>?,
                     view: View?,
                     position: Int,
-                    id: Long
+                    id: Long,
                 ) {
                     var feeToPay = when (selectedCategory) {
                         0 -> {

@@ -3,11 +3,8 @@ package com.woleapp.netpos.contactless.ui.activities
 import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import android.widget.Toast
-import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.databinding.DataBindingUtil
@@ -27,7 +24,7 @@ class AuthenticationActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setTheme(R.style.AppTheme)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_authentication)
-        if (RootUtil.isDeviceRooted){
+        if (RootUtil.isDeviceRooted) {
             Toast.makeText(this, getString(R.string.device_is_rooted), Toast.LENGTH_SHORT).show()
             finish()
         }
@@ -36,16 +33,21 @@ class AuthenticationActivity : AppCompatActivity() {
                 Intent(this, MainActivity::class.java).apply {
                     flags =
                         Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                }
+                },
             )
-            // MqttHelper.init<Nothing>(applicationContext)
             NetPosTerminalConfig.init(applicationContext)
             finish()
         }
         showFragment(LoginFragment())
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.READ_PHONE_STATE),
-                AppConstants.READ_PHONE_STATE_REQUEST_CODE
+        if (ActivityCompat.checkSelfPermission(
+                this,
+                Manifest.permission.READ_PHONE_STATE,
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            ActivityCompat.requestPermissions(
+                this,
+                arrayOf(Manifest.permission.READ_PHONE_STATE),
+                AppConstants.READ_PHONE_STATE_REQUEST_CODE,
             )
         }
     }
@@ -62,7 +64,7 @@ class AuthenticationActivity : AppCompatActivity() {
                     replace(
                         R.id.auth_container,
                         targetFragment,
-                        targetFragment.javaClass.simpleName
+                        targetFragment.javaClass.simpleName,
                     )
                     setCustomAnimations(R.anim.right_to_left, android.R.anim.fade_out)
                     commit()
@@ -71,21 +73,4 @@ class AuthenticationActivity : AppCompatActivity() {
             e.printStackTrace()
         }
     }
-//    @RequiresApi(Build.VERSION_CODES.O)
-//    override fun onRequestPermissionsResult(
-//        requestCode: Int,
-//        permissions: Array<out String>,
-//        grantResults: IntArray
-//    ) {
-//        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-//        if (requestCode == AppConstants.READ_PHONE_STATE_REQUEST_CODE) {
-//            if (grantResults.size == 1 && grantResults.first() == PackageManager.PERMISSION_GRANTED) {
-//                val deviceSerialNumber = Build.getSerial()
-//                Log.d("SERIAL", deviceSerialNumber)
-//                Toast.makeText(this, "HEREEEEE", Toast.LENGTH_SHORT).show()
-//            } else {
-//                Toast.makeText(this, "Not granted", Toast.LENGTH_SHORT).show()
-//            }
-//        }
-//    }
 }

@@ -28,10 +28,9 @@ import com.woleapp.netpos.contactless.util.initViewsForPdfLayout
 import com.woleapp.netpos.contactless.viewmodels.NfcCardReaderViewModel
 import com.woleapp.netpos.contactless.viewmodels.ScanQrViewModel
 import dagger.hilt.android.AndroidEntryPoint
-import javax.inject.Inject
 
 @AndroidEntryPoint
-class ResponseModal @Inject constructor() : DialogFragment() {
+class ResponseModal : DialogFragment() {
     private lateinit var binding: TransactionStatusModalBinding
     private lateinit var lottieIcon: LottieAnimationView
     private lateinit var statusTv: TextView
@@ -55,16 +54,18 @@ class ResponseModal @Inject constructor() : DialogFragment() {
                     nfcCardReaderViewModel.setQrTransactionResponse(responseFromWebView!!)
                     ModalData(
                         responseFromWebView!!.responseCode == "00",
-                        responseFromWebView!!.amount.toDouble()
+                        responseFromWebView!!.amount.toDouble(),
                     )
-                } else ModalData(false, 0.0)
+                } else {
+                    ModalData(false, 0.0)
+                }
         }
     }
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View {
         // Inflate the layout for this fragment
         pdfView =
@@ -83,7 +84,7 @@ class ResponseModal @Inject constructor() : DialogFragment() {
         }
         initViewsForPdfLayout(
             pdfView,
-            responseFromWebView
+            responseFromWebView,
         )
     }
 
@@ -136,10 +137,10 @@ class ResponseModal @Inject constructor() : DialogFragment() {
             .insertNewTransaction(
                 transactionResponse.copy(
                     amount = transactionResponse.amount.times(
-                        100
+                        100,
                     ),
-                    TVR = transactionResponse.TVR + IS_QR_TRANSACTION
-                )
+                    TVR = transactionResponse.TVR + IS_QR_TRANSACTION,
+                ),
             )
             .compose(getSingleTransformer(SAVE_QR_TRANS_TO_DB))
             .subscribe { responseFromDbOperations ->

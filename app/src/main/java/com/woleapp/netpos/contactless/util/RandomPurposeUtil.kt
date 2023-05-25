@@ -24,7 +24,7 @@ import androidx.lifecycle.LiveData
 import com.google.android.material.snackbar.Snackbar
 import com.google.gson.Gson
 import com.woleapp.netpos.contactless.R
-import com.woleapp.netpos.contactless.model.*
+import com.woleapp.netpos.contactless.model.* // ktlint-disable no-wildcard-imports
 import com.woleapp.netpos.contactless.ui.dialog.LoadingDialog
 import com.woleapp.netpos.contactless.util.AppConstants.STRING_LOADING_DIALOG_TAG
 import io.reactivex.Scheduler
@@ -195,6 +195,18 @@ object RandomPurposeUtil {
                 }
             }
         }
+    }
+
+    fun alertDialog(
+        context: Context,
+        layout: Int,
+    ): AlertDialog {
+        val dialogView: View = LayoutInflater.from(context).inflate(layout, null)
+        val dialogBuilder: AlertDialog.Builder = AlertDialog.Builder(context)
+        dialogBuilder.setCancelable(false)
+        dialogBuilder.setView(dialogView)
+
+        return dialogBuilder.create()
     }
 
     fun <T> Fragment.observeServerResponse(

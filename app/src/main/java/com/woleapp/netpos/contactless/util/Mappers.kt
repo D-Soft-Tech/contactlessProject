@@ -12,7 +12,7 @@ object Mappers {
     fun mapQrTransToNormalTransRespType(qrTrans: QrTransactionResponseFinalModel) =
         TransactionResponse().apply {
             this.otherId =
-                qrTrans.message // Since response message can not be set because it is a val from the sdk, hence i used other id to represent response message here
+                qrTrans.message ?: "" // Since response message can not be set because it is a val from the sdk, hence i used other id to represent response message here
             transactionType = qrTrans.transactionType
             maskedPan = ""
             amount = qrTrans.amount
