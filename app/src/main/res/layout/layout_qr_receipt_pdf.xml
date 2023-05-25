@@ -24,8 +24,8 @@
                 android:id="@+id/imageView"
                 android:layout_width="@dimen/dimen_50dp"
                 android:layout_height="@dimen/dimen_50dp"
-                android:layout_marginStart="20dp"
                 android:contentDescription="@string/app_logo"
+                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:srcCompat="@drawable/ic_netpos_logo" />
@@ -37,11 +37,11 @@
                 android:layout_marginTop="@dimen/dimen_15dp"
                 android:fontFamily="@font/poppins_bold"
                 android:text="@string/transaction_receipt"
+                android:textColor="@color/colorPrimary"
                 android:textSize="@dimen/dimen_20sp"
                 android:textStyle="bold"
-                android:textColor="@color/colorPrimary"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="@+id/imageView"
+                app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/imageView" />
 
             <View

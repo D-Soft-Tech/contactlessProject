@@ -115,7 +115,7 @@ class EnterOtpFragment : BaseFragment() {
             override fun afterTextChanged(s: Editable?) {
             }
         })
-        val resendCodeText = "Didn't Receive Code? Resend it" /*getString(R.string.resend_code)*/
+        val resendCodeText = getString(R.string.resend_code)
         val spannableText = customSpannableString(
             resendCodeText,
             resendCodeText.indexOf("Resend it"),
