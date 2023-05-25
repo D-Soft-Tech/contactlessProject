@@ -12,6 +12,8 @@ class ContactlessRegRepository @Inject constructor(
 ) {
     fun findAccount(accountNumber: String, partnerId: String, deviceSerialId: String) = accountLookUpService.findAccount(AccountNumberLookUpRequest(accountNumber), partnerId, deviceSerialId)
 
+    fun findAccountForFirstBankUser(accountNumber: String, partnerId: String, deviceSerialId: String) = accountLookUpService.findAccountForFirstBankUser(AccountNumberLookUpRequest(accountNumber), partnerId, deviceSerialId)
+
     fun confirmOTP(phoneNumber: String, accountNumber: String, otp:String, partnerId: String) = accountLookUpService.
     confirmOTP(
         ConfirmOTPRequest(phoneNumber, accountNumber, otp), partnerId

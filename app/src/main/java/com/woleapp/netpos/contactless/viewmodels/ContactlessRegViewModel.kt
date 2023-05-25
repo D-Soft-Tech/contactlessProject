@@ -30,6 +30,10 @@ class ContactlessRegViewModel @Inject constructor(
         MutableLiveData()
     val accountNumberResponse: LiveData<Resource<AccountNumberLookUpResponse>> get() = _accountNumberResponse
 
+    private var _firstBankAccountNumberResponse: MutableLiveData<Resource<ConfirmOTPResponse>> =
+        MutableLiveData()
+    val firstBankAccountNumberResponse: LiveData<Resource<ConfirmOTPResponse>> get() = _firstBankAccountNumberResponse
+
     private var _confirmOTPResponse: MutableLiveData<Resource<ConfirmOTPResponse>> =
         MutableLiveData()
     val confirmOTPResponse: LiveData<Resource<ConfirmOTPResponse>> get() = _confirmOTPResponse
@@ -65,6 +69,43 @@ class ContactlessRegViewModel @Inject constructor(
                     }
                     error?.let {
                         _accountNumberResponse.postValue(Resource.error(null))
+                        Timber.d("ERROR==${it.localizedMessage}")
+                        (it as? HttpException).let { httpException ->
+                            val errorMessage = httpException?.response()?.errorBody()?.string()
+                                ?: "{\"message\":\"Unexpected error\"}"
+                            _message.value = Event(
+                                try {
+                                    gson.fromJson(errorMessage, ExistingCustomerError::class.java).message
+                                        ?: "Error"
+                                } catch (e: Exception) {
+                                    "Error"
+                                }
+                            )
+                            //Timber.e("SHOWME--->$errorMessage")
+                        }
+                    }
+                }
+        )
+    }
+    fun findAccountForFirstBankUser(accountNumber: String, partnerId: String, deviceSerialId: String) {
+        _firstBankAccountNumberResponse.postValue(Resource.loading(null))
+        saveAccountNumber(accountNumber)
+        disposable.add(
+            contactlessRegRepo.findAccountForFirstBankUser(accountNumber, partnerId, deviceSerialId)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe { data, error ->
+                    data?.let {
+                        _firstBankAccountNumberResponse.postValue(Resource.success(it))
+                        saveExistingPhoneNumber(it.data.phone)
+                        saveEmail(it.data.email)
+                        saveBusinessName(it.data.businessName)
+                        saveBusinessAddress(it.data.address)
+                        saveFullName(it.data.fullName)
+                        _message.value = Event(it.message)
+                    }
+                    error?.let {
+                        _firstBankAccountNumberResponse.postValue(Resource.error(null))
                         Timber.d("ERROR==${it.localizedMessage}")
                         (it as? HttpException).let { httpException ->
                             val errorMessage = httpException?.response()?.errorBody()?.string()
@@ -160,7 +201,7 @@ class ContactlessRegViewModel @Inject constructor(
         Prefs.putString(AppConstants.SAVED_ACCOUNT_NUM_SIGNED_UP, gson.toJson(ActNumber))
     }
 
-    private fun saveExistingCustomerData(customerData: Data) {
+    private fun saveExistingCustomerData(customerData: ConfirmOTPResponse) {
         Prefs.putString(AppConstants.SAVE_CUSTOMER_DATA, gson.toJson(customerData))
     }
     private fun saveBusinessName(businessName: String) {
@@ -179,12 +220,6 @@ class ContactlessRegViewModel @Inject constructor(
         Prefs.putString(AppConstants.EMAIL_ADDRESS, gson.toJson(email))
     }
 
-//    fun retrieveExistingCustomerData(): Data? {
-//        val payload = Prefs.getString(AppConstants.SAVE_CUSTOMER_DATA, "")
-//        return if (!payload.isNullOrEmpty()) {
-//            gson.fromJson(payload, Data::class.java)
-//        } else null
-//    }
 
     override fun onCleared() {
         super.onCleared()

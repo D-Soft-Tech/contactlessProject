@@ -16,6 +16,13 @@ interface AccountLookUpService {
         @Query("deviceSerialId") deviceSerialId: String
     ): Single<AccountNumberLookUpResponse>
 
+    @POST("account-lookup")
+    fun findAccountForFirstBankUser(
+        @Body accountNumber: AccountNumberLookUpRequest,
+        @Query("partnerId") partnerId: String,
+        @Query("deviceSerialId") deviceSerialId: String
+    ): Single<ConfirmOTPResponse>
+
     @POST("confirm-otp")
     fun confirmOTP(
         @Body confirmOTP: ConfirmOTPRequest,

@@ -89,7 +89,7 @@ class DisplayQrFragment : BaseFragment() {
             }
             else -> {
                 if (validateSignUpFieldsOnTextChange()) {
-                    registerExistingCustomer()
+                    generateMerchantQr()
                 }
             }
         }
@@ -113,7 +113,7 @@ class DisplayQrFragment : BaseFragment() {
         return isValidated
     }
 
-    private fun registerExistingCustomer() {
+    private fun generateMerchantQr() {
         loader.show()
         val paymentWithQr = PayWithQrRequest(
             terminalId = userTID.toString(),
