@@ -17,6 +17,7 @@ import com.woleapp.netpos.contactless.R
 import com.woleapp.netpos.contactless.model.FirebaseNotificationModelResponse
 import com.woleapp.netpos.contactless.ui.activities.MainActivity
 import com.woleapp.netpos.contactless.util.AppConstants.INT_FIREBASE_PENDING_INTENT_REQUEST_CODE
+import com.woleapp.netpos.contactless.util.AppConstants.MERCHANT_QR_PREFIX
 import com.woleapp.netpos.contactless.util.AppConstants.STRING_FIREBASE_INTENT_ACTION
 import com.woleapp.netpos.contactless.util.AppConstants.TAG_NOTIFICATION_RECEIVED_FROM_BACKEND
 import com.woleapp.netpos.contactless.util.AppConstants.WORKER_INPUT_FIREBASE_DEVICE_TOKEN_TAG
@@ -45,9 +46,16 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
                     transactionNotificationFromFirebase,
                     FirebaseNotificationModelResponse::class.java,
                 )
-            val transaction = gson.toJson(temporalTransaction.mapToTransactionResponse())
-            transaction?.let {
-                scheduleJobToSaveTransactionToDatabase(it)
+            val transaction = gson.toJson(
+                temporalTransaction.copy(
+                    email = temporalTransaction.email.removePrefix(MERCHANT_QR_PREFIX),
+                ).mapToTransactionResponse(),
+            )
+
+            if (temporalTransaction.email.contains(MERCHANT_QR_PREFIX)) {
+                transaction?.let {
+                    scheduleJobToSaveTransactionToDatabase(it)
+                }
             }
 
             val intent = Intent(this, MainActivity::class.java)
@@ -67,16 +75,18 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
                     FirebaseNotificationModelResponse::class.java,
                 )
 
-            sendNotification(
-                getString(
-                    R.string.notification_message_body,
-                    temporalTransaction.amount.toDouble()
-                        .formatCurrencyAmountUsingCurrentModule(),
-                    temporalTransaction.status,
-                    temporalTransaction.customerName,
-                    temporalTransaction.maskedPan,
-                ),
-            )
+            if (temporalTransaction.email.contains(MERCHANT_QR_PREFIX)) {
+                sendNotification(
+                    getString(
+                        R.string.notification_message_body,
+                        temporalTransaction.amount.toDouble()
+                            .formatCurrencyAmountUsingCurrentModule(),
+                        temporalTransaction.status,
+                        temporalTransaction.customerName,
+                        temporalTransaction.maskedPan,
+                    ),
+                )
+            }
         }
     }
 

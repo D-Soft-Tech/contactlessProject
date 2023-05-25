@@ -142,6 +142,8 @@ class AuthViewModel : ViewModel() {
                             " "
                         }
                 }
+
+                Timber.tag("LoggedInUser==>").d(gson.toJson(user))
                 Single.just(user)
             }.subscribeOn(Schedulers.io())
             .doFinally { authInProgress.postValue(false) }
