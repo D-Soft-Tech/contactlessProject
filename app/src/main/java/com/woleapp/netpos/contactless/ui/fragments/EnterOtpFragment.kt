@@ -102,6 +102,7 @@ class EnterOtpFragment : BaseFragment() {
                                 bundleOf(QR_TRANSACTION_RESULT_BUNDLE_KEY to formattedTransactionResp),
                             )
                             requireActivity().supportFragmentManager.popBackStack()
+                            // removeFragment(this@EnterOtpFragment)
                             ResponseModal().show(
                                 requireActivity().supportFragmentManager,
                                 STRING_QR_RESPONSE_MODAL_DIALOG_TAG,

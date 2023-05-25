@@ -40,4 +40,12 @@ open class BaseFragment : Fragment() {
             addToBackStack(tag)
         }.commit()
     }
+
+    open fun removeFragment(
+        fragment: Fragment,
+    ) {
+        requireActivity().supportFragmentManager.beginTransaction().apply {
+            remove(fragment)
+        }.commit()
+    }
 }
