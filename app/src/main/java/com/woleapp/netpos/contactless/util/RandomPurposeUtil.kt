@@ -16,6 +16,7 @@ import android.util.Base64
 import android.view.LayoutInflater
 import android.view.View
 import android.view.inputmethod.InputMethodManager
+import android.widget.ProgressBar
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
@@ -23,6 +24,7 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LiveData
 import com.google.android.material.snackbar.Snackbar
 import com.google.gson.Gson
+import com.woleapp.netpos.contactless.BuildConfig
 import com.woleapp.netpos.contactless.R
 import com.woleapp.netpos.contactless.model.* // ktlint-disable no-wildcard-imports
 import com.woleapp.netpos.contactless.ui.dialog.LoadingDialog
@@ -283,7 +285,8 @@ object RandomPurposeUtil {
                         it.data is AccountNumberLookUpResponse ||
                         it.data is ConfirmOTPResponse ||
                         it.data is ExistingAccountRegisterResponse ||
-                        it.data is String
+                        it.data is String ||
+                        it.data is GeneralResponse
                     ) {
                         successAction()
                     } else {
@@ -341,7 +344,7 @@ object RandomPurposeUtil {
         return "$currencySymbol${format.format(this)}"
     }
 
-    fun getDeviceId(context: Context): String? {
+    fun getDeviceId(context: Context): String {
         val deviceId: String = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             Settings.Secure.getString(context.contentResolver, Settings.Secure.ANDROID_ID)
         } else {
@@ -357,4 +360,28 @@ object RandomPurposeUtil {
         }
         return deviceId
     }
+
+    fun initPartnerId(): String {
+        var partnerID = ""
+        val bankList = mapOf(
+            "firstbank" to "7FD43DF1-633F-4250-8C6F-B49DBB9650EA",
+            "fcmb" to "1B0E68FD-7676-4F2C-883D-3931C3564190",
+            "easypay" to "1B0E68FD-7676-4F2C-883D-3931C3564190",
+            "fcmbeasypay" to "1B0E68FD-7676-4F2C-883D-3931C3564190",
+            "easypayfcmb" to "1B0E68FD-7676-4F2C-883D-3931C3564190",
+            "easyfcmb" to "1B0E68FD-7676-4F2C-883D-3931C3564190",
+            "providus" to "8B26F328-040F-4F27-A5BC-4414AB9D1EFA",
+            "providussoftpos" to "8B26F328-040F-4F27-A5BC-4414AB9D1EFA",
+            "wemabank" to "1E3D050B-6995-495F-982A-0511114959C8",
+            "zenith" to "3D9B3E2D-5171-4D6A-99CC-E2799D16DD56",
+        )
+
+        for (element in bankList) {
+            if (element.key == BuildConfig.FLAVOR) {
+                partnerID = element.value
+            }
+        }
+        return partnerID
+    }
+
 }

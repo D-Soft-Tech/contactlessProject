@@ -3,7 +3,7 @@ package com.woleapp.netpos.contactless.viewmodels
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.google.gson.Gson
+import com.google.gson.JsonObject
 import com.pixplicity.easyprefs.library.Prefs
 import com.woleapp.netpos.contactless.model.*
 import com.woleapp.netpos.contactless.network.ContactlessRegRepository
@@ -11,12 +11,13 @@ import com.woleapp.netpos.contactless.util.AppConstants
 import com.woleapp.netpos.contactless.util.Event
 import com.woleapp.netpos.contactless.util.Resource
 import com.woleapp.netpos.contactless.util.Singletons.gson
-import com.woleapp.netpos.contactless.util.showToast
 import dagger.hilt.android.lifecycle.HiltViewModel
+import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import retrofit2.HttpException
+import retrofit2.Response
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -38,6 +39,26 @@ class ContactlessRegViewModel @Inject constructor(
         MutableLiveData()
     val confirmOTPResponse: LiveData<Resource<ConfirmOTPResponse>> get() = _confirmOTPResponse
 
+    private var _getStatesResponse: MutableLiveData<Resource<GetStatesResponse>> =
+        MutableLiveData()
+    val getStatesResponse: LiveData<Resource<GetStatesResponse>> get() = _getStatesResponse
+
+    private var _getBranchResponse: MutableLiveData<Resource<GetFBNBranchResponse>> =
+        MutableLiveData()
+    val getBranchResponse: LiveData<Resource<GetFBNBranchResponse>> get() = _getBranchResponse
+
+    private var _resetPasswordResponse: MutableLiveData<Resource<GeneralResponse>> =
+        MutableLiveData()
+    val resetPasswordResponse: LiveData<Resource<GeneralResponse>> get() = _resetPasswordResponse
+
+    private var _confirmOtpToResetPasswordResponse: MutableLiveData<Resource<GeneralResponse>> =
+        MutableLiveData()
+    val confirmOtpToResetPasswordResponse: LiveData<Resource<GeneralResponse>> get() = _confirmOtpToResetPasswordResponse
+
+    private var _newPasswordResponse: MutableLiveData<Resource<GeneralResponse>> =
+        MutableLiveData()
+    val newPasswordResponse: LiveData<Resource<GeneralResponse>> get() = _newPasswordResponse
+
     private var _existingRegRequestResponse: MutableLiveData<Resource<ExistingAccountRegisterResponse>> =
         MutableLiveData()
     val existingRegRequestResponse: LiveData<Resource<ExistingAccountRegisterResponse>> get() = _existingRegRequestResponse
@@ -53,6 +74,10 @@ class ContactlessRegViewModel @Inject constructor(
     private val _registerMessage = MutableLiveData<Event<String>>()
     val registerMessage: LiveData<Event<String>>
         get() = _registerMessage
+
+    val listOfStates = arrayListOf<FBNState>()
+
+    val listOfBranches = arrayListOf<FBNBranch>()
 
     fun accountLookUp(accountNumber: String, partnerId: String, deviceSerialId: String) {
         _accountNumberResponse.postValue(Resource.loading(null))
@@ -162,10 +187,201 @@ class ContactlessRegViewModel @Inject constructor(
         )
     }
 
+    fun getStates() {
+        _getStatesResponse.postValue(Resource.loading(null))
+        disposable.add(
+            contactlessRegRepo.getStates()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe { data, error ->
+                    data?.let {
+                        _getStatesResponse.postValue(Resource.success(it))
+                        for (i in 0 until it.data.rows.size) {
+                            listOfStates.add(it.data.rows[i])
+                        }
+                    }
+                    error?.let {
+                        _getStatesResponse.postValue(Resource.error(null))
+                        Timber.d("ERROR==${it.localizedMessage}")
+                        (it as? HttpException).let { httpException ->
+                            val errorMessage = httpException?.response()?.errorBody()?.string()
+                                ?: "{\"message\":\"Unexpected error\"}"
+                            _message.value = Event(
+                                try {
+                                    gson.fromJson(errorMessage, ExistingCustomerError::class.java).message
+                                        ?: "Error"
+                                } catch (e: Exception) {
+                                    "Error"
+                                }
+                            )
+                            //Timber.e("SHOWME--->$errorMessage")
+                        }                    }
+                }
+        )
+    }
+
+    fun getBranches(stateInt: Int, deviceSerialId: String, partnerId: String) {
+        _getBranchResponse.postValue(Resource.loading(null))
+        disposable.add(
+            contactlessRegRepo.getBranches(stateInt,deviceSerialId, partnerId)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe { data, error ->
+                    data?.let {
+                        _getBranchResponse.postValue(Resource.success(it))
+                        for (i in 0 until it.data.rows.size) {
+                            listOfBranches.add(it.data.rows[i])
+                        }
+                    }
+                    error?.let {
+                        _getBranchResponse.postValue(Resource.error(null))
+                        Timber.d("ERROR==${it.localizedMessage}")
+                        (it as? HttpException).let { httpException ->
+                            val errorMessage = httpException?.response()?.errorBody()?.string()
+                                ?: "{\"message\":\"Unexpected error\"}"
+                            _message.value = Event(
+                                try {
+                                    gson.fromJson(errorMessage, ExistingCustomerError::class.java).message
+                                        ?: "Error"
+                                } catch (e: Exception) {
+                                    "Error"
+                                }
+                            )
+                            //Timber.e("SHOWME--->$errorMessage")
+                        }                    }
+                }
+        )
+    }
+
+    fun resetPassword(payload: JsonObject, deviceSerialId: String, partnerId: String) {
+        _resetPasswordResponse.postValue(Resource.loading(null))
+        disposable.add(
+            contactlessRegRepo.resetPassword(payload, deviceSerialId, partnerId)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe { data, error ->
+                    data?.let {
+                        _resetPasswordResponse.postValue(Resource.success(it))
+                        _message.value = Event(it.message)
+                    }
+                    error?.let {
+                        _resetPasswordResponse.postValue(Resource.error(null))
+                        Timber.d("ERROR==${it.localizedMessage}")
+                        (it as? HttpException).let { httpException ->
+                            val errorMessage = httpException?.response()?.errorBody()?.string()
+                                ?: "{\"message\":\"Unexpected error\"}"
+                            _message.value = Event(
+                                try {
+                                    gson.fromJson(errorMessage, ExistingCustomerError::class.java).message
+                                        ?: "Error"
+                                } catch (e: Exception) {
+                                    "Error"
+                                }
+                            )
+                            //Timber.e("SHOWME--->$errorMessage")
+                        }                    }
+                }
+        )
+    }
+
+    fun confirmOTPToSetPassword(payload: JsonObject, deviceSerialId: String, partnerId: String) {
+        _confirmOtpToResetPasswordResponse.postValue(Resource.loading(null))
+        disposable.add(
+            contactlessRegRepo.confirmOTPToSetPassword(payload, deviceSerialId, partnerId)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe { data, error ->
+                    data?.let {
+                        _confirmOtpToResetPasswordResponse.postValue(Resource.success(it))
+                        _message.value = Event(it.message)
+                    }
+                    error?.let {
+                        _confirmOtpToResetPasswordResponse.postValue(Resource.error(null))
+                        Timber.d("ERROR==${it.localizedMessage}")
+                        (it as? HttpException).let { httpException ->
+                            val errorMessage = httpException?.response()?.errorBody()?.string()
+                                ?: "{\"message\":\"Unexpected error\"}"
+                            _message.value = Event(
+                                try {
+                                    gson.fromJson(errorMessage, ExistingCustomerError::class.java).message
+                                        ?: "Error"
+                                } catch (e: Exception) {
+                                    "Error"
+                                }
+                            )
+                            //Timber.e("SHOWME--->$errorMessage")
+                        }                    }
+                }
+        )
+    }
+
+    fun setNewPassword(payload: JsonObject, deviceSerialId: String, partnerId: String) {
+        _newPasswordResponse.postValue(Resource.loading(null))
+        disposable.add(
+            contactlessRegRepo.setNewPassword(payload, deviceSerialId, partnerId)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe { data, error ->
+                    data?.let {
+                        _newPasswordResponse.postValue(Resource.success(it))
+                        _message.value = Event(it.message)
+                    }
+                    error?.let {
+                        _newPasswordResponse.postValue(Resource.error(null))
+                        Timber.d("ERROR==${it.localizedMessage}")
+                        (it as? HttpException).let { httpException ->
+                            val errorMessage = httpException?.response()?.errorBody()?.string()
+                                ?: "{\"message\":\"Unexpected error\"}"
+                            _message.value = Event(
+                                try {
+                                    gson.fromJson(errorMessage, ExistingCustomerError::class.java).message
+                                        ?: "Error"
+                                } catch (e: Exception) {
+                                    "Error"
+                                }
+                            )
+                            //Timber.e("SHOWME--->$errorMessage")
+                        }                    }
+                }
+        )
+    }
+
     fun registerExistingAccount(accountNumber: ExistingAccountRegisterRequest, partnerId:String, deviceSerialId: String) {
         _existingRegRequestResponse.postValue(Resource.loading(null))
         disposable.add(
             contactlessRegRepo.registerExistingAccount(accountNumber, partnerId, deviceSerialId)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe { data, error ->
+                    data?.let {
+                        _existingRegRequestResponse.postValue(Resource.success(it))
+                        _registerMessage.value = Event(it.message)
+                    }
+                    error?.let {
+                        _existingRegRequestResponse.postValue(Resource.error(null))
+                        Timber.d("ERROR==${it.localizedMessage}")
+                        (it as? HttpException).let { httpException ->
+                            val errorMessage = httpException?.response()?.errorBody()?.string()
+                                ?: "{\"message\":\"Unexpected error\"}"
+                            _registerMessage.value = Event(
+                                try {
+                                    gson.fromJson(errorMessage, ExistingCustomerError::class.java).message
+                                        ?: "Error"
+                                } catch (e: Exception) {
+                                    "Error"
+                                }
+                            )
+                            //Timber.e("SHOWME--->$errorMessage")
+                        }
+                    }
+                }
+        )
+    }
+
+    fun registerExistingAccountForFBN(accountNumber: RegistrationForExistingFBNUsersRequest, partnerId:String, deviceSerialId: String) {
+        _existingRegRequestResponse.postValue(Resource.loading(null))
+        disposable.add(
+            contactlessRegRepo.registerExistingAccountForFBN(accountNumber, partnerId, deviceSerialId)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe { data, error ->
@@ -201,9 +417,6 @@ class ContactlessRegViewModel @Inject constructor(
         Prefs.putString(AppConstants.SAVED_ACCOUNT_NUM_SIGNED_UP, gson.toJson(ActNumber))
     }
 
-    private fun saveExistingCustomerData(customerData: ConfirmOTPResponse) {
-        Prefs.putString(AppConstants.SAVE_CUSTOMER_DATA, gson.toJson(customerData))
-    }
     private fun saveBusinessName(businessName: String) {
         Prefs.putString(AppConstants.BUSINESS_NAME, gson.toJson(businessName))
     }

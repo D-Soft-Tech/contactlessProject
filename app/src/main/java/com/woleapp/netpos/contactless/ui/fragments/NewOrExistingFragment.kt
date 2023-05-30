@@ -5,12 +5,15 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.AdapterView
 import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.activityViewModels
 import com.woleapp.netpos.contactless.BuildConfig
 import com.woleapp.netpos.contactless.R
+import com.woleapp.netpos.contactless.adapter.StatesAdapter
 import com.woleapp.netpos.contactless.databinding.FragmentNewOrExistingBinding
+import com.woleapp.netpos.contactless.model.FBNState
 import com.woleapp.netpos.contactless.util.RandomPurposeUtil
 import com.woleapp.netpos.contactless.util.RandomPurposeUtil.getDeviceId
 import com.woleapp.netpos.contactless.util.RandomPurposeUtil.observeServerResponse
@@ -47,6 +50,7 @@ class NewOrExistingFragment : BaseFragment() {
                 Toast.makeText(requireContext(), message, Toast.LENGTH_LONG).show()
             }
         }
+
 
         loader = RandomPurposeUtil.alertDialog(requireContext())
 

@@ -1,5 +1,6 @@
 package com.woleapp.netpos.contactless.network
 
+import com.woleapp.netpos.contactless.model.RegistrationFBNModel
 import com.woleapp.netpos.contactless.model.RegistrationModel
 import com.woleapp.netpos.contactless.util.UtilityParam
 import io.reactivex.Single
@@ -16,6 +17,13 @@ interface ContactlessRegistrationService {
     @POST("user/register")
     fun register(
         @Body registrationModel: RegistrationModel?,
+        @Query("bank") bank: String,
+        @Query("deviceSerialId") deviceSerialId: String
+        ): Single<RegistrationModel>
+    @POST("user/register")
+    fun registerFBN(
+        @Body registrationModel: RegistrationFBNModel?,
+        @Query("bank") bank: String,
         @Query("deviceSerialId") deviceSerialId: String
         ): Single<RegistrationModel>
 }

@@ -39,7 +39,7 @@
     <string name="enter_name">Customer Name</string>
     <string name="reset_password">Reset Password</string>
     <string name="close_dialog">close dialog</string>
-    <string name="enter_your_registered_e_mail_with_storm">Enter your registered E-mail with Storm</string>
+    <string name="enter_your_registered_e_mail_with_storm">Enter your registered E-mail</string>
     <string name="nip_notifications">NIP NOTIFICATIONS</string>
     <string name="beneficiaryAccountNumber"><b>Beneficiary Account Number:</b> %s</string>
     <string name="sourceName"><b>Source Name:</b> %s</string>
