@@ -22,7 +22,7 @@ import javax.inject.Inject
 @HiltViewModel
 class ScanQrViewModel @Inject constructor(
     private val repository: Repository,
-    private val gson: Gson
+    private val gson: Gson,
 ) : ViewModel() {
     private val compositeDisposable = CompositeDisposable()
     private val _sendQrToServerResponse: MutableLiveData<Resource<PostQrToServerResponse>> =
@@ -41,8 +41,12 @@ class ScanQrViewModel @Inject constructor(
     private val _cardScheme: MutableLiveData<String> = MutableLiveData("")
 
     fun postScannedQrRequestToServer(qrData: PostQrToServerModel) {
-        if (_isVerveCard.value == true) _sendQrToServerResponseVerve.value =
-            Resource.loading(null) else _sendQrToServerResponse.value = Resource.loading(null)
+        if (_isVerveCard.value == true) {
+            _sendQrToServerResponseVerve.value =
+                Resource.loading(null)
+        } else {
+            _sendQrToServerResponse.value = Resource.loading(null)
+        }
         compositeDisposable.add(
             repository.postScannedQrRequestToServer(qrData)
                 .subscribeOn(Schedulers.io())
@@ -55,7 +59,7 @@ class ScanQrViewModel @Inject constructor(
                         val serverResponse: Any? = if (it.has("TermUrl")) {
                             gson.fromJson(
                                 it,
-                                PostQrToServerResponse::class.java
+                                PostQrToServerResponse::class.java,
                             )
                         } else if (it.get("status").asString.lowercase() != "failed") {
                             gson.fromJson(it, PostQrToServerVerveResponseModel::class.java)
@@ -68,26 +72,38 @@ class ScanQrViewModel @Inject constructor(
                             _sendQrToServerResponseVerve.value =
                                 Resource.success(serverResponse)
                         } else {
-                            if (_isVerveCard.value == true) _sendQrToServerResponseVerve.value =
-                                Resource.error(null) else _sendQrToServerResponse.value =
-                                Resource.error(null)
+                            if (_isVerveCard.value == true) {
+                                _sendQrToServerResponseVerve.value =
+                                    Resource.error(null)
+                            } else {
+                                _sendQrToServerResponse.value =
+                                    Resource.error(null)
+                            }
                         }
                     }
                     error?.let {
                         if (_isVerveCard.value == true) {
                             _sendQrToServerResponseVerve.value =
-                                if (it is SocketTimeoutException) Resource.timeOut(null) else Resource.error(
-                                    null
-                                )
+                                if (it is SocketTimeoutException) {
+                                    Resource.timeOut(null)
+                                } else {
+                                    Resource.error(
+                                        null,
+                                    )
+                                }
                         } else {
                             _sendQrToServerResponse.value =
-                                if (it is SocketTimeoutException) Resource.timeOut(null) else Resource.error(
-                                    null
-                                )
+                                if (it is SocketTimeoutException) {
+                                    Resource.timeOut(null)
+                                } else {
+                                    Resource.error(
+                                        null,
+                                    )
+                                }
                         }
                         Timber.d(gson.toJson(it))
                     }
-                }
+                },
         )
     }
 
@@ -117,11 +133,15 @@ class ScanQrViewModel @Inject constructor(
                         error?.let { throwable ->
                             Timber.d("ERROR_FROM_VP%s", throwable.localizedMessage)
                             _transactionResponseFromVerve.value =
-                                if (throwable is SocketTimeoutException) Resource.timeOut(null) else Resource.error(
-                                    null
-                                )
+                                if (throwable is SocketTimeoutException) {
+                                    Resource.timeOut(null)
+                                } else {
+                                    Resource.error(
+                                        null,
+                                    )
+                                }
                         }
-                    }
+                    },
             )
         }
     }
@@ -142,7 +162,9 @@ class ScanQrViewModel @Inject constructor(
         val payload = Prefs.getString(QR_TRANSACTION_POST_REQUEST_PAYLOAD, "")
         return if (!payload.isNullOrEmpty()) {
             gson.fromJson(payload, PostQrToServerModel::class.java)
-        } else null
+        } else {
+            null
+        }
     }
 
     fun setCardScheme(cardScheme: String) {
