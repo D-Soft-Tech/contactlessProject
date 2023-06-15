@@ -19,7 +19,7 @@ Java_com_woleapp_netpos_contactless_util_UtilityParam_getGetQrBaseUrl(JNIEnv *en
 JNIEXPORT jstring JNICALL
 Java_com_woleapp_netpos_contactless_util_UtilityParam_getSendVerveOtpBaseUrl(JNIEnv *env,
                                                                              jobject thiz) {
-    return (*env)->NewStringUTF(env, "https://api.netpluspay.com/");
+    return (*env)->NewStringUTF(env, "https://webpay.netpluspay.com/");
 }
 
 JNIEXPORT jstring JNICALL
@@ -29,7 +29,7 @@ Java_com_woleapp_netpos_contactless_util_UtilityParam_getMerchantId(JNIEnv *env,
 
 JNIEXPORT jstring JNICALL
 Java_com_woleapp_netpos_contactless_util_UtilityParam_getWebViewBaseUrl(JNIEnv *env, jobject thiz) {
-    return (*env)->NewStringUTF(env, "https://api.netpluspay.com/transactions/requery/");
+    return (*env)->NewStringUTF(env, "https://webpay.netpluspay.com/transactions/requery/");
 }
 
 JNIEXPORT jstring JNICALL

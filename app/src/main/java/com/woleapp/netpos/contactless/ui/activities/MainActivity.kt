@@ -116,8 +116,8 @@ class MainActivity :
     private lateinit var requestNarration: String
     private lateinit var qrAmoutDialogBinding: QrAmoutDialogBinding
     private lateinit var verveCardQrAmountDialogBinding: LayoutVerveCardQrAmountDialogBinding
-    private lateinit var qrAmountDialog: androidx.appcompat.app.AlertDialog
-    private lateinit var qrAmountDialogForVerveCard: androidx.appcompat.app.AlertDialog
+    private lateinit var qrAmountDialog: AlertDialog
+    private lateinit var qrAmountDialogForVerveCard: AlertDialog
     private val scanQrViewModel by viewModels<ScanQrViewModel>()
     private val qrPinBlock: QrPasswordPinBlockDialog = QrPasswordPinBlockDialog()
     private var amountToPayInDouble: Double? = 0.0
@@ -289,7 +289,7 @@ class MainActivity :
             STRING_QR_READ_RESULT_REQUEST_KEY,
             this,
         ) { _, bundle ->
-            qrData = bundle.getParcelable<QrScannedDataModel>(STRING_QR_READ_RESULT_BUNDLE_KEY)
+            qrData = bundle.getParcelable(STRING_QR_READ_RESULT_BUNDLE_KEY)
             qrData?.let {
                 if (it.card_scheme.contains(
                         "verve",
@@ -503,11 +503,11 @@ class MainActivity :
                 lifecycleOwner = this@MainActivity
             }
 
-        qrAmountDialog = androidx.appcompat.app.AlertDialog.Builder(this).apply {
+        qrAmountDialog = AlertDialog.Builder(this).apply {
             setView(qrAmoutDialogBinding.root)
         }.create()
 
-        qrAmountDialogForVerveCard = androidx.appcompat.app.AlertDialog.Builder(this).apply {
+        qrAmountDialogForVerveCard = AlertDialog.Builder(this).apply {
             setView(verveCardQrAmountDialogBinding.root)
         }.create()
         deviceNotSupportedAlertDialog =

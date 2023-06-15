@@ -5,7 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.google.gson.Gson
 import com.pixplicity.easyprefs.library.Prefs
-import com.woleapp.netpos.contactless.model.*
+import com.woleapp.netpos.contactless.model.* // ktlint-disable no-wildcard-imports
 import com.woleapp.netpos.contactless.network.Repository
 import com.woleapp.netpos.contactless.util.AppConstants.QR_TRANSACTION_POST_REQUEST_PAYLOAD
 import com.woleapp.netpos.contactless.util.RandomPurposeUtil.stringToBase64
