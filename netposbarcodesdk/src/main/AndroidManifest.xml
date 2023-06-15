@@ -13,8 +13,9 @@
         android:theme="@style/Theme.NetposLibrary">
         <activity
             android:name=".BarcodeActivity"
-            android:exported="true">
+            android:exported="false">
         </activity>
     </application>
 
 </manifest>
+

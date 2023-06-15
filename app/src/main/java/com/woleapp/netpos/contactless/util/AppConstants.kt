@@ -24,7 +24,6 @@ object AppConstants {
     const val SAVED_ACCOUNT_NUM_SIGNED_UP = "SAVED_ACCOUNT_NUM_SIGNED_UP"
     const val SAVE_PHONE_NUMBER = "SAVE_PHONE_NUMBER"
     const val PAYMENT_WITH_QR_STRING = "PAYMENT_WITH_QR_STRING"
-    const val SAVE_CUSTOMER_DATA = "SAVE_CUSTOMER_DATA"
     const val BUSINESS_NAME = "BUSINESS_NAME"
     const val FULL_NAME = "FULL_NAME"
     const val BUSINESS_ADDRESS = "BUSINESS_ADDRESS"
@@ -41,5 +40,6 @@ object AppConstants {
     const val CONTACTLESS_TRANSACTION_DEFAULT_EMAIL = "contactless@gmail.com"
     const val SEPARATOR = "<======>"
     const val MERCHANT_QR_PREFIX = "MERCHANT_DISPLAY_QR==="
+    const val RESET_USERNAME = "RESET_USERNAME"
 
 }

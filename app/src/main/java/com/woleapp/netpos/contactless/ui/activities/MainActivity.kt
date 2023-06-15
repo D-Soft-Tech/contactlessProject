@@ -7,6 +7,7 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.DatePickerDialog
 import android.app.ProgressDialog
+import android.content.DialogInterface
 import android.content.Intent
 import android.content.IntentFilter
 import android.location.Location
@@ -82,9 +83,7 @@ import java.util.*
 
 @Suppress("DEPRECATION")
 @AndroidEntryPoint
-class MainActivity :
-    AppCompatActivity(),
-    EasyPermissions.PermissionCallbacks,
+class MainActivity : AppCompatActivity(), EasyPermissions.PermissionCallbacks,
     NfcAdapter.ReaderCallback {
 
     private lateinit var receiptPdf: File
@@ -101,14 +100,6 @@ class MainActivity :
     }
 
     private lateinit var waitingDialog: AlertDialog
-    private val iFilter = IntentFilter().apply {
-        addAction(Intent.ACTION_POWER_CONNECTED)
-        addAction(Intent.ACTION_POWER_DISCONNECTED)
-        addAction(Intent.ACTION_BATTERY_CHANGED)
-        addAction(Intent.ACTION_BATTERY_LOW)
-        addAction(Intent.ACTION_BATTERY_OKAY)
-    }
-    private val batteryReceiver = BatteryReceiver()
     private var nfcAdapter: NfcAdapter? = null
     private lateinit var receiptDialogBinding: DialogTransactionResultBinding
     private lateinit var receiptAlertDialog: AlertDialog
@@ -126,19 +117,13 @@ class MainActivity :
     private lateinit var firebaseInstance: FirebaseMessaging
     private lateinit var deviceNotSupportedAlertDialog: AlertDialog
 
-    override fun onStop() {
-        super.onStop()
-        // LocalBroadcastManager.getInstance(this).unregisterReceiver(receiver)
-        unregisterReceiver(batteryReceiver)
-    }
+
 
     override fun onStart() {
         super.onStart()
-        registerReceiver(batteryReceiver, iFilter)
         // LocalBroadcastManager.getInstance(this).registerReceiver(receiver, IntentFilter(CONFIGURATION_ACTION))
         when ( // NetPosTerminalConfig.isConfigurationInProcess -> showProgressDialog()
-            NetPosTerminalConfig.configurationStatus
-        ) {
+            NetPosTerminalConfig.configurationStatus) {
             -1 -> NetPosTerminalConfig.init(
                 applicationContext,
             )
@@ -209,6 +194,15 @@ class MainActivity :
         } catch (e: Exception) {
             Timber.e(e)
         }
+    }
+
+    private fun logoutConfirmation() {
+        AlertDialog.Builder(this)
+            .setMessage(R.string.logout_confirmation_dialog_message) // Specifying a listener allows you to take an action before dismissing the dialog.
+            .setPositiveButton(android.R.string.yes) { _: DialogInterface, _: Int ->
+                logout()
+            } // A null listener allows the button to dismiss the dialog and take no further action.
+            .setNegativeButton(android.R.string.no, null).show()
     }
 
     private fun logout() {
@@ -384,7 +378,7 @@ class MainActivity :
         })
 
         binding.dashboardHeader.logout.setOnClickListener {
-            logout()
+            logoutConfirmation()
         }
         if (checkBillsPaymentToken().not()) {
             getBillsToken(StormApiClient.getInstance())
@@ -512,7 +506,7 @@ class MainActivity :
         }.create()
         deviceNotSupportedAlertDialog =
             AlertDialog.Builder(this).setTitle("NFC Message").setCancelable(false)
-                .setMessage("Device dose not have NFC support")
+                .setMessage("Device does not have NFC support")
                 .setPositiveButton("Close") { dialog, _ ->
                     dialog.dismiss()
                     // finish()
@@ -844,8 +838,7 @@ class MainActivity :
         qrAmoutDialogBinding.proceed.setOnClickListener {
             val amountDouble = qrAmoutDialogBinding.amount.text.toString().toDoubleOrNull()
             if (qrAmoutDialogBinding.amount.text.isNullOrEmpty()) {
-                qrAmoutDialogBinding.amount.error =
-                    getString(R.string.amount_empty)
+                qrAmoutDialogBinding.amount.error = getString(R.string.amount_empty)
             }
             amountDouble?.let {
                 qrAmoutDialogBinding.amount.text?.clear()
@@ -1042,14 +1035,13 @@ class MainActivity :
         if (pin.length == 4) {
             amountDouble?.let {
                 qrAmountDialogForVerveCard.cancel()
-                val qrDataToSendToBackend =
-                    PostQrToServerModel(
-                        it,
-                        qrData.data,
-                        merchantId = UtilityParam.STRING_MERCHANT_ID,
-                        padding = formattedPadding,
-                        naration = requestNarration,
-                    )
+                val qrDataToSendToBackend = PostQrToServerModel(
+                    it,
+                    qrData.data,
+                    merchantId = UtilityParam.STRING_MERCHANT_ID,
+                    padding = formattedPadding,
+                    naration = requestNarration,
+                )
                 scanQrViewModel.setScannedQrIsVerveCard(true)
                 scanQrViewModel.saveTheQrToSharedPrefs(qrDataToSendToBackend.copy(orderId = AppConstants.getGUID()))
                 scanQrViewModel.postScannedQrRequestToServer(qrDataToSendToBackend)

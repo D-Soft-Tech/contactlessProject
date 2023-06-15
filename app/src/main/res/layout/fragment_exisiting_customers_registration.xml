@@ -113,17 +113,48 @@
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/existing_customers_textInputAddress"
+                    android:id="@+id/fragment_state"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox.ExposedDropdownMenu"
+                    android:hint="Select State"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     app:errorEnabled="true"
+                    android:visibility="gone"
                     app:errorTextColor="@color/colorError"
+                    android:textColorHint="@android:color/black"
+                    app:endIconDrawable="@drawable/ic_arrow_down_24"
+                    app:endIconTint="@color/black"
+                    app:hintEnabled="true"
+                    app:layout_constraintTop_toBottomOf="@+id/existing_customers_contact_info"
+                    app:layout_constraintEnd_toEndOf="@+id/existing_customers_textInputAddress"
+                    app:layout_constraintStart_toStartOf="@+id/existing_customers_textInputAddress"
+                    app:layout_constraintBottom_toTopOf="@+id/existing_customers_textInputAddress">
+
+                    <AutoCompleteTextView
+                        android:id="@+id/state"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:focusable="false"
+                        android:gravity="center_vertical"
+                        android:inputType="none"
+                        android:textColor="@android:color/background_dark"
+                        android:textCursorDrawable="@color/black"
+                        android:visibility="visible"
+                        app:backgroundTint="@color/white" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/existing_customers_textInputAddress"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
                     android:hint="@string/business_address"
                     android:textColorHint="@android:color/black"
-                    app:layout_constraintBottom_toTopOf="@id/existing_customers_phoneee"
-                    app:layout_constraintEnd_toEndOf="@id/existing_customers_business_name"
-                    app:layout_constraintStart_toStartOf="@id/existing_customers_business_name"
-                    app:layout_constraintTop_toBottomOf="@id/existing_customers_contact_info">
+                    app:errorEnabled="true"
+                    app:errorTextColor="@color/colorError"
+                    app:layout_constraintBottom_toTopOf="@id/fragment_state"
+                    app:layout_constraintEnd_toEndOf="@id/existing_customers_contact_info"
+                    app:layout_constraintStart_toStartOf="@id/existing_customers_contact_info"
+                    app:layout_constraintTop_toBottomOf="@+id/fragment_state">
 
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/address"
@@ -145,8 +176,8 @@
                     app:errorEnabled="true"
                     app:errorTextColor="@color/colorError"
                     android:textColorHint="@android:color/black"
-                    app:layout_constraintEnd_toEndOf="@id/existing_customers_business_name"
-                    app:layout_constraintStart_toStartOf="@id/existing_customers_business_name"
+                    app:layout_constraintEnd_toEndOf="@id/existing_customers_textInputAddress"
+                    app:layout_constraintStart_toStartOf="@id/existing_customers_textInputAddress"
                     app:layout_constraintTop_toBottomOf="@id/existing_customers_textInputAddress">
 
                     <com.google.android.material.textfield.TextInputEditText
@@ -166,6 +197,38 @@
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/fragment_branch"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox.ExposedDropdownMenu"
+                    android:hint="Select Branch"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    app:errorEnabled="true"
+                    android:visibility="gone"
+                    app:errorTextColor="@color/colorError"
+                    android:textColorHint="@android:color/black"
+                    app:endIconDrawable="@drawable/ic_arrow_down_24"
+                    app:endIconTint="@color/black"
+                    app:hintEnabled="true"
+                    app:layout_constraintTop_toBottomOf="@+id/existing_customers_phoneee"
+                    app:layout_constraintEnd_toEndOf="@+id/existing_customers_phoneee"
+                    app:layout_constraintStart_toStartOf="@+id/existing_customers_phoneee"
+                    app:layout_constraintBottom_toTopOf="@+id/email_field">
+
+                    <AutoCompleteTextView
+                        android:id="@+id/branch"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:focusable="false"
+                        android:gravity="center_vertical"
+                        android:inputType="none"
+                        android:textColor="@android:color/background_dark"
+                        android:textCursorDrawable="@color/black"
+                        android:visibility="visible"
+                        app:backgroundTint="@color/white" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+
+                <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/email_field"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
@@ -175,7 +238,7 @@
                     android:textColorHint="@android:color/black"
                     app:layout_constraintEnd_toEndOf="@id/existing_customers_business_name"
                     app:layout_constraintStart_toStartOf="@id/existing_customers_business_name"
-                    app:layout_constraintTop_toBottomOf="@id/existing_customers_phoneee">
+                    app:layout_constraintTop_toBottomOf="@id/fragment_branch">
 
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/email"

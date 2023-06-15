@@ -37,7 +37,7 @@
             android:layout_marginStart="16dp"
             android:layout_marginTop="150dp"
             android:layout_marginEnd="16dp"
-            android:hint="@string/username"
+            android:hint="@string/email_address"
             android:textColorHint="@android:color/black"
             app:layout_constraintBottom_toTopOf="@id/textInputPwd"
             app:layout_constraintEnd_toEndOf="parent"

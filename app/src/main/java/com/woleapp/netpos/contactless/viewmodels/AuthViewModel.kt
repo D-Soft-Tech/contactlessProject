@@ -13,6 +13,7 @@ import com.woleapp.netpos.contactless.model.AuthError
 import com.woleapp.netpos.contactless.model.User
 import com.woleapp.netpos.contactless.network.StormApiService
 import com.woleapp.netpos.contactless.util.* // ktlint-disable no-wildcard-imports
+import com.woleapp.netpos.contactless.util.AppConstants.RESET_USERNAME
 import com.woleapp.netpos.contactless.util.Singletons.gson
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -188,6 +189,7 @@ class AuthViewModel : ViewModel() {
         val payload = JsonObject().apply {
             addProperty("username", username)
         }
+        Prefs.putString(RESET_USERNAME, username)
         stormApiService!!.passwordReset(payload).subscribeOn(Schedulers.io())
             .doOnSubscribe {
                 passwordResetInProgress.postValue(true)

@@ -94,7 +94,7 @@ class DisplayQrFragment : BaseFragment() {
             }
             else -> {
                 if (validateSignUpFieldsOnTextChange()) {
-                    registerExistingCustomer()
+                    generateMerchantQr()
                 }
             }
         }
@@ -118,7 +118,7 @@ class DisplayQrFragment : BaseFragment() {
         return isValidated
     }
 
-    private fun registerExistingCustomer() {
+    private fun generateMerchantQr() {
         loader.show()
         val paymentWithQr = PayWithQrRequest(
             terminalId = userTID.toString(),
@@ -151,11 +151,10 @@ class DisplayQrFragment : BaseFragment() {
         val bankList = mapOf(
             "firstbank" to "firstbank",
             "netpos" to "netpos",
-            "fcmb" to "fcmb",
             "easypay" to "fcmb",
             "fcmbeasypay" to "fcmb",
             "easypayfcmb" to "fcmb",
-            "easyfcmb" to "fcmb",
+            "providuspos" to "providus",
             "providus" to "providus",
             "providussoftpos" to "providus",
             "wemabank" to "wemabank",

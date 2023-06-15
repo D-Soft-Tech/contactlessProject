@@ -156,8 +156,11 @@ class TransactionsFragment : BaseFragment() {
         val listOfService = ArrayList<Service>()
             .apply {
                 add(Service(0, "Purchase", R.drawable.purchase))
-                if (!BuildConfig.FLAVOR.contains("providus") || !BuildConfig.FLAVOR.contains("providussoftpos")) {
+                if (!BuildConfig.FLAVOR.contains("providussoftpos") || !BuildConfig.FLAVOR.contains("providus")) {
                     add(Service(7, "Purchase With Cashback", R.drawable.purchase))
+                }
+                if (BuildConfig.FLAVOR.contains("providuspos")) {
+                    remove(Service(7, "Purchase With Cashback", R.drawable.purchase))
                 }
                 add(Service(3, "Settings", R.drawable.ic_baseline_settings))
                 if (BuildConfig.FLAVOR.contains("polaris")) {

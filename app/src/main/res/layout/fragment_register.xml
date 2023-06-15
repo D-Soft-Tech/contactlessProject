@@ -80,7 +80,7 @@
                 android:layout_marginEnd="16dp"
                 android:hint="@string/fullname"
                 android:textColorHint="@android:color/black"
-                app:layout_constraintBottom_toTopOf="@id/textInputAddress"
+                app:layout_constraintBottom_toTopOf="@id/fragment_state"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/textInputBusinessName">
@@ -104,23 +104,51 @@
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/fragment_state"
+                style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox.ExposedDropdownMenu"
+                android:hint="Select State"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:errorEnabled="true"
+                android:visibility="gone"
+                app:errorTextColor="@color/colorError"
+                android:textColorHint="@android:color/black"
+                app:endIconDrawable="@drawable/ic_arrow_down_24"
+                app:endIconTint="@color/black"
+                app:hintEnabled="true"
+                app:layout_constraintTop_toBottomOf="@+id/text_contact_info"
+                app:layout_constraintEnd_toEndOf="@+id/text_contact_info"
+                app:layout_constraintStart_toStartOf="@+id/text_contact_info"
+                app:layout_constraintBottom_toTopOf="@+id/textInputAddress">
+
+                <AutoCompleteTextView
+                    android:id="@+id/state"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:focusable="false"
+                    android:gravity="center_vertical"
+                    android:inputType="none"
+                    android:textColor="@android:color/background_dark"
+                    android:textCursorDrawable="@color/black"
+                    app:backgroundTint="@color/white" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/textInputAddress"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:hint="@string/business_address"
                 android:textColorHint="@android:color/black"
                 app:layout_constraintBottom_toTopOf="@id/phoneee"
-                app:layout_constraintEnd_toEndOf="@id/textInputBusinessName"
-                app:layout_constraintStart_toStartOf="@id/textInputBusinessName"
-                app:layout_constraintTop_toBottomOf="@id/text_contact_info">
+                app:layout_constraintEnd_toEndOf="@id/text_contact_info"
+                app:layout_constraintStart_toStartOf="@id/text_contact_info"
+                app:layout_constraintTop_toBottomOf="@id/fragment_state">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/address"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="@drawable/edittext_bg"
-                    android:drawablePadding="8dp"
-                    android:gravity="top"
                     android:inputType="textMultiLine"
                     android:text="@={viewmodel.registrationModel.businessAddress}"
                     android:textColor="@android:color/black"
@@ -155,6 +183,36 @@
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/fragment_branch"
+                style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox.ExposedDropdownMenu"
+                android:hint="Select Branch"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:errorEnabled="true"
+                android:visibility="gone"
+                app:errorTextColor="@color/colorError"
+                android:textColorHint="@android:color/black"
+                app:endIconDrawable="@drawable/ic_arrow_down_24"
+                app:endIconTint="@color/black"
+                app:hintEnabled="true"
+                app:layout_constraintTop_toBottomOf="@+id/email_field"
+                app:layout_constraintEnd_toEndOf="@+id/phoneee"
+                app:layout_constraintStart_toStartOf="@+id/phoneee"
+                app:layout_constraintBottom_toTopOf="@+id/phoneee">
+
+                <AutoCompleteTextView
+                    android:id="@+id/branch"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:focusable="false"
+                    android:gravity="center_vertical"
+                    android:inputType="none"
+                    android:textColor="@android:color/background_dark"
+                    android:textCursorDrawable="@color/black"
+                    app:backgroundTint="@color/white" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/email_field"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -162,7 +220,7 @@
                 android:textColorHint="@android:color/black"
                 app:layout_constraintEnd_toEndOf="@id/textInputBusinessName"
                 app:layout_constraintStart_toStartOf="@id/textInputBusinessName"
-                app:layout_constraintTop_toBottomOf="@id/phoneee">
+                app:layout_constraintTop_toBottomOf="@id/fragment_branch">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/email"

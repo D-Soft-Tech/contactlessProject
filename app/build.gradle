@@ -39,10 +39,7 @@ android {
         versionName "1.0.22"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         def environmentPath
-        if (appModeProd == "true")
-            environmentPath = appProperties["env.path.production"]
-        else
-            environmentPath = appProperties["env.path.staging"]
+        if (appModeProd == "true") environmentPath = appProperties["env.path.production"] else environmentPath = appProperties["env.path.staging"]
         buildConfigField "Boolean", "APPMODE_PROD", appModeProd
     }
 
@@ -65,8 +62,9 @@ android {
             buildConfigField "String", "BUILD_VARIANT", "\"release\""
             resValue "string", "app_name", "NetPOS Contactless"
             debuggable false
-            minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            minifyEnabled true
+            shrinkResources true
         }
         nibssserverdebug {
             initWith debug
@@ -95,6 +93,10 @@ android {
             dimension "whiteLabel"
             applicationIdSuffix ".providus"
         }
+        providuspos {
+            dimension "whiteLabel"
+            applicationIdSuffix ".providuspos"
+        }
         providussoftpos {
             dimension "whiteLabel"
             applicationIdSuffix ".providussoftpos"
@@ -102,10 +104,6 @@ android {
         wemabank {
             dimension "whiteLabel"
             applicationIdSuffix ".wemabank"
-        }
-        fcmb {
-            dimension "whiteLabel"
-            applicationIdSuffix ".fcmb"
         }
         easypay {
             dimension "whiteLabel"
@@ -118,10 +116,6 @@ android {
         easypayfcmb {
             dimension "whiteLabel"
             applicationIdSuffix ".easypayfcmb"
-        }
-        easyfcmb {
-            dimension "whiteLabel"
-            applicationIdSuffix ".easyfcmb"
         }
         zenith {
             dimension "whiteLabel"
@@ -309,5 +303,5 @@ dependencies {
     implementation 'com.google.firebase:firebase-analytics-ktx'
 
     // debugImplementation because LeakCanary should only run in debug builds.
-    debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.11'
+    //   debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.11'
 }
