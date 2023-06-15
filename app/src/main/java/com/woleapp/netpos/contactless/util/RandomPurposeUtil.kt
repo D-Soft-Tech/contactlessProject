@@ -311,9 +311,14 @@ object RandomPurposeUtil {
 
     fun closeSoftKeyboard(context: Context, activity: Activity) {
         activity.currentFocus?.let { view ->
-            val imm = context.getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
+            val imm =
+                context.getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
             imm?.hideSoftInputFromWindow(view.windowToken, 0)
         }
+    }
+
+    fun isLettersOrDigits(chars: String): Boolean {
+        return chars.matches("^[a-zA-Z0-9]*$".toRegex())
     }
 
     fun formatFailedVerveTransRespToExtractIswResponse(transResponse: VerveTransactionResponse): VerveTransactionResponse {
@@ -365,11 +370,10 @@ object RandomPurposeUtil {
         var partnerID = ""
         val bankList = mapOf(
             "firstbank" to "7FD43DF1-633F-4250-8C6F-B49DBB9650EA",
-            "fcmb" to "1B0E68FD-7676-4F2C-883D-3931C3564190",
             "easypay" to "1B0E68FD-7676-4F2C-883D-3931C3564190",
             "fcmbeasypay" to "1B0E68FD-7676-4F2C-883D-3931C3564190",
             "easypayfcmb" to "1B0E68FD-7676-4F2C-883D-3931C3564190",
-            "easyfcmb" to "1B0E68FD-7676-4F2C-883D-3931C3564190",
+            "providuspos" to "8B26F328-040F-4F27-A5BC-4414AB9D1EFA",
             "providus" to "8B26F328-040F-4F27-A5BC-4414AB9D1EFA",
             "providussoftpos" to "8B26F328-040F-4F27-A5BC-4414AB9D1EFA",
             "wemabank" to "1E3D050B-6995-495F-982A-0511114959C8",

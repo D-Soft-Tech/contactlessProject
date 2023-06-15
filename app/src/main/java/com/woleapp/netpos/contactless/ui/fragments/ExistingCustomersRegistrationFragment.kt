@@ -2,6 +2,7 @@ package com.woleapp.netpos.contactless.ui.fragments
 
 import android.app.AlertDialog
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -27,6 +28,7 @@ import com.woleapp.netpos.contactless.util.*
 import com.woleapp.netpos.contactless.util.AppConstants.SAVED_ACCOUNT_NUM_SIGNED_UP
 import com.woleapp.netpos.contactless.util.RandomPurposeUtil.alertDialog
 import com.woleapp.netpos.contactless.util.RandomPurposeUtil.getDeviceId
+import com.woleapp.netpos.contactless.util.RandomPurposeUtil.isLettersOrDigits
 import com.woleapp.netpos.contactless.util.RandomPurposeUtil.observeServerResponse
 import com.woleapp.netpos.contactless.viewmodels.ContactlessRegViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -160,10 +162,10 @@ class ExistingCustomersRegistrationFragment : BaseFragment() {
     }
 
     private fun initPartnerID() {
-        val bankList = mapOf("firstbank" to "7FD43DF1-633F-4250-8C6F-B49DBB9650EA", "fcmb" to "1B0E68FD-7676-4F2C-883D-3931C3564190",
+        val bankList = mapOf("firstbank" to "7FD43DF1-633F-4250-8C6F-B49DBB9650EA",
             "easypay" to "1B0E68FD-7676-4F2C-883D-3931C3564190",
-            "fcmbeasypay" to "1B0E68FD-7676-4F2C-883D-3931C3564190", "easyfcmb" to "1B0E68FD-7676-4F2C-883D-3931C3564190",
-            "providus" to "8B26F328-040F-4F27-A5BC-4414AB9D1EFA", "providussoftpos" to "8B26F328-040F-4F27-A5BC-4414AB9D1EFA",
+            "fcmbeasypay" to "1B0E68FD-7676-4F2C-883D-3931C3564190",
+            "providuspos" to "8B26F328-040F-4F27-A5BC-4414AB9D1EFA","providus" to "8B26F328-040F-4F27-A5BC-4414AB9D1EFA", "providussoftpos" to "8B26F328-040F-4F27-A5BC-4414AB9D1EFA",
             "wemabank" to "1E3D050B-6995-495F-982A-0511114959C8", "zenith" to "3D9B3E2D-5171-4D6A-99CC-E2799D16DD56",
         )
 
@@ -226,7 +228,7 @@ class ExistingCustomersRegistrationFragment : BaseFragment() {
             }
             else -> {
                 if (validateSignUpFieldsOnTextChange()) {
-                    if (BuildConfig.FLAVOR.contains("providus") || BuildConfig.FLAVOR.contains("providussoftpos")) {
+                    if (BuildConfig.FLAVOR.contains("providuspos") || BuildConfig.FLAVOR.contains("providus") || BuildConfig.FLAVOR.contains("providussoftpos")) {
                         activity?.getFragmentManager()?.popBackStack()
                         val dialogView: View = LayoutInflater.from(requireContext())
                             .inflate(R.layout.dialog_terms_and_conditions, null)
@@ -236,15 +238,11 @@ class ExistingCustomersRegistrationFragment : BaseFragment() {
 
                         val alertDialog: AlertDialog = dialogBuilder.create()
                         alertDialog.show()
-                        if (BuildConfig.FLAVOR.contains("providus") || BuildConfig.FLAVOR.contains("providussoftpos")) {
+                        if (BuildConfig.FLAVOR.contains("providuspos") || BuildConfig.FLAVOR.contains("providus") || BuildConfig.FLAVOR.contains("providussoftpos")) {
                             dialogView.pdf.fromAsset("providus.pdf").load()
-                        } else if (BuildConfig.FLAVOR.contains("fcmb")) {
-                            dialogView.pdf.fromAsset("qlick.pdf").load()
                         } else if (BuildConfig.FLAVOR.contains("easypay")) {
                             dialogView.pdf.fromAsset("qlick.pdf").load()
                         } else if (BuildConfig.FLAVOR.contains("fcmbeasypay")) {
-                            dialogView.pdf.fromAsset("qlick.pdf").load()
-                        } else if (BuildConfig.FLAVOR.contains("easyfcmb")) {
                             dialogView.pdf.fromAsset("qlick.pdf").load()
                         } else if (BuildConfig.FLAVOR.contains("easypayfcmb")) {
                             dialogView.pdf.fromAsset("qlick.pdf").load()
@@ -395,11 +393,19 @@ class ExistingCustomersRegistrationFragment : BaseFragment() {
                 branch_name = listOfBranches,
                 phoneNumber = phoneNumber.text.toString().trim(),
             )
-            viewModel.registerExistingAccountForFBN(
-                existingAccountRegReq,
-                partnerId = partnerID,
-                deviceSerialId = deviceSerialID,
-            )
+            if (isLettersOrDigits(passwordView.text.toString().trim())){
+                showToast("Password should contain small letters, capital letters and special characters")
+                return
+            }
+            if (passwordView.text.toString().trim().length < 8){
+                showToast("Password should be more than seven characters")
+                return
+            }
+                viewModel.registerExistingAccountForFBN(
+                    existingAccountRegReq,
+                    partnerId = partnerID,
+                    deviceSerialId = deviceSerialID,
+                )
         }else{
             val existingAccountRegReq = ExistingAccountRegisterRequest(
                 accountNumber = actNumber,

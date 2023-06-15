@@ -31,8 +31,10 @@ import com.woleapp.netpos.contactless.ui.activities.MainActivity
 import com.woleapp.netpos.contactless.util.*
 import com.woleapp.netpos.contactless.util.AppConstants.RESET_USERNAME
 import com.woleapp.netpos.contactless.util.RandomPurposeUtil.alertDialog
+import com.woleapp.netpos.contactless.util.RandomPurposeUtil.closeSoftKeyboard
 import com.woleapp.netpos.contactless.util.RandomPurposeUtil.getDeviceId
 import com.woleapp.netpos.contactless.util.RandomPurposeUtil.initPartnerId
+import com.woleapp.netpos.contactless.util.RandomPurposeUtil.isLettersOrDigits
 import com.woleapp.netpos.contactless.util.RandomPurposeUtil.observeServerResponse
 import com.woleapp.netpos.contactless.viewmodels.AuthViewModel
 import com.woleapp.netpos.contactless.viewmodels.ContactlessRegViewModel
@@ -115,10 +117,10 @@ class LoginFragment : BaseFragment() {
         }
 
         binding.register.setOnClickListener {
-            if (BuildConfig.FLAVOR.contains("firstbank") || BuildConfig.FLAVOR.contains("providus") || BuildConfig.FLAVOR.contains("providussoftpos") ||
-                BuildConfig.FLAVOR.contains("wemabank") || BuildConfig.FLAVOR.contains("fcmb") ||
+            if (BuildConfig.FLAVOR.contains("firstbank") || BuildConfig.FLAVOR.contains("providuspos") || BuildConfig.FLAVOR.contains("providus") || BuildConfig.FLAVOR.contains("providussoftpos") ||
+                BuildConfig.FLAVOR.contains("wemabank") ||
                 BuildConfig.FLAVOR.contains("easypay") || BuildConfig.FLAVOR.contains("fcmbeasypay") ||
-                BuildConfig.FLAVOR.contains("easypayfcmb") || BuildConfig.FLAVOR.contains("easyfcmb") ||
+                BuildConfig.FLAVOR.contains("easypayfcmb") ||
                 BuildConfig.FLAVOR.contains("zenith")
             ) {
                 showFragment(
@@ -261,6 +263,7 @@ class LoginFragment : BaseFragment() {
             }
 
             confirmOTPBinding.btnResetPassword.setOnClickListener {
+                activity?.getFragmentManager()?.popBackStack()
                 if (confirmOTPBinding.fragmentOtp.isVisible){
                     val email = confirmOTPBinding.etEmail.text?.trim().toString()
                     val otp = confirmOTPBinding.otp.text?.trim().toString()
@@ -288,6 +291,7 @@ class LoginFragment : BaseFragment() {
                     val payload = JsonObject().apply {
                         addProperty("email", email)
                     }
+         //           closeSoftKeyboard(requireContext(), this.requireActivity())
                     contactlessViewModel.resetPassword(payload, initPartnerId(), deviceId)
                     observeServerResponse(contactlessViewModel.resetPasswordResponse, loader, requireActivity().supportFragmentManager){
                         confirmOTPBinding.etEmail.setText(email)

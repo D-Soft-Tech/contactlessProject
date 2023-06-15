@@ -44,9 +44,8 @@ class RegistrationViewModel : ViewModel() {
 
 
     fun register(context:Context, bank: String, deviceSerialId: String) {
-        if (BuildConfig.FLAVOR.contains("providus") || BuildConfig.FLAVOR.contains("providussoftpos") ||
-            BuildConfig.FLAVOR.contains("fcmb")|| BuildConfig.FLAVOR.contains("fcmbeasypay")||
-            BuildConfig.FLAVOR.contains("easyfcmb")||
+        if (BuildConfig.FLAVOR.contains("providuspos") ||BuildConfig.FLAVOR.contains("providus") || BuildConfig.FLAVOR.contains("providussoftpos") ||
+            BuildConfig.FLAVOR.contains("fcmbeasypay")||
             BuildConfig.FLAVOR.contains("easypayfcmb")||
             BuildConfig.FLAVOR.contains("easypay")) {
 //            activity?.getFragmentManager()?.popBackStack()
@@ -62,15 +61,11 @@ class RegistrationViewModel : ViewModel() {
 
                 val alertDialog: AlertDialog = dialogBuilder.create()
                 alertDialog.show()
-                if (BuildConfig.FLAVOR.contains("providus") || BuildConfig.FLAVOR.contains("providussoftpos")) {
+                if (BuildConfig.FLAVOR.contains("providuspos") ||BuildConfig.FLAVOR.contains("providus") || BuildConfig.FLAVOR.contains("providussoftpos")) {
                     dialogView.pdf.fromAsset("providus.pdf").load()
-                } else if (BuildConfig.FLAVOR.contains("fcmb")) {
-                    dialogView.pdf.fromAsset("qlick.pdf").load()
                 } else if (BuildConfig.FLAVOR.contains("easypay")) {
                     dialogView.pdf.fromAsset("qlick.pdf").load()
                 }else if (BuildConfig.FLAVOR.contains("fcmbeasypay")) {
-                    dialogView.pdf.fromAsset("qlick.pdf").load()
-                }else if (BuildConfig.FLAVOR.contains("easyfcmb")) {
                     dialogView.pdf.fromAsset("qlick.pdf").load()
                 }else if (BuildConfig.FLAVOR.contains("easypayfcmb")) {
                     dialogView.pdf.fromAsset("qlick.pdf").load()

@@ -113,9 +113,9 @@ class NewOrExistingFragment : BaseFragment() {
     }
 
     private fun initPartnerID() {
-        val bankList = mutableMapOf("firstbank" to "7FD43DF1-633F-4250-8C6F-B49DBB9650EA", "fcmb" to "1B0E68FD-7676-4F2C-883D-3931C3564190", "easypay" to "1B0E68FD-7676-4F2C-883D-3931C3564190",
-            "fcmbeasypay" to "1B0E68FD-7676-4F2C-883D-3931C3564190", "easypayfcmb" to "1B0E68FD-7676-4F2C-883D-3931C3564190","easyfcmb" to "1B0E68FD-7676-4F2C-883D-3931C3564190",
-            "providus" to "8B26F328-040F-4F27-A5BC-4414AB9D1EFA", "providussoftpos" to "8B26F328-040F-4F27-A5BC-4414AB9D1EFA",
+        val bankList = mutableMapOf("firstbank" to "7FD43DF1-633F-4250-8C6F-B49DBB9650EA", "easypay" to "1B0E68FD-7676-4F2C-883D-3931C3564190",
+            "fcmbeasypay" to "1B0E68FD-7676-4F2C-883D-3931C3564190", "easypayfcmb" to "1B0E68FD-7676-4F2C-883D-3931C3564190",
+            "providuspos" to "8B26F328-040F-4F27-A5BC-4414AB9D1EFA", "providus" to "8B26F328-040F-4F27-A5BC-4414AB9D1EFA", "providussoftpos" to "8B26F328-040F-4F27-A5BC-4414AB9D1EFA",
             "wemabank" to "1E3D050B-6995-495F-982A-0511114959C8", "zenith" to "3D9B3E2D-5171-4D6A-99CC-E2799D16DD56",
         )
 
