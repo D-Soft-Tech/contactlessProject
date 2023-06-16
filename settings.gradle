@@ -20,4 +20,3 @@ dependencyResolutionManagement {
 //include ':netpossdk'
 rootProject.name='NetPOS for Droid'
 include ':app'
-include ':app', ':netposbarcodesdk'

@@ -38,7 +38,6 @@ import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.navigation.NavigationBarView
 import com.google.firebase.messaging.FirebaseMessaging
 import com.google.gson.Gson
-import com.netpluspay.netposbarcodesdk.RESULT_CODE_TEXT
 import com.pixplicity.easyprefs.library.Prefs
 import com.visa.app.ttpkernel.ContactlessKernel
 import com.woleapp.netpos.contactless.BuildConfig
@@ -306,32 +305,32 @@ class MainActivity : AppCompatActivity(), EasyPermissions.PermissionCallbacks,
                 qrData?.let { it1 -> formatPinAndSendToServer(it, amountToPayInDouble, it1) }
             }
         }
-
-        resultLauncher =
-            registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-                if (result.resultCode == Activity.RESULT_OK) {
-                    val data: Intent? = result.data
-                    data?.let {
-                        if (it.hasExtra(RESULT_CODE_TEXT)) {
-                            val text = it.getStringExtra(RESULT_CODE_TEXT)
-                            Toast.makeText(
-                                this,
-                                getString(R.string.qr_scanned),
-                                Toast.LENGTH_SHORT,
-                            ).show()
-                            text?.let { qrCardData ->
-                                val qrReadResult =
-                                    Gson().fromJson(qrCardData, QrCardReadResultModel::class.java)
-                                val scannedData =
-                                    QrScannedDataModel(card_scheme = "", qrReadResult.data)
-//                                showAmountDialog(qrReadResult.data)
-                            }
-                        }
-                    }
-                } else {
-                    Toast.makeText(this, "scan failed", Toast.LENGTH_SHORT).show()
-                }
-            }
+//
+//        resultLauncher =
+//            registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+//                if (result.resultCode == Activity.RESULT_OK) {
+//                    val data: Intent? = result.data
+//                    data?.let {
+//                        if (it.hasExtra(RESULT_CODE_TEXT)) {
+//                            val text = it.getStringExtra(RESULT_CODE_TEXT)
+//                            Toast.makeText(
+//                                this,
+//                                getString(R.string.qr_scanned),
+//                                Toast.LENGTH_SHORT,
+//                            ).show()
+//                            text?.let { qrCardData ->
+//                                val qrReadResult =
+//                                    Gson().fromJson(qrCardData, QrCardReadResultModel::class.java)
+//                                val scannedData =
+//                                    QrScannedDataModel(card_scheme = "", qrReadResult.data)
+////                                showAmountDialog(qrReadResult.data)
+//                            }
+//                        }
+//                    }
+//                } else {
+//                    Toast.makeText(this, "scan failed", Toast.LENGTH_SHORT).show()
+//                }
+//            }
         alertDialog = AlertDialog.Builder(this).run {
             setCancelable(false)
             title = "Message"
