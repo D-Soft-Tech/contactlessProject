@@ -10,9 +10,8 @@ buildscript {
         pin_view = "1.4.4"
     }
     repositories {
-        mavenLocal()
         google()
-        jcenter()
+        mavenCentral()
         gradlePluginPortal()
 
     }
@@ -27,17 +26,17 @@ buildscript {
     }
 }
 
-allprojects {
-    repositories {
-        mavenLocal()
-        google()
-        jcenter()
-        maven { url 'https://jitpack.io' }
+//allprojects {
+//    repositories {
+//        mavenCentral()
+//        google()
 //        maven {
-//            url "https://repo.eclipse.org/content/repositories/paho-snapshots/"
+//            url "https://jitpack.io"
+//            credentials { username "jp_iu426m6k793tts6nisfjg8at42" }
+//
 //        }
-    }
-}
+//    }
+//}
 
 task clean(type: Delete) {
     delete rootProject.buildDir
