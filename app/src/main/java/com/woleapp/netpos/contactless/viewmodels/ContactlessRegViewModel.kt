@@ -12,12 +12,10 @@ import com.woleapp.netpos.contactless.util.Event
 import com.woleapp.netpos.contactless.util.Resource
 import com.woleapp.netpos.contactless.util.Singletons.gson
 import dagger.hilt.android.lifecycle.HiltViewModel
-import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import retrofit2.HttpException
-import retrofit2.Response
 import timber.log.Timber
 import javax.inject.Inject
 

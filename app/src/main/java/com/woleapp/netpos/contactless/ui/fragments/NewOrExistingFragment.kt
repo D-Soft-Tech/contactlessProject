@@ -16,6 +16,7 @@ import com.woleapp.netpos.contactless.databinding.FragmentNewOrExistingBinding
 import com.woleapp.netpos.contactless.model.FBNState
 import com.woleapp.netpos.contactless.util.RandomPurposeUtil
 import com.woleapp.netpos.contactless.util.RandomPurposeUtil.getDeviceId
+import com.woleapp.netpos.contactless.util.RandomPurposeUtil.initPartnerId
 import com.woleapp.netpos.contactless.util.RandomPurposeUtil.observeServerResponse
 import com.woleapp.netpos.contactless.viewmodels.ContactlessRegViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -43,7 +44,7 @@ class NewOrExistingFragment : BaseFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        initPartnerID()
+        newPartnerId = initPartnerId()
         deviceSerialID = getDeviceId(requireContext()).toString()
         viewModel.message.observe(viewLifecycleOwner) {
             it.getContentIfNotHandled()?.let { message ->
@@ -88,7 +89,7 @@ class NewOrExistingFragment : BaseFragment() {
                         Toast.LENGTH_SHORT,
                     ).show()
                 } else {
-                    if (BuildConfig.FLAVOR.contains("firstbank")){
+                    if (BuildConfig.FLAVOR.contains("firstbank") || BuildConfig.FLAVOR.contains("zenith")){
                         viewModel.findAccountForFirstBankUser(account, newPartnerId, deviceSerialID)
                         observeServerResponse(viewModel.firstBankAccountNumberResponse, loader, requireActivity().supportFragmentManager){
                             showFragment(
@@ -112,19 +113,4 @@ class NewOrExistingFragment : BaseFragment() {
         }
     }
 
-    private fun initPartnerID() {
-        val bankList = mutableMapOf("firstbank" to "7FD43DF1-633F-4250-8C6F-B49DBB9650EA", "easypay" to "1B0E68FD-7676-4F2C-883D-3931C3564190",
-            "fcmbeasypay" to "1B0E68FD-7676-4F2C-883D-3931C3564190", "easypayfcmb" to "1B0E68FD-7676-4F2C-883D-3931C3564190",
-            "providuspos" to "8B26F328-040F-4F27-A5BC-4414AB9D1EFA", "providus" to "8B26F328-040F-4F27-A5BC-4414AB9D1EFA", "providussoftpos" to "8B26F328-040F-4F27-A5BC-4414AB9D1EFA",
-            "wemabank" to "1E3D050B-6995-495F-982A-0511114959C8", "zenith" to "3D9B3E2D-5171-4D6A-99CC-E2799D16DD56",
-        )
-
-        for (element in bankList) {
-            if (element.key == BuildConfig.FLAVOR) {
-                Timber.d("ACCOUNTBANK---->${element.value}")
-                newPartnerId = element.value
-                Timber.d("PARTNERID---->$newPartnerId")
-            }
-        }
-    }
 }

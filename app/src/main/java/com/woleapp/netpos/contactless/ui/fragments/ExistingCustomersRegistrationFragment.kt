@@ -1,6 +1,7 @@
 package com.woleapp.netpos.contactless.ui.fragments
 
 import android.app.AlertDialog
+import android.app.DatePickerDialog
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -19,13 +20,11 @@ import com.woleapp.netpos.contactless.R
 import com.woleapp.netpos.contactless.adapter.BranchAdapter
 import com.woleapp.netpos.contactless.adapter.StatesAdapter
 import com.woleapp.netpos.contactless.databinding.FragmentExisitingCustomersRegistrationBinding
-import com.woleapp.netpos.contactless.model.ExistingAccountRegisterRequest
-import com.woleapp.netpos.contactless.model.FBNBranch
-import com.woleapp.netpos.contactless.model.FBNState
-import com.woleapp.netpos.contactless.model.RegistrationForExistingFBNUsersRequest
+import com.woleapp.netpos.contactless.model.*
 import com.woleapp.netpos.contactless.util.AppConstants
 import com.woleapp.netpos.contactless.util.RandomPurposeUtil.alertDialog
 import com.woleapp.netpos.contactless.util.RandomPurposeUtil.getDeviceId
+import com.woleapp.netpos.contactless.util.RandomPurposeUtil.initPartnerId
 import com.woleapp.netpos.contactless.util.RandomPurposeUtil.isLettersOrDigits
 import com.woleapp.netpos.contactless.util.RandomPurposeUtil.observeServerResponse
 import com.woleapp.netpos.contactless.util.showToast
@@ -33,6 +32,7 @@ import com.woleapp.netpos.contactless.util.validatePasswordMismatch
 import com.woleapp.netpos.contactless.viewmodels.ContactlessRegViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.dialog_terms_and_conditions.view.*
+import java.util.*
 
 @AndroidEntryPoint
 class ExistingCustomersRegistrationFragment : BaseFragment() {
@@ -48,6 +48,8 @@ class ExistingCustomersRegistrationFragment : BaseFragment() {
     private lateinit var firstBankStates: AutoCompleteTextView
     private lateinit var firstBankBranches: AutoCompleteTextView
     private lateinit var confirmPasswordView: TextInputEditText
+    private lateinit var bvnView: TextInputEditText
+    private lateinit var referenceView: TextInputEditText
     private lateinit var phoneNumber: TextInputEditText
     private lateinit var submitBtn: Button
     private lateinit var partnerID: String
@@ -73,8 +75,9 @@ class ExistingCustomersRegistrationFragment : BaseFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewModel.getStates()
-        deviceSerialID = getDeviceId(requireContext()).toString()
+
+        partnerID = initPartnerId()
+        deviceSerialID = getDeviceId(requireContext())
         viewModel.registerMessage.observe(viewLifecycleOwner) {
             it.getContentIfNotHandled()?.let { message ->
                 Toast.makeText(requireContext(), message, Toast.LENGTH_LONG).show()
@@ -83,32 +86,31 @@ class ExistingCustomersRegistrationFragment : BaseFragment() {
         if (BuildConfig.FLAVOR.contains("firstbank")) {
             binding.fragmentState.visibility = View.VISIBLE
             binding.fragmentBranch.visibility = View.VISIBLE
+            viewModel.getStates()
+        }
+        if (BuildConfig.FLAVOR.contains("zenith")) {
+            binding.businessName.isFocusableInTouchMode = true
+            binding.contactInfo.isFocusableInTouchMode = true
+            binding.phone.isFocusableInTouchMode = true
+            binding.email.isFocusableInTouchMode = true
         }
         initViews()
-        initPartnerID()
-        val newActNumber =
-            Prefs.getString(AppConstants.SAVED_ACCOUNT_NUM_SIGNED_UP, "")
-        // val phoneNumber = newPoneNumber.replace("^\"|\"$", "")
+        val newActNumber = Prefs.getString(AppConstants.SAVED_ACCOUNT_NUM_SIGNED_UP, "")
         actNumber = newActNumber.substring(1, newActNumber.length - 1)
 
-        val newBusinessName =
-            Prefs.getString(AppConstants.BUSINESS_NAME, "")
+        val newBusinessName = Prefs.getString(AppConstants.BUSINESS_NAME, "")
         val businessName = newBusinessName.substring(1, newBusinessName.length - 1)
 
-        val newBusinessAddress =
-            Prefs.getString(AppConstants.BUSINESS_ADDRESS, "")
+        val newBusinessAddress = Prefs.getString(AppConstants.BUSINESS_ADDRESS, "")
         val businessAddress = newBusinessAddress.substring(1, newBusinessAddress.length - 1)
 
-        val newEmail =
-            Prefs.getString(AppConstants.EMAIL_ADDRESS, "")
+        val newEmail = Prefs.getString(AppConstants.EMAIL_ADDRESS, "")
         val email = newEmail.substring(1, newEmail.length - 1)
 
-        val newPhone =
-            Prefs.getString(AppConstants.PHONE_NUMBER, "")
+        val newPhone = Prefs.getString(AppConstants.PHONE_NUMBER, "")
         val phone = newPhone.substring(1, newPhone.length - 1)
 
-        val newContactInfo =
-            Prefs.getString(AppConstants.FULL_NAME, "")
+        val newContactInfo = Prefs.getString(AppConstants.FULL_NAME, "")
         val contactInfo =
             newContactInfo.substring(1, newContactInfo.length - 1).replace("\\u0026", "&")
 
@@ -131,8 +133,7 @@ class ExistingCustomersRegistrationFragment : BaseFragment() {
 
         firstBankStates.onItemClickListener = object : AdapterView.OnItemClickListener {
             override fun onItemClick(adapterView: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
-                val statesList =
-                    adapterView?.getItemAtPosition(p2) as FBNState
+                val statesList = adapterView?.getItemAtPosition(p2) as FBNState
                 listOfStates = statesList.state
                 viewModel.getBranches(statesList.id, partnerID, deviceSerialID)
             }
@@ -149,33 +150,16 @@ class ExistingCustomersRegistrationFragment : BaseFragment() {
 
         firstBankBranches.onItemClickListener = object : AdapterView.OnItemClickListener {
             override fun onItemClick(adapterView: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
-                val branchList =
-                    adapterView?.getItemAtPosition(p2) as FBNBranch
+                val branchList = adapterView?.getItemAtPosition(p2) as FBNBranch
                 listOfBranches = branchList.branch_name
-                //    binding.address.setText(branchList.address)
             }
         }
 
         submitBtn.setOnClickListener {
-            register()
-        }
-    }
-
-    private fun initPartnerID() {
-        val bankList = mapOf(
-            "firstbank" to "7FD43DF1-633F-4250-8C6F-B49DBB9650EA",
-            "easypay" to "1B0E68FD-7676-4F2C-883D-3931C3564190",
-            "fcmbeasypay" to "1B0E68FD-7676-4F2C-883D-3931C3564190",
-            "providuspos" to "8B26F328-040F-4F27-A5BC-4414AB9D1EFA",
-            "providus" to "8B26F328-040F-4F27-A5BC-4414AB9D1EFA",
-            "providussoftpos" to "8B26F328-040F-4F27-A5BC-4414AB9D1EFA",
-            "wemabank" to "1E3D050B-6995-495F-982A-0511114959C8",
-            "zenith" to "3D9B3E2D-5171-4D6A-99CC-E2799D16DD56",
-        )
-
-        for (element in bankList) {
-            if (element.key == BuildConfig.FLAVOR) {
-                partnerID = element.value
+            if (BuildConfig.FLAVOR.contains("firstbank")) {
+                registerForFBN()
+            } else {
+                register()
             }
         }
     }
@@ -191,11 +175,12 @@ class ExistingCustomersRegistrationFragment : BaseFragment() {
             firstBankBranches = branch
             confirmPasswordView = confirmPassword
             phoneNumber = phone
-            submitBtn = btnLogin
+            submitBtn = btnSubmit
         }
     }
 
-    private fun register() {
+
+    private fun registerForFBN() {
         when {
             businessNameView.text.toString().isEmpty() -> {
                 showToast(getString(R.string.all_please_enter_business_name))
@@ -220,6 +205,43 @@ class ExistingCustomersRegistrationFragment : BaseFragment() {
             }
             firstBankBranches.text.toString().isEmpty() -> {
                 showToast(getString(R.string.select_your_branch))
+            }
+            confirmPasswordView.text.toString().isEmpty() -> {
+                showToast(getString(R.string.all_please_enter_confirm_password))
+            }
+            !validatePasswordMismatch(
+                passwordView.text.toString(),
+                confirmPasswordView.text.toString(),
+            ) -> {
+                showToast(getString(R.string.all_password_mismatch))
+            }
+            else -> {
+                if (validateSignUpFieldsOnTextChange()) {
+                    registerExistingCustomer()
+                }
+            }
+        }
+    }
+
+    private fun register() {
+        when {
+            businessNameView.text.toString().isEmpty() -> {
+                showToast(getString(R.string.all_please_enter_business_name))
+            }
+            contactName.text.toString().isEmpty() -> {
+                showToast(getString(R.string.all_please_enter_full_name))
+            }
+            addressView.text.toString().isEmpty() -> {
+                showToast(getString(R.string.all_please_enter_location))
+            }
+            phoneNumber.text.toString().isEmpty() -> {
+                showToast(getString(R.string.all_please_enter_phone_number))
+            }
+            emailView.text.toString().isEmpty() -> {
+                showToast(getString(R.string.all_please_enter_email_address))
+            }
+            passwordView.text.toString().isEmpty() -> {
+                showToast(getString(R.string.hint_enter_password))
             }
             confirmPasswordView.text.toString().isEmpty() -> {
                 showToast(getString(R.string.all_please_enter_confirm_password))
@@ -312,8 +334,7 @@ class ExistingCustomersRegistrationFragment : BaseFragment() {
         emailView.doOnTextChanged { _, _, _, _ ->
             when {
                 emailView.text.toString().trim().isEmpty() -> {
-                    binding.emailField.error =
-                        getString(R.string.all_please_enter_email_address)
+                    binding.emailField.error = getString(R.string.all_please_enter_email_address)
                     isValidated = false
                 }
                 else -> {
@@ -325,8 +346,7 @@ class ExistingCustomersRegistrationFragment : BaseFragment() {
         firstBankStates.doOnTextChanged { _, _, _, _ ->
             when {
                 firstBankStates.text.toString().trim().isEmpty() -> {
-                    binding.fragmentState.error =
-                        getString(R.string.select_your_state)
+                    binding.fragmentState.error = getString(R.string.select_your_state)
                     isValidated = false
                 }
                 else -> {
@@ -338,8 +358,7 @@ class ExistingCustomersRegistrationFragment : BaseFragment() {
         firstBankBranches.doOnTextChanged { _, _, _, _ ->
             when {
                 firstBankBranches.text.toString().trim().isEmpty() -> {
-                    binding.fragmentBranch.error =
-                        getString(R.string.select_your_branch)
+                    binding.fragmentBranch.error = getString(R.string.select_your_branch)
                     isValidated = false
                 }
                 else -> {
@@ -351,8 +370,7 @@ class ExistingCustomersRegistrationFragment : BaseFragment() {
         binding.password.doOnTextChanged { _, _, _, _ ->
             when {
                 binding.password.text.toString().trim().isEmpty() -> {
-                    binding.passwordField.error =
-                        getString(R.string.all_please_enter_password)
+                    binding.passwordField.error = getString(R.string.all_please_enter_password)
                     binding.passwordField.errorIconDrawable = null
                     isValidated = false
                 }
@@ -367,18 +385,15 @@ class ExistingCustomersRegistrationFragment : BaseFragment() {
                 binding.confirmPassword.text.toString().trim().isEmpty() -> {
                     binding.confirmPasswordField.error =
                         getString(R.string.all_please_enter_confirm_password)
-                    binding.confirmPasswordField.errorIconDrawable =
-                        null
+                    binding.confirmPasswordField.errorIconDrawable = null
                     isValidated = false
                 }
                 !validatePasswordMismatch(
                     binding.password.text.toString().trim(),
                     binding.confirmPassword.text.toString().trim(),
                 ) -> {
-                    binding.confirmPasswordField.error =
-                        getString(R.string.all_password_mismatch)
-                    binding.confirmPasswordField.errorIconDrawable =
-                        null
+                    binding.confirmPasswordField.error = getString(R.string.all_password_mismatch)
+                    binding.confirmPasswordField.errorIconDrawable = null
                     isValidated = false
                 }
                 else -> {
@@ -444,4 +459,5 @@ class ExistingCustomersRegistrationFragment : BaseFragment() {
             )
         }
     }
+
 }

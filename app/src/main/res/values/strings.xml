@@ -3,6 +3,7 @@
     <string name="username">Username</string>
     <string name="login">Login</string>
     <string name="select_your_state">Select your state</string>
+    <string name="select_your_dob">Select your Date of Birth</string>
     <string name="select_your_branch">Select your branch</string>
     <string name="hint_enter_password">Enter password</string>
     <string name="forgot_password">Forgot Password?</string>
@@ -105,6 +106,8 @@
     <string name="enter_smart_card_number">SmartCard Number</string>
     <string name="enter_meter_number">Meter Number</string>
     <string name="enter_email_address">Email Address (username)</string>
+    <string name="reference">Reference</string>
+    <string name="bvn">Bank Verification Number</string>
     <string name="service_asset">Service Asset</string>
     <string name="bills">BILLS</string>
     <string name="scan_to_pay">Scan to Pay</string>
@@ -214,9 +217,13 @@ Nullam purus nulla, elementum nec tempor eget, rutrum et risus. Nullam ut suscip
     <string name="all_please_enter_business_name">Please Enter Business Name</string>
     <string name="all_please_enter_amount">Please Enter Amount</string>
     <string name="all_please_enter_full_name">Please Enter Full Name</string>
+    <string name="all_please_enter_first_name">Please Enter First Name</string>
+    <string name="all_please_enter_last_name">Please Enter Last Name</string>
     <string name="all_please_enter_location">Please Enter Your Location</string>
     <string name="all_please_enter_phone_number">Please Enter your Phone Number</string>
     <string name="all_please_enter_email_address">Please Enter your Email address</string>
+    <string name="all_please_enter_reference">Please Enter your Reference</string>
+    <string name="all_please_enter_bvn">Please Enter your BVN</string>
     <string name="all_please_enter_password">Please Enter Password</string>
     <string name="all_please_enter_confirm_password">Please re-enter your password</string>
     <!--    <string name="invalid_phone_number">Invalid Phone number</string>-->

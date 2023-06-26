@@ -26,14 +26,15 @@ class RegistrationViewModel : ViewModel() {
     private val contactlessService = ContactlessClient.getContactlessService()
     private val disposable = CompositeDisposable()
 
-
     val registrationModel: MutableLiveData<RegistrationModel> = MutableLiveData(
         RegistrationModel()
     )
     val registrationFBNModel: MutableLiveData<RegistrationFBNModel> = MutableLiveData(
         RegistrationFBNModel()
     )
-
+    val registrationZenithModel: MutableLiveData<RegistrationZenithModel> = MutableLiveData(
+        RegistrationZenithModel()
+    )
     private val _message = MutableLiveData<Event<String>>()
     private val _authDone = MutableLiveData<Event<Boolean>>()
     val authDone: LiveData<Event<Boolean>>
@@ -82,6 +83,13 @@ class RegistrationViewModel : ViewModel() {
                     return
                 }else{
                     regFBN(bank, deviceSerialId)
+                }
+            } else if (BuildConfig.FLAVOR.contains("zenith")){
+                if (registrationZenithModel.value?.allFieldsFilledZenith() == false) {
+                    _message.value = Event("All fields are required")
+                    return
+                }else{
+                    regZenith(bank, deviceSerialId)
                 }
             }else{
                 if (registrationModel.value?.allFieldsFilled() == false) {
@@ -158,6 +166,33 @@ class RegistrationViewModel : ViewModel() {
             .subscribe { t1, t2 ->
                 t1?.let {
                     registrationFBNModel.value = RegistrationFBNModel()
+                    _authDone.value = Event(true)
+                }
+                t2?.let {
+                    val errorMessage = try {
+                        Singletons.gson.fromJson(
+                            it.getResponseBody(),
+                            RegistrationError::class.java
+                        ).message
+                    } catch (e: Exception) {
+                        "an error occurred during registration, try again or contact support"
+                    }
+                    _message.value =
+                        Event(errorMessage)
+                }
+            }.disposeWith(disposable)
+    }
+    private fun regZenith(bank: String, deviceSerialId: String){
+        authInProgress.value = true
+        contactlessService.registerExistingAccountForZenith(registrationZenithModel.value, bank, deviceSerialId)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .doFinally {
+                authInProgress.value = false
+            }
+            .subscribe { t1, t2 ->
+                t1?.let {
+                    registrationZenithModel.value = RegistrationZenithModel()
                     _authDone.value = Event(true)
                 }
                 t2?.let {

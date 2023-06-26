@@ -242,19 +242,127 @@
             </com.google.android.material.textfield.TextInputLayout>
 
 
-            <Button
-                android:id="@+id/btn_login"
-                android:layout_width="wrap_content"
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/bvn_field"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:hint="@string/bvn"
+            app:errorEnabled="true"
+            android:visibility="gone"
+            app:errorTextColor="@color/colorError"
+            android:textColorHint="@android:color/black"
+            app:layout_constraintEnd_toEndOf="@id/email_field"
+            app:layout_constraintStart_toStartOf="@id/email_field"
+            app:layout_constraintTop_toBottomOf="@+id/email_field">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/bvn"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:paddingHorizontal="48dp"
-                android:text="@string/submit"
-                android:textAllCaps="true"
-                android:textColor="@android:color/white"
-                app:buttonInProgress="@{viewmodel.authInProgress}"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/email_field" />
+                android:background="@drawable/edittext_bg"
+                android:drawablePadding="8dp"
+                android:inputType="number"
+                android:singleLine="true"
+                android:textColor="@android:color/black"
+                android:textColorHint="@android:color/black"
+                android:textSize="15sp"
+                tools:text="" />
+        </com.google.android.material.textfield.TextInputLayout>
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/reference_field"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:hint="@string/reference"
+            app:errorEnabled="true"
+            android:visibility="gone"
+            app:errorTextColor="@color/colorError"
+            android:textColorHint="@android:color/black"
+            app:layout_constraintEnd_toEndOf="@id/email_field"
+            app:layout_constraintStart_toStartOf="@id/email_field"
+            app:layout_constraintTop_toBottomOf="@+id/bvn_field">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/reference"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/edittext_bg"
+                android:drawablePadding="8dp"
+                android:singleLine="true"
+                android:inputType="number"
+                android:textColor="@android:color/black"
+                android:textColorHint="@android:color/black"
+                android:textSize="15sp"
+                tools:text=""/>
+        </com.google.android.material.textfield.TextInputLayout>
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/password_field"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:hint="@string/password"
+            app:errorEnabled="true"
+            android:visibility="gone"
+            app:passwordToggleEnabled="true"
+            app:errorTextColor="@color/colorError"
+            android:textColorHint="@android:color/black"
+            app:layout_constraintEnd_toEndOf="@id/email_field"
+            app:layout_constraintStart_toStartOf="@id/email_field"
+            app:layout_constraintTop_toBottomOf="@+id/reference_field">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/password"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/edittext_bg"
+                android:drawablePadding="8dp"
+                android:inputType="textPassword"
+                android:singleLine="true"
+                android:textColor="@android:color/black"
+                android:textColorHint="@android:color/black"
+                android:textSize="15sp"
+                tools:text="" />
+        </com.google.android.material.textfield.TextInputLayout>
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/confirm_password_field"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:hint="@string/confirm_password"
+            app:errorEnabled="true"
+            android:visibility="gone"
+            app:errorTextColor="@color/colorError"
+            android:textColorHint="@android:color/black"
+            app:passwordToggleEnabled="true"
+            app:layout_constraintEnd_toEndOf="@id/email_field"
+            app:layout_constraintStart_toStartOf="@id/email_field"
+            app:layout_constraintTop_toBottomOf="@+id/password_field">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/confirm_password"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/edittext_bg"
+                android:drawablePadding="8dp"
+                android:inputType="textPassword"
+                android:singleLine="true"
+                android:textColor="@android:color/black"
+                android:textColorHint="@android:color/black"
+                android:textSize="15sp"
+                tools:text="" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+
+        <Button
+            android:id="@+id/btn_login"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:paddingHorizontal="48dp"
+            android:text="@string/submit"
+            android:textAllCaps="true"
+            android:textColor="@android:color/white"
+            app:buttonInProgress="@{viewmodel.authInProgress}"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/confirm_password_field" />
 
 
             <ProgressBar

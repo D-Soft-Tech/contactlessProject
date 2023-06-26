@@ -3,7 +3,6 @@ package com.woleapp.netpos.contactless.network
 import com.google.gson.JsonObject
 import com.woleapp.netpos.contactless.model.*
 import io.reactivex.Single
-import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.POST
