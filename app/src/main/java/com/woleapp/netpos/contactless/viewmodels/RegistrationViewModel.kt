@@ -48,7 +48,8 @@ class RegistrationViewModel : ViewModel() {
         get() = _message
 
     fun register(context: Context, bank: String, deviceSerialId: String) {
-        if (BuildConfig.FLAVOR.contains("providuspos") || BuildConfig.FLAVOR.contains("providus") || BuildConfig.FLAVOR.contains(
+        if (
+            BuildConfig.FLAVOR.contains("providuspos") || BuildConfig.FLAVOR.contains("providus") || BuildConfig.FLAVOR.contains(
                 "providussoftpos",
             ) ||
             BuildConfig.FLAVOR.contains("fcmbeasypay") ||
@@ -116,12 +117,6 @@ class RegistrationViewModel : ViewModel() {
         disposable.clear()
     }
 
-    //    fun setSelectedBank(s: String) {
-//        registrationModel.value = registrationModel.value?.apply {
-//            Log.d("BANK", s)
-//            bank = s
-//        }
-//    }
     fun setSelectedState(data: String) {
         registrationFBNModel.value = registrationFBNModel.value?.apply {
             state = data
