@@ -1,7 +1,6 @@
 package com.woleapp.netpos.contactless.util
 
 import com.danbamitale.epmslib.entities.*
-import com.danbamitale.epmslib.entities.*
 import com.dsofttech.dprefs.utils.DPrefs
 import com.google.gson.Gson
 import com.woleapp.netpos.contactless.model.ConfigurationData
@@ -52,11 +51,11 @@ object Singletons {
         return ConnectionData(
             UtilityParam.TEST_IP,
             UtilityParam.TEST_PORT.toInt(),
-            true
+            true,
         )
     }
 
-    val keyHolder = if (DPrefs.getString(PREF_KEYHOLDER).isNotEmpty()) {
+    private val keyHolder = if (DPrefs.getString(PREF_KEYHOLDER).isNotEmpty()) {
         DPrefs.getString(
             PREF_KEYHOLDER,
         )

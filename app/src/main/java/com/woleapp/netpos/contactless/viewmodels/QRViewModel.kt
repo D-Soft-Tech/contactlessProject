@@ -292,30 +292,30 @@ class QRViewModel : ViewModel() {
 
     private lateinit var dataSourceFactory: ZenithQrMCCDataSourceFactory
 
-    fun getZenithMCC(zenithMCCDto: ZenithMCCDto) {
-        dataSourceFactory = ZenithQrMCCDataSourceFactory(zenithMCCDto, disposable)
-        val networkResourceLiveData: LiveData<Event<NetworkResource>> = Transformations.switchMap(
-            dataSourceFactory.itemLiveDataSource
-        ) {
-            it.networkResource
-        }
-
-        val emptyResultLiveData: LiveData<Event<Boolean>> = Transformations.switchMap(
-            dataSourceFactory.itemLiveDataSource
-        ) {
-            it.emptyResultLiveData
-        }
-
-        val data: LiveData<PagedList<ZenithMerchantCategory>> =
-            LivePagedListBuilder(dataSourceFactory, config).build()
-        _paginationHelper.postValue(
-            PaginationHelper(
-                networkResourceLiveData,
-                emptyResultLiveData,
-                data
-            )
-        )
-    }
+//    fun getZenithMCC(zenithMCCDto: ZenithMCCDto) {
+//        dataSourceFactory = ZenithQrMCCDataSourceFactory(zenithMCCDto, disposable)
+//        val networkResourceLiveData: LiveData<Event<NetworkResource>> = Transformations.switchMap(
+//            dataSourceFactory.itemLiveDataSource
+//        ) {
+//            it.networkResource
+//        }
+//
+//        val emptyResultLiveData: LiveData<Event<Boolean>> = Transformations.switchMap(
+//            dataSourceFactory.itemLiveDataSource
+//        ) {
+//            it.emptyResultLiveData
+//        }
+//
+//        val data: LiveData<PagedList<ZenithMerchantCategory>> =
+//            LivePagedListBuilder(dataSourceFactory, config).build()
+//        _paginationHelper.postValue(
+//            PaginationHelper(
+//                networkResourceLiveData,
+//                emptyResultLiveData,
+//                data
+//            )
+//        )
+//    }
 
     fun textChanged(filter: String) = subject.onNext(filter)
 
@@ -326,7 +326,7 @@ class QRViewModel : ViewModel() {
             .distinctUntilChanged()
             .subscribe {
                 Timber.e(it)
-                getZenithMCC(ZenithMCCDto(it))
+//                getZenithMCC(ZenithMCCDto(it))
             }.disposeWith(disposable)
     }
 

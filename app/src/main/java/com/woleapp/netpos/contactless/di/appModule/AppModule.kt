@@ -1,7 +1,7 @@
 package com.woleapp.netpos.contactless.di.appModule
 
 import com.google.gson.Gson
-import com.woleapp.netpos.contactless.network.*
+import com.woleapp.netpos.contactless.network.* // ktlint-disable no-wildcard-imports
 import com.woleapp.netpos.contactless.util.UtilityParam
 import dagger.Module
 import dagger.Provides

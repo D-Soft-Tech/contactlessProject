@@ -115,7 +115,7 @@ class QrRegistrationFragment : BaseFragment() {
             .create()
         binding.getMCC.setOnClickListener {
             mccAlertDialog.show()
-            viewModel.getZenithMCC(ZenithMCCDto())
+//            viewModel.getZenithMCC(ZenithMCCDto())
         }
         viewModel.loadingStateLiveData.observe(viewLifecycleOwner) { event ->
             event.getContentIfNotHandled()?.let {
