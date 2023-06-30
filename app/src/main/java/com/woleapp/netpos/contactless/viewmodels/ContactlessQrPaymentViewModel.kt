@@ -1,6 +1,7 @@
 package com.woleapp.netpos.contactless.viewmodels
 
 import androidx.lifecycle.ViewModel
+import com.dsofttech.dprefs.utils.DPrefs
 import com.pixplicity.easyprefs.library.Prefs
 import com.woleapp.netpos.contactless.model.PayWithQrRequest
 import com.woleapp.netpos.contactless.network.ContactlessQrPaymentRepository

@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.recyclerview.widget.GridLayoutManager
+import com.dsofttech.dprefs.utils.DPrefs
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.pixplicity.easyprefs.library.Prefs
 import com.woleapp.netpos.contactless.R

@@ -13,6 +13,7 @@ import androidx.core.widget.doOnTextChanged
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.activityViewModels
 import com.dsofttech.dprefs.utils.DPrefs
+import com.github.barteksc.pdfviewer.PDFView
 import com.google.android.material.textfield.TextInputEditText
 import com.pixplicity.easyprefs.library.Prefs
 import com.woleapp.netpos.contactless.BuildConfig
@@ -34,7 +35,6 @@ import com.woleapp.netpos.contactless.util.showToast
 import com.woleapp.netpos.contactless.util.validatePasswordMismatch
 import com.woleapp.netpos.contactless.viewmodels.ContactlessRegViewModel
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.android.synthetic.main.dialog_terms_and_conditions.view.*
 
 @AndroidEntryPoint
 class ExistingCustomersRegistrationFragment : BaseFragment() {
@@ -272,15 +272,15 @@ class ExistingCustomersRegistrationFragment : BaseFragment() {
                                 "providus",
                             ) || BuildConfig.FLAVOR.contains("providussoftpos")
                         ) {
-                            dialogView.pdf.fromAsset("providus.pdf").load()
+                            dialogView.findViewById<PDFView>(R.id.pdf).fromAsset("providus.pdf").load()
                         } else if (BuildConfig.FLAVOR.contains("easypay")) {
-                            dialogView.pdf.fromAsset("qlick.pdf").load()
+                            dialogView.findViewById<PDFView>(R.id.pdf).fromAsset("qlick.pdf").load()
                         } else if (BuildConfig.FLAVOR.contains("fcmbeasypay")) {
-                            dialogView.pdf.fromAsset("qlick.pdf").load()
+                            dialogView.findViewById<PDFView>(R.id.pdf).fromAsset("qlick.pdf").load()
                         } else if (BuildConfig.FLAVOR.contains("easypayfcmb")) {
-                            dialogView.pdf.fromAsset("qlick.pdf").load()
+                            dialogView.findViewById<PDFView>(R.id.pdf).fromAsset("qlick.pdf").load()
                         }
-                        dialogView.accept_button.setOnClickListener {
+                        dialogView.findViewById<Button>(R.id.accept_button).setOnClickListener {
                             alertDialog.dismiss()
                             registerExistingCustomer()
                         }

@@ -1,5 +1,6 @@
 package com.woleapp.netpos.contactless.util
 
+import com.dsofttech.dprefs.utils.DPrefs
 import com.pixplicity.easyprefs.library.Prefs
 import com.woleapp.netpos.contactless.network.NotificationService
 import okhttp3.Interceptor
@@ -53,7 +54,8 @@ class TokenInterceptor : Interceptor {
         var request = chain.request()
         val headersInReq = request.headers
         if (headersInReq["Authorization"].isNullOrEmpty()) {
-            DPrefs.getString(PREF_USER_TOKEN, null)?.let {
+            val stringData = if (DPrefs.getString(PREF_USER_TOKEN).isNotEmpty()) DPrefs.getString(PREF_USER_TOKEN) else null
+            stringData?.let {
                 request = request.newBuilder().addHeader("Authorization", "Bearer $it").build()
             }
         }

@@ -2,8 +2,8 @@ package com.woleapp.netpos.contactless.util
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import com.dsofttech.dprefs.utils.DPrefs
 import com.google.gson.JsonObject
-import com.pixplicity.easyprefs.library.Prefs
 import com.woleapp.netpos.contactless.network.StormApiClient
 import com.woleapp.netpos.contactless.network.StormApiService
 import io.reactivex.Single
@@ -14,11 +14,10 @@ import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
 import retrofit2.HttpException
-import retrofit2.Response
 import timber.log.Timber
 
 fun checkBillsPaymentToken(): Boolean {
-    val billsToken = DPrefs.getString(PREF_BILLS_TOKEN, null)
+    val billsToken = if (DPrefs.getString(PREF_BILLS_TOKEN).isNotEmpty()) DPrefs.getString(PREF_BILLS_TOKEN) else null
     return !(billsToken.isNullOrEmpty() || JWTHelper.isExpired(billsToken))
 }
 
@@ -64,7 +63,13 @@ fun getBillsToken(stormApiService: StormApiService): LiveData<Event<Boolean>> {
 }
 
 fun checkAppToken(): Boolean {
-    val appToken = DPrefs.getString(PREF_USER_TOKEN, null)
+    val appToken = if (DPrefs.getString(PREF_USER_TOKEN).isNotEmpty()) {
+        DPrefs.getString(
+            PREF_USER_TOKEN,
+        )
+    } else {
+        null
+    }
     return !(appToken.isNullOrEmpty() || JWTHelper.isExpired(appToken))
 }
 
@@ -82,7 +87,7 @@ fun getAppToken(stormApiService: StormApiService): Single<Boolean> {
                 } else {
                     DPrefs.putString(PREF_APP_TOKEN, it.token)
                     true
-                }
+                },
             )
         }
 }
@@ -104,7 +109,7 @@ fun sendSMS(
     message: String,
     number: String,
     _smsSent: MutableLiveData<Event<Boolean>>,
-    compositeDisposable: CompositeDisposable
+    compositeDisposable: CompositeDisposable,
 ) {
     val req = if (checkAppToken().not()) {
         Timber.e("app token not found, get it first")

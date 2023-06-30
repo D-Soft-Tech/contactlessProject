@@ -3,8 +3,8 @@ package com.woleapp.netpos.contactless.viewmodels
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.dsofttech.dprefs.utils.DPrefs
 import com.google.gson.JsonObject
-import com.pixplicity.easyprefs.library.Prefs
 import com.woleapp.netpos.contactless.model.*
 import com.woleapp.netpos.contactless.network.ContactlessRegRepository
 import com.woleapp.netpos.contactless.util.AppConstants
@@ -21,7 +21,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ContactlessRegViewModel @Inject constructor(
-    private val contactlessRegRepo: ContactlessRegRepository
+    private val contactlessRegRepo: ContactlessRegRepository,
 ) : ViewModel() {
     private val disposable = CompositeDisposable()
 
@@ -102,12 +102,12 @@ class ContactlessRegViewModel @Inject constructor(
                                         ?: "Error"
                                 } catch (e: Exception) {
                                     "Error"
-                                }
+                                },
                             )
-                            //Timber.e("SHOWME--->$errorMessage")
+                            // Timber.e("SHOWME--->$errorMessage")
                         }
                     }
-                }
+                },
         )
     }
     fun findAccountForFirstBankUser(accountNumber: String, partnerId: String, deviceSerialId: String) {
@@ -139,16 +139,16 @@ class ContactlessRegViewModel @Inject constructor(
                                         ?: "Error"
                                 } catch (e: Exception) {
                                     "Error"
-                                }
+                                },
                             )
-                            //Timber.e("SHOWME--->$errorMessage")
+                            // Timber.e("SHOWME--->$errorMessage")
                         }
                     }
-                }
+                },
         )
     }
 
-    fun confirmOTP(phoneNumber: String, accountNumber:String, otp: String, partnerId: String) {
+    fun confirmOTP(phoneNumber: String, accountNumber: String, otp: String, partnerId: String) {
         _confirmOTPResponse.postValue(Resource.loading(null))
         disposable.add(
             contactlessRegRepo.confirmOTP(phoneNumber, accountNumber, otp, partnerId)
@@ -157,7 +157,7 @@ class ContactlessRegViewModel @Inject constructor(
                 .subscribe { data, error ->
                     data?.let {
                         _confirmOTPResponse.postValue(Resource.success(it))
-                        //saveExistingCustomerData(data.data)
+                        // saveExistingCustomerData(data.data)
                         saveExistingPhoneNumber(it.data.phone)
                         saveEmail(it.data.email)
                         saveBusinessName(it.data.businessName)
@@ -177,11 +177,12 @@ class ContactlessRegViewModel @Inject constructor(
                                         ?: "Error"
                                 } catch (e: Exception) {
                                     "Error"
-                                }
+                                },
                             )
-                            //Timber.e("SHOWME--->$errorMessage")
-                        }                    }
-                }
+                            // Timber.e("SHOWME--->$errorMessage")
+                        }
+                    }
+                },
         )
     }
 
@@ -210,18 +211,19 @@ class ContactlessRegViewModel @Inject constructor(
                                         ?: "Error"
                                 } catch (e: Exception) {
                                     "Error"
-                                }
+                                },
                             )
-                            //Timber.e("SHOWME--->$errorMessage")
-                        }                    }
-                }
+                            // Timber.e("SHOWME--->$errorMessage")
+                        }
+                    }
+                },
         )
     }
 
     fun getBranches(stateInt: Int, deviceSerialId: String, partnerId: String) {
         _getBranchResponse.postValue(Resource.loading(null))
         disposable.add(
-            contactlessRegRepo.getBranches(stateInt,deviceSerialId, partnerId)
+            contactlessRegRepo.getBranches(stateInt, deviceSerialId, partnerId)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe { data, error ->
@@ -243,11 +245,12 @@ class ContactlessRegViewModel @Inject constructor(
                                         ?: "Error"
                                 } catch (e: Exception) {
                                     "Error"
-                                }
+                                },
                             )
-                            //Timber.e("SHOWME--->$errorMessage")
-                        }                    }
-                }
+                            // Timber.e("SHOWME--->$errorMessage")
+                        }
+                    }
+                },
         )
     }
 
@@ -274,11 +277,12 @@ class ContactlessRegViewModel @Inject constructor(
                                         ?: "Error"
                                 } catch (e: Exception) {
                                     "Error"
-                                }
+                                },
                             )
-                            //Timber.e("SHOWME--->$errorMessage")
-                        }                    }
-                }
+                            // Timber.e("SHOWME--->$errorMessage")
+                        }
+                    }
+                },
         )
     }
 
@@ -305,11 +309,12 @@ class ContactlessRegViewModel @Inject constructor(
                                         ?: "Error"
                                 } catch (e: Exception) {
                                     "Error"
-                                }
+                                },
                             )
-                            //Timber.e("SHOWME--->$errorMessage")
-                        }                    }
-                }
+                            // Timber.e("SHOWME--->$errorMessage")
+                        }
+                    }
+                },
         )
     }
 
@@ -336,15 +341,16 @@ class ContactlessRegViewModel @Inject constructor(
                                         ?: "Error"
                                 } catch (e: Exception) {
                                     "Error"
-                                }
+                                },
                             )
-                            //Timber.e("SHOWME--->$errorMessage")
-                        }                    }
-                }
+                            // Timber.e("SHOWME--->$errorMessage")
+                        }
+                    }
+                },
         )
     }
 
-    fun registerExistingAccount(accountNumber: ExistingAccountRegisterRequest, partnerId:String, deviceSerialId: String) {
+    fun registerExistingAccount(accountNumber: ExistingAccountRegisterRequest, partnerId: String, deviceSerialId: String) {
         _existingRegRequestResponse.postValue(Resource.loading(null))
         disposable.add(
             contactlessRegRepo.registerExistingAccount(accountNumber, partnerId, deviceSerialId)
@@ -367,16 +373,16 @@ class ContactlessRegViewModel @Inject constructor(
                                         ?: "Error"
                                 } catch (e: Exception) {
                                     "Error"
-                                }
+                                },
                             )
-                            //Timber.e("SHOWME--->$errorMessage")
+                            // Timber.e("SHOWME--->$errorMessage")
                         }
                     }
-                }
+                },
         )
     }
 
-    fun registerExistingAccountForFBN(accountNumber: RegistrationForExistingFBNUsersRequest, partnerId:String, deviceSerialId: String) {
+    fun registerExistingAccountForFBN(accountNumber: RegistrationForExistingFBNUsersRequest, partnerId: String, deviceSerialId: String) {
         _existingRegRequestResponse.postValue(Resource.loading(null))
         disposable.add(
             contactlessRegRepo.registerExistingAccountForFBN(accountNumber, partnerId, deviceSerialId)
@@ -399,12 +405,12 @@ class ContactlessRegViewModel @Inject constructor(
                                         ?: "Error"
                                 } catch (e: Exception) {
                                     "Error"
-                                }
+                                },
                             )
-                            //Timber.e("SHOWME--->$errorMessage")
+                            // Timber.e("SHOWME--->$errorMessage")
                         }
                     }
-                }
+                },
         )
     }
     private fun savePhoneNumber(phoneNumber: String) {
@@ -430,7 +436,6 @@ class ContactlessRegViewModel @Inject constructor(
     private fun saveEmail(email: String) {
         DPrefs.putString(AppConstants.EMAIL_ADDRESS, gson.toJson(email))
     }
-
 
     override fun onCleared() {
         super.onCleared()

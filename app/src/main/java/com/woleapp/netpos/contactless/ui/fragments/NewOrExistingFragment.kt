@@ -5,23 +5,20 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.AdapterView
+import android.widget.Button
+import android.widget.EditText
 import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.activityViewModels
 import com.woleapp.netpos.contactless.BuildConfig
 import com.woleapp.netpos.contactless.R
-import com.woleapp.netpos.contactless.adapter.StatesAdapter
 import com.woleapp.netpos.contactless.databinding.FragmentNewOrExistingBinding
-import com.woleapp.netpos.contactless.model.FBNState
 import com.woleapp.netpos.contactless.util.RandomPurposeUtil
 import com.woleapp.netpos.contactless.util.RandomPurposeUtil.getDeviceId
 import com.woleapp.netpos.contactless.util.RandomPurposeUtil.initPartnerId
 import com.woleapp.netpos.contactless.util.RandomPurposeUtil.observeServerResponse
 import com.woleapp.netpos.contactless.viewmodels.ContactlessRegViewModel
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.android.synthetic.main.dialog_account_number_layout.view.*
-import timber.log.Timber
 
 @AndroidEntryPoint
 class NewOrExistingFragment : BaseFragment() {
@@ -52,7 +49,6 @@ class NewOrExistingFragment : BaseFragment() {
             }
         }
 
-
         loader = RandomPurposeUtil.alertDialog(requireContext())
 
         binding.confirmationTvNo.setOnClickListener {
@@ -65,17 +61,16 @@ class NewOrExistingFragment : BaseFragment() {
 
         binding.confirmationTvYes.setOnClickListener {
             activity?.getFragmentManager()?.popBackStack()
-            val dialogView: View = LayoutInflater.from(requireContext())
-                .inflate(R.layout.dialog_account_number_layout, null)
+            val inflater = LayoutInflater.from(requireContext())
+            val dialogView = inflater.inflate(R.layout.dialog_account_number_layout, null)
             val dialogBuilder: AlertDialog.Builder = AlertDialog.Builder(requireContext())
             dialogBuilder.setView(dialogView)
 
             val alertDialog: AlertDialog = dialogBuilder.create()
             alertDialog.show()
-
-            dialogView.dialog_account_number_proceed.setOnClickListener {
+            dialogView.findViewById<Button>(R.id.dialog_account_number_proceed).setOnClickListener {
                 alertDialog.dismiss()
-                val account = dialogView.dialog_account_number_editText.text.toString()
+                val account = dialogView.findViewById<EditText>(R.id.dialog_account_number_editText).text.toString()
                 if (account.isNullOrEmpty()) {
                     Toast.makeText(
                         requireContext(),
@@ -89,22 +84,30 @@ class NewOrExistingFragment : BaseFragment() {
                         Toast.LENGTH_SHORT,
                     ).show()
                 } else {
-                    if (BuildConfig.FLAVOR.contains("firstbank") || BuildConfig.FLAVOR.contains("zenith")){
+                    if (BuildConfig.FLAVOR.contains("firstbank") || BuildConfig.FLAVOR.contains("zenith")) {
                         viewModel.findAccountForFirstBankUser(account, newPartnerId, deviceSerialID)
-                        observeServerResponse(viewModel.firstBankAccountNumberResponse, loader, requireActivity().supportFragmentManager){
+                        observeServerResponse(
+                            viewModel.firstBankAccountNumberResponse,
+                            loader,
+                            requireActivity().supportFragmentManager,
+                        ) {
                             showFragment(
                                 ExistingCustomersRegistrationFragment(),
                                 containerViewId = R.id.auth_container,
-                                fragmentName = "RegisterOTP Fragment"
+                                fragmentName = "RegisterOTP Fragment",
                             )
                         }
-                    }else{
+                    } else {
                         viewModel.accountLookUp(account, newPartnerId, deviceSerialID)
-                        observeServerResponse(viewModel.accountNumberResponse, loader, requireActivity().supportFragmentManager){
+                        observeServerResponse(
+                            viewModel.accountNumberResponse,
+                            loader,
+                            requireActivity().supportFragmentManager,
+                        ) {
                             showFragment(
                                 RegistrationOTPFragment(),
                                 containerViewId = R.id.auth_container,
-                                fragmentName = "RegisterOTP Fragment"
+                                fragmentName = "RegisterOTP Fragment",
                             )
                         }
                     }
@@ -112,5 +115,4 @@ class NewOrExistingFragment : BaseFragment() {
             }
         }
     }
-
 }

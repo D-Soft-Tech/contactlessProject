@@ -5,9 +5,11 @@ import android.content.Context
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
+import android.widget.Button
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.github.barteksc.pdfviewer.PDFView
 import com.woleapp.netpos.contactless.BuildConfig
 import com.woleapp.netpos.contactless.R
 import com.woleapp.netpos.contactless.model.RegistrationError
@@ -22,7 +24,6 @@ import com.woleapp.netpos.contactless.util.getResponseBody
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
-import kotlinx.android.synthetic.main.dialog_terms_and_conditions.view.*
 
 class RegistrationViewModel : ViewModel() {
 
@@ -73,15 +74,15 @@ class RegistrationViewModel : ViewModel() {
                         "providussoftpos",
                     )
                 ) {
-                    dialogView.pdf.fromAsset("providus.pdf").load()
+                    dialogView.findViewById<PDFView>(R.id.pdf).fromAsset("providus.pdf").load()
                 } else if (BuildConfig.FLAVOR.contains("easypay")) {
-                    dialogView.pdf.fromAsset("qlick.pdf").load()
+                    dialogView.findViewById<PDFView>(R.id.pdf).fromAsset("qlick.pdf").load()
                 } else if (BuildConfig.FLAVOR.contains("fcmbeasypay")) {
-                    dialogView.pdf.fromAsset("qlick.pdf").load()
+                    dialogView.findViewById<PDFView>(R.id.pdf).fromAsset("qlick.pdf").load()
                 } else if (BuildConfig.FLAVOR.contains("easypayfcmb")) {
-                    dialogView.pdf.fromAsset("qlick.pdf").load()
+                    dialogView.findViewById<PDFView>(R.id.pdf).fromAsset("qlick.pdf").load()
                 }
-                dialogView.accept_button.setOnClickListener {
+                dialogView.findViewById<Button>(R.id.accept_button).setOnClickListener {
                     alertDialog.dismiss()
                     reg(bank, deviceSerialId)
                 }

@@ -32,7 +32,6 @@ import com.woleapp.netpos.contactless.util.AppConstants.STRING_LOADING_DIALOG_TA
 import io.reactivex.Scheduler
 import io.reactivex.Single
 import io.reactivex.disposables.CompositeDisposable
-import kotlinx.android.synthetic.main.dialog_print_type.*
 import java.text.DecimalFormat
 import java.text.ParseException
 import java.text.SimpleDateFormat
@@ -187,11 +186,9 @@ object RandomPurposeUtil {
                     )
                 }
                 Status.ERROR -> {
-                    loadingDialog.cancel
                     loadingDialog.dismiss()
                 }
                 Status.TIMEOUT -> {
-                    loadingDialog.cancel
                     loadingDialog.dismiss()
                     showSnackBar(this.requireView(), getString(R.string.timeOut))
                 }
@@ -248,18 +245,18 @@ object RandomPurposeUtil {
                                 loadingDialog.show()
                             }
                             Status.ERROR -> {
-                                loadingDialog.cancel
+                                loadingDialog.cancel()
                                 loadingDialog.dismiss()
                             }
                             Status.TIMEOUT -> {
-                                loadingDialog.cancel
+                                loadingDialog.cancel()
                                 loadingDialog.dismiss()
                                 showSnackBar(this.requireView(), getString(R.string.timeOut))
                             }
                         }
                     }
                     error?.let {
-                        loadingDialog.cancel
+                        loadingDialog.cancel()
                         loadingDialog.dismiss()
                         showSnackBar(this.requireView(), getString(R.string.an_error_occurred))
                     }
