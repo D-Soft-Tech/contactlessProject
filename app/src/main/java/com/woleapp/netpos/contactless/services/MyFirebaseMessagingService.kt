@@ -13,6 +13,7 @@ import androidx.core.app.NotificationCompat
 import androidx.work.*
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
+import com.woleapp.netpos.contactless.BuildConfig
 import com.woleapp.netpos.contactless.R
 import com.woleapp.netpos.contactless.model.FirebaseNotificationModelResponse
 import com.woleapp.netpos.contactless.ui.activities.MainActivity
@@ -40,7 +41,9 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
         // Check if message contains a data payload.
         if (remoteMessage.data.toString().isNotEmpty()) {
             val transactionNotificationFromFirebase = remoteMessage.data["TransactionNotification"]
-            Timber.tag("INCOMING_M").d(gson.toJson(transactionNotificationFromFirebase))
+            if (BuildConfig.DEBUG) {
+                Timber.tag("INCOMING_M").d(gson.toJson(transactionNotificationFromFirebase))
+            }
             val temporalTransaction: FirebaseNotificationModelResponse =
                 gson.fromJson(
                     transactionNotificationFromFirebase,

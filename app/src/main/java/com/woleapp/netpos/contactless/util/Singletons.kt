@@ -1,18 +1,14 @@
 package com.woleapp.netpos.contactless.util
 
-import com.danbamitale.epmslib.entities.ConfigData
-import com.danbamitale.epmslib.entities.KeyHolder
-import com.danbamitale.epmslib.entities.TransactionResponse
-import com.danbamitale.epmslib.entities.responseMessage
+import com.danbamitale.epmslib.entities.*
+import com.danbamitale.epmslib.entities.*
+import com.dsofttech.dprefs.utils.DPrefs
 import com.google.gson.Gson
-import com.pixplicity.easyprefs.library.Prefs
 import com.woleapp.netpos.contactless.model.ConfigurationData
 import com.woleapp.netpos.contactless.model.NibssResponse
 import com.woleapp.netpos.contactless.model.User
-import com.woleapp.netpos.contactless.nibss.Keys
-import java.lang.Exception
 
-fun useStormTerminalId() = Prefs.getBoolean(PREF_USE_STORM_TERMINAL_ID, true)
+fun useStormTerminalId() = DPrefs.getBoolean(PREF_USE_STORM_TERMINAL_ID, true)
 fun TransactionResponse.toNibssResponse(remark: String? = null): NibssResponse =
     Singletons.gson.fromJson(
         Singletons.gson.toJson(this),
@@ -34,28 +30,52 @@ fun TransactionResponse.toNibssResponse(remark: String? = null): NibssResponse =
 
 object Singletons {
     fun setUseStormTid(useStormTid: Boolean) =
-        Prefs.putBoolean(PREF_USE_STORM_TERMINAL_ID, useStormTid)
+        DPrefs.putBoolean(PREF_USE_STORM_TERMINAL_ID, useStormTid)
 
     val gson = Gson()
     fun getCurrentlyLoggedInUser(): User? =
-        gson.fromJson(Prefs.getString(PREF_USER, ""), User::class.java)
+        gson.fromJson(DPrefs.getString(PREF_USER, ""), User::class.java)
 
-    fun getNetPlusPayMid(): String = getCurrentlyLoggedInUser()?.netplusPayMid ?: UtilityParam.STRING_MERCHANT_ID
+    fun getNetPlusPayMid(): String =
+        getCurrentlyLoggedInUser()?.netplusPayMid ?: UtilityParam.STRING_MERCHANT_ID
 
     fun getSavedConfigurationData(): ConfigurationData {
         return ConfigurationData(
             UtilityParam.CONFIGURATION_DATA_IP,
             UtilityParam.CONFIGURATION_DATA_PORT,
-            Keys.posvasLiveKey1,
-            Keys.posvasLiveKey2,
+            UtilityParam.CERT_KEY_1,
+            UtilityParam.CERT_KEY_2,
         )
     }
 
+    fun getConfigDataForTest(): ConnectionData {
+        return ConnectionData(
+            UtilityParam.TEST_IP,
+            UtilityParam.TEST_PORT.toInt(),
+            true
+        )
+    }
+
+    val keyHolder = if (DPrefs.getString(PREF_KEYHOLDER).isNotEmpty()) {
+        DPrefs.getString(
+            PREF_KEYHOLDER,
+        )
+    } else {
+        null
+    }
+    val configData = if (DPrefs.getString(PREF_CONFIG_DATA).isNotEmpty()) {
+        DPrefs.getString(
+            PREF_KEYHOLDER,
+        )
+    } else {
+        null
+    }
+
     fun getKeyHolder(): KeyHolder? =
-        gson.fromJson(Prefs.getString(PREF_KEYHOLDER, null), KeyHolder::class.java)
+        gson.fromJson(keyHolder, KeyHolder::class.java)
 
     fun getConfigData(): ConfigData? =
-        gson.fromJson(Prefs.getString(PREF_CONFIG_DATA, null), ConfigData::class.java)
+        gson.fromJson(configData, ConfigData::class.java)
 }
 
 var TransactionResponse.additionalAmount: Long?

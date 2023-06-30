@@ -68,7 +68,7 @@ class DisplayQrFragment : BaseFragment() {
         super.onViewCreated(view, savedInstanceState)
         initViews()
         initPartnerID()
-        val user = gson.fromJson(Prefs.getString(PREF_USER, ""), User::class.java)
+        val user = gson.fromJson(DPrefs.getString(PREF_USER, ""), User::class.java)
         netposID = user.netplus_id
         userTID = user.terminal_id
         name = user.business_name

@@ -29,7 +29,6 @@ object SSLUtil {
         return tmf
     }
 
-
     fun getKeyMangerFactory(context: Context): KeyManagerFactory? {
         val password = "netpos_password"
         // load client certificate
@@ -45,7 +44,7 @@ object SSLUtil {
             "private-key",
             key,
             password.toCharArray(),
-            arrayOf<Certificate>(cert)
+            arrayOf<Certificate>(cert),
         )
         val kmf = KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm())
         kmf.init(ks, password.toCharArray())
@@ -59,7 +58,7 @@ object SSLUtil {
         reader = reader.replace("-----BEGIN RSA PRIVATE KEY-----\n", "")
         reader = reader.replace("-----END RSA PRIVATE KEY-----", "")
         // Base64 decode the data
-        //Timber.e("\n$reader")
+        // Timber.e("\n$reader")
         val encoded: ByteArray = Base64.decode(reader, Base64.DEFAULT)
         val keySpec = PKCS8EncodedKeySpec(encoded)
         val kf: KeyFactory = KeyFactory.getInstance("RSA")
@@ -80,7 +79,7 @@ object SSLUtil {
         sslContext.init(
             getKeyMangerFactory(context)!!.keyManagers,
             getTrustManagerFactory(context)!!.trustManagers,
-            null
+            null,
         )
 
         return sslContext.socketFactory

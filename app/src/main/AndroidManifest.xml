@@ -40,8 +40,8 @@
             android:exported="true"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustNothing"
-            android:launchMode="singleInstance"
-            android:taskAffinity="">
+            android:launchMode="singleTask"
+            android:taskAffinity="com.woleapp.netpos.contactless">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -54,7 +54,7 @@
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustNothing"
             android:launchMode="singleInstance"
-            android:taskAffinity=""
+            android:taskAffinity="com.woleapp.netpos.contactless"
             android:protectionLevel="signature">
         </activity>
 

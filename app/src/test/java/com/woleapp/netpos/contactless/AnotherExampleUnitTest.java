@@ -1,15 +1,14 @@
 package com.woleapp.netpos.contactless;
 
 
-import com.danbamitale.epmslib.utils.TripleDES;
+import static org.junit.Assert.assertEquals;
+
+import com.danbamitale.epmslib.utils.DataEncryptAndDecrypt;
 import com.woleapp.netpos.contactless.util.ExtensionFunctionsKt;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
-
-
-import static org.junit.Assert.assertEquals;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -26,7 +25,7 @@ public class AnotherExampleUnitTest {
         String block2 = "0425396E7EBEBBBD";
         //String convertedByte = HexDump.toHexString(Byte.parseByte(""+sample.length() / 2));
         //System.out.println(convertedByte);
-        String de = TripleDES.decrypt("08E8A7AF70395D036E", "00112233445566778899AABBCCDDEEFF");
+        String de = DataEncryptAndDecrypt.INSTANCE.decrypt("08E8A7AF70395D036E", "00112233445566778899AABBCCDDEEFF");
         System.out.println("length: " + de.length());
         assertEquals(4, 2 + 2);
     }
@@ -48,16 +47,16 @@ public class AnotherExampleUnitTest {
         String pinblock = ExtensionFunctionsKt.xorHex(pin, cardNum);
         //System.out.println(ExtensionFunctionsKt.xorHex(pin, cardNum));
         System.out.println(pinblock);
-        //System.out.println(TripleDES.encrypt(pinblock, pinKey));
+        //System.out.println(DataEncryptAndDecrypt.INSTANCE.encrypt(pinblock, pinKey));
         assertEquals(4, 2 + 2);
     }
 
     @Test
     public void testDecrypt() {
-        String dec = TripleDES.decrypt("B7C60530D82A361516E938B5343D2F774C82B0AF", "B7C60530D82A361516E938B5343D2F774C82B0AF");
+        String dec = DataEncryptAndDecrypt.INSTANCE.decrypt("B7C60530D82A361516E938B5343D2F774C82B0AF", "B7C60530D82A361516E938B5343D2F774C82B0AF");
         System.out.println(dec);
-        String pin = TripleDES.decrypt("CB603BBF8DE1EA47", "3005996b41e3ff64e1d9efc42faca953");
-        String pin1 = TripleDES.decrypt("CB603BBF8DE1EA47", "FFFF9876543210000000");
+        String pin = DataEncryptAndDecrypt.INSTANCE.decrypt("CB603BBF8DE1EA47", "3005996b41e3ff64e1d9efc42faca953");
+        String pin1 = DataEncryptAndDecrypt.INSTANCE.decrypt("CB603BBF8DE1EA47", "FFFF9876543210000000");
         System.out.println(pin);
         System.out.println(pin1);
         assertEquals(4, 2 + 2);
@@ -65,7 +64,7 @@ public class AnotherExampleUnitTest {
 
     @Test
     public void testShuffle() {
-        List<Integer> integerList = Arrays.asList(1,2,3,4,5,6,7,8,9,0);
+        List<Integer> integerList = Arrays.asList(1, 2, 3, 4, 5, 6, 7, 8, 9, 0);
 
         Collections.shuffle(integerList);
         System.out.println();

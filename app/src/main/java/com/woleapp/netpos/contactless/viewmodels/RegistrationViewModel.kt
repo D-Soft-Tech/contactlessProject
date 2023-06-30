@@ -10,15 +10,19 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.woleapp.netpos.contactless.BuildConfig
 import com.woleapp.netpos.contactless.R
-import com.woleapp.netpos.contactless.model.*
+import com.woleapp.netpos.contactless.model.RegistrationError
+import com.woleapp.netpos.contactless.model.RegistrationFBNModel
+import com.woleapp.netpos.contactless.model.RegistrationModel
+import com.woleapp.netpos.contactless.model.RegistrationZenithModel
 import com.woleapp.netpos.contactless.network.ContactlessClient
-import com.woleapp.netpos.contactless.util.*
+import com.woleapp.netpos.contactless.util.Event
+import com.woleapp.netpos.contactless.util.Singletons
+import com.woleapp.netpos.contactless.util.disposeWith
+import com.woleapp.netpos.contactless.util.getResponseBody
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.dialog_terms_and_conditions.view.*
-import retrofit2.HttpException
-import timber.log.Timber
 
 class RegistrationViewModel : ViewModel() {
 
@@ -27,13 +31,13 @@ class RegistrationViewModel : ViewModel() {
     private val disposable = CompositeDisposable()
 
     val registrationModel: MutableLiveData<RegistrationModel> = MutableLiveData(
-        RegistrationModel()
+        RegistrationModel(),
     )
     val registrationFBNModel: MutableLiveData<RegistrationFBNModel> = MutableLiveData(
-        RegistrationFBNModel()
+        RegistrationFBNModel(),
     )
     val registrationZenithModel: MutableLiveData<RegistrationZenithModel> = MutableLiveData(
-        RegistrationZenithModel()
+        RegistrationZenithModel(),
     )
     private val _message = MutableLiveData<Event<String>>()
     private val _authDone = MutableLiveData<Event<Boolean>>()
@@ -43,17 +47,19 @@ class RegistrationViewModel : ViewModel() {
     val message: LiveData<Event<String>>
         get() = _message
 
-
-    fun register(context:Context, bank: String, deviceSerialId: String) {
-        if (BuildConfig.FLAVOR.contains("providuspos") ||BuildConfig.FLAVOR.contains("providus") || BuildConfig.FLAVOR.contains("providussoftpos") ||
-            BuildConfig.FLAVOR.contains("fcmbeasypay")||
-            BuildConfig.FLAVOR.contains("easypayfcmb")||
-            BuildConfig.FLAVOR.contains("easypay")) {
+    fun register(context: Context, bank: String, deviceSerialId: String) {
+        if (BuildConfig.FLAVOR.contains("providuspos") || BuildConfig.FLAVOR.contains("providus") || BuildConfig.FLAVOR.contains(
+                "providussoftpos",
+            ) ||
+            BuildConfig.FLAVOR.contains("fcmbeasypay") ||
+            BuildConfig.FLAVOR.contains("easypayfcmb") ||
+            BuildConfig.FLAVOR.contains("easypay")
+        ) {
 //            activity?.getFragmentManager()?.popBackStack()
             if (registrationModel.value?.allFieldsFilled() == false) {
                 _message.value = Event("All fields are required")
                 return
-            }else {
+            } else {
                 val dialogView: View = LayoutInflater.from(context)
                     .inflate(R.layout.dialog_terms_and_conditions, null)
                 val dialogBuilder: AlertDialog.Builder =
@@ -62,13 +68,16 @@ class RegistrationViewModel : ViewModel() {
 
                 val alertDialog: AlertDialog = dialogBuilder.create()
                 alertDialog.show()
-                if (BuildConfig.FLAVOR.contains("providuspos") ||BuildConfig.FLAVOR.contains("providus") || BuildConfig.FLAVOR.contains("providussoftpos")) {
+                if (BuildConfig.FLAVOR.contains("providuspos") || BuildConfig.FLAVOR.contains("providus") || BuildConfig.FLAVOR.contains(
+                        "providussoftpos",
+                    )
+                ) {
                     dialogView.pdf.fromAsset("providus.pdf").load()
                 } else if (BuildConfig.FLAVOR.contains("easypay")) {
                     dialogView.pdf.fromAsset("qlick.pdf").load()
-                }else if (BuildConfig.FLAVOR.contains("fcmbeasypay")) {
+                } else if (BuildConfig.FLAVOR.contains("fcmbeasypay")) {
                     dialogView.pdf.fromAsset("qlick.pdf").load()
-                }else if (BuildConfig.FLAVOR.contains("easypayfcmb")) {
+                } else if (BuildConfig.FLAVOR.contains("easypayfcmb")) {
                     dialogView.pdf.fromAsset("qlick.pdf").load()
                 }
                 dialogView.accept_button.setOnClickListener {
@@ -76,48 +85,49 @@ class RegistrationViewModel : ViewModel() {
                     reg(bank, deviceSerialId)
                 }
             }
-        }else{
-            if (BuildConfig.FLAVOR.contains("firstbank")){
+        } else {
+            if (BuildConfig.FLAVOR.contains("firstbank")) {
                 if (registrationFBNModel.value?.allFieldsFilledFBN() == false) {
                     _message.value = Event("All fields are required")
                     return
-                }else{
+                } else {
                     regFBN(bank, deviceSerialId)
                 }
-            } else if (BuildConfig.FLAVOR.contains("zenith")){
+            } else if (BuildConfig.FLAVOR.contains("zenith")) {
                 if (registrationZenithModel.value?.allFieldsFilledZenith() == false) {
                     _message.value = Event("All fields are required")
                     return
-                }else{
+                } else {
                     regZenith(bank, deviceSerialId)
                 }
-            }else{
+            } else {
                 if (registrationModel.value?.allFieldsFilled() == false) {
                     _message.value = Event("All fields are required")
                     return
-                }else{
+                } else {
                     reg(bank, deviceSerialId)
                 }
             }
         }
     }
 
-
     override fun onCleared() {
         super.onCleared()
         disposable.clear()
     }
 
-//    fun setSelectedBank(s: String) {
+    //    fun setSelectedBank(s: String) {
 //        registrationModel.value = registrationModel.value?.apply {
 //            Log.d("BANK", s)
 //            bank = s
 //        }
 //    }
     fun setSelectedState(data: String) {
-    registrationFBNModel.value = registrationFBNModel.value?.apply {
+        registrationFBNModel.value = registrationFBNModel.value?.apply {
             state = data
-            Log.d("STATEFBN", data)
+            if (BuildConfig.DEBUG) {
+                Log.d("STATEFBN", data)
+            }
         }
     }
 
@@ -127,7 +137,7 @@ class RegistrationViewModel : ViewModel() {
         }
     }
 
-    private fun reg(bank: String, deviceSerialId: String){
+    private fun reg(bank: String, deviceSerialId: String) {
         authInProgress.value = true
         contactlessService.register(registrationModel.value, bank, deviceSerialId)
             .subscribeOn(Schedulers.io())
@@ -144,7 +154,7 @@ class RegistrationViewModel : ViewModel() {
                     val errorMessage = try {
                         Singletons.gson.fromJson(
                             it.getResponseBody(),
-                            RegistrationError::class.java
+                            RegistrationError::class.java,
                         ).message
                     } catch (e: Exception) {
                         "an error occurred during registration, try again or contact support"
@@ -155,7 +165,7 @@ class RegistrationViewModel : ViewModel() {
             }.disposeWith(disposable)
     }
 
-    private fun regFBN(bank: String, deviceSerialId: String){
+    private fun regFBN(bank: String, deviceSerialId: String) {
         authInProgress.value = true
         contactlessService.registerFBN(registrationFBNModel.value, bank, deviceSerialId)
             .subscribeOn(Schedulers.io())
@@ -172,7 +182,7 @@ class RegistrationViewModel : ViewModel() {
                     val errorMessage = try {
                         Singletons.gson.fromJson(
                             it.getResponseBody(),
-                            RegistrationError::class.java
+                            RegistrationError::class.java,
                         ).message
                     } catch (e: Exception) {
                         "an error occurred during registration, try again or contact support"
@@ -182,9 +192,14 @@ class RegistrationViewModel : ViewModel() {
                 }
             }.disposeWith(disposable)
     }
-    private fun regZenith(bank: String, deviceSerialId: String){
+
+    private fun regZenith(bank: String, deviceSerialId: String) {
         authInProgress.value = true
-        contactlessService.registerExistingAccountForZenith(registrationZenithModel.value, bank, deviceSerialId)
+        contactlessService.registerExistingAccountForZenith(
+            registrationZenithModel.value,
+            bank,
+            deviceSerialId,
+        )
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .doFinally {
@@ -199,7 +214,7 @@ class RegistrationViewModel : ViewModel() {
                     val errorMessage = try {
                         Singletons.gson.fromJson(
                             it.getResponseBody(),
-                            RegistrationError::class.java
+                            RegistrationError::class.java,
                         ).message
                     } catch (e: Exception) {
                         "an error occurred during registration, try again or contact support"
@@ -209,5 +224,4 @@ class RegistrationViewModel : ViewModel() {
                 }
             }.disposeWith(disposable)
     }
-
 }

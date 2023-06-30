@@ -1,11 +1,10 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
-
-
 buildscript {
     ext {
         lifecycle_version = "2.3.1"
         arch_version = "2.1.0"
         kotlin_version = '1.5.10'
+        std_lib = '1.5.10'
         room_version = "2.3.0"
         pin_view = "1.4.4"
     }
@@ -13,7 +12,6 @@ buildscript {
         google()
         mavenCentral()
         gradlePluginPortal()
-
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:7.0.0'

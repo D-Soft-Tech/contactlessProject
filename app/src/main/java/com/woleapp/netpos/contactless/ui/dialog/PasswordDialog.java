@@ -19,7 +19,7 @@ import androidx.constraintlayout.widget.Group;
 
 import com.danbamitale.epmslib.entities.KeyHolder;
 import com.danbamitale.epmslib.entities.KeyHolderKt;
-import com.danbamitale.epmslib.utils.TripleDES;
+import com.danbamitale.epmslib.utils.DataEncryptAndDecrypt;
 import com.woleapp.netpos.contactless.R;
 import com.woleapp.netpos.contactless.util.ExtensionFunctionsKt;
 import com.woleapp.netpos.contactless.util.Singletons;
@@ -165,7 +165,7 @@ public class PasswordDialog {
         System.out.println(pinblock);
         //System.out.println(TripleDES.encrypt(pinblock, pinKey));
         KeyHolder keyHolder = Singletons.INSTANCE.getKeyHolder();
-        return TripleDES.encrypt(pinblock, KeyHolderKt.getClearPinKey(keyHolder));
+        return DataEncryptAndDecrypt.INSTANCE.encrypt(pinblock, KeyHolderKt.getClearPinKey(keyHolder));
     }
 
 

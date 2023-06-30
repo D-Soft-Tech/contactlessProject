@@ -4,12 +4,10 @@ package com.woleapp.netpos.contactless.ui.activities
 
 import android.Manifest
 import android.annotation.SuppressLint
-import android.app.Activity
 import android.app.DatePickerDialog
 import android.app.ProgressDialog
 import android.content.DialogInterface
 import android.content.Intent
-import android.content.IntentFilter
 import android.location.Location
 import android.location.LocationListener
 import android.location.LocationManager
@@ -24,7 +22,6 @@ import android.view.View
 import android.view.WindowManager
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
@@ -33,12 +30,12 @@ import androidx.databinding.ViewDataBinding
 import androidx.fragment.app.Fragment
 import com.danbamitale.epmslib.entities.TransactionResponse
 import com.danbamitale.epmslib.utils.IsoAccountType
+import com.dsofttech.dprefs.utils.DPrefs
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.navigation.NavigationBarView
 import com.google.firebase.messaging.FirebaseMessaging
 import com.google.gson.Gson
-import com.pixplicity.easyprefs.library.Prefs
 import com.visa.app.ttpkernel.ContactlessKernel
 import com.woleapp.netpos.contactless.BuildConfig
 import com.woleapp.netpos.contactless.R
@@ -49,7 +46,6 @@ import com.woleapp.netpos.contactless.model.*
 import com.woleapp.netpos.contactless.mqtt.MqttHelper
 import com.woleapp.netpos.contactless.network.StormApiClient
 import com.woleapp.netpos.contactless.nibss.NetPosTerminalConfig
-import com.woleapp.netpos.contactless.receivers.BatteryReceiver
 import com.woleapp.netpos.contactless.taponphone.mastercard.implementations.nfc.NFCManager.READER_FLAGS
 import com.woleapp.netpos.contactless.taponphone.visa.LiveNfcTransReceiver
 import com.woleapp.netpos.contactless.taponphone.visa.NfcPaymentType
@@ -82,7 +78,9 @@ import java.util.*
 
 @Suppress("DEPRECATION")
 @AndroidEntryPoint
-class MainActivity : AppCompatActivity(), EasyPermissions.PermissionCallbacks,
+class MainActivity :
+    AppCompatActivity(),
+    EasyPermissions.PermissionCallbacks,
     NfcAdapter.ReaderCallback {
 
     private lateinit var receiptPdf: File
@@ -116,13 +114,12 @@ class MainActivity : AppCompatActivity(), EasyPermissions.PermissionCallbacks,
     private lateinit var firebaseInstance: FirebaseMessaging
     private lateinit var deviceNotSupportedAlertDialog: AlertDialog
 
-
-
     override fun onStart() {
         super.onStart()
         // LocalBroadcastManager.getInstance(this).registerReceiver(receiver, IntentFilter(CONFIGURATION_ACTION))
         when ( // NetPosTerminalConfig.isConfigurationInProcess -> showProgressDialog()
-            NetPosTerminalConfig.configurationStatus) {
+            NetPosTerminalConfig.configurationStatus
+        ) {
             -1 -> NetPosTerminalConfig.init(
                 applicationContext,
             )
@@ -205,11 +202,11 @@ class MainActivity : AppCompatActivity(), EasyPermissions.PermissionCallbacks,
     }
 
     private fun logout() {
-        Prefs.remove(PREF_USER_TOKEN)
-        Prefs.remove(PREF_AUTHENTICATED)
-        Prefs.remove(PREF_KEYHOLDER)
-        Prefs.remove(PREF_CONFIG_DATA)
-        Prefs.remove(PREF_USER)
+        DPrefs.removePref(PREF_USER_TOKEN)
+        DPrefs.removePref(PREF_AUTHENTICATED)
+        DPrefs.removePref(PREF_KEYHOLDER)
+        DPrefs.removePref(PREF_CONFIG_DATA)
+        DPrefs.removePref(PREF_USER)
         MqttHelper.disconnect()
         val intent = Intent(this, AuthenticationActivity::class.java)
         intent.flags =
@@ -219,7 +216,13 @@ class MainActivity : AppCompatActivity(), EasyPermissions.PermissionCallbacks,
     }
 
     private fun checkTokenExpiry() {
-        val token = Prefs.getString(PREF_USER_TOKEN, null)
+        val token = if (DPrefs.getString(PREF_USER_TOKEN).isNotEmpty()) {
+            DPrefs.getString(
+                PREF_USER_TOKEN,
+            )
+        } else {
+            null
+        }
         token?.let {
             if (JWTHelper.isExpired(it)) {
                 logout()
@@ -323,7 +326,7 @@ class MainActivity : AppCompatActivity(), EasyPermissions.PermissionCallbacks,
 //                                    Gson().fromJson(qrCardData, QrCardReadResultModel::class.java)
 //                                val scannedData =
 //                                    QrScannedDataModel(card_scheme = "", qrReadResult.data)
-////                                showAmountDialog(qrReadResult.data)
+// //                                showAmountDialog(qrReadResult.data)
 //                            }
 //                        }
 //                    }
@@ -345,7 +348,7 @@ class MainActivity : AppCompatActivity(), EasyPermissions.PermissionCallbacks,
             }
             create()
         }
-        val user = gson.fromJson(Prefs.getString(PREF_USER, ""), User::class.java)
+        val user = gson.fromJson(DPrefs.getString(PREF_USER, ""), User::class.java)
         binding.dashboardHeader.username.text = user.business_name
         binding.dashboardBottomNavigationView.setOnItemSelectedListener(object :
             NavigationBarView.OnItemSelectedListener {
@@ -547,7 +550,7 @@ class MainActivity : AppCompatActivity(), EasyPermissions.PermissionCallbacks,
             override fun onLocationChanged(location: Location) {
                 // Called when a new location is found by the network location provider.
                 location.let {
-                    Prefs.putString(PREF_LAST_LOCATION, "lat:${it.latitude} long:${it.longitude}")
+                    DPrefs.putString(PREF_LAST_LOCATION, "lat:${it.latitude} long:${it.longitude}")
                 }
             }
 
@@ -673,7 +676,7 @@ class MainActivity : AppCompatActivity(), EasyPermissions.PermissionCallbacks,
     }
 
     private fun printQrTransactionUtil(qrTransaction: QrTransactionResponseFinalModel) {
-        when (Prefs.getString(PREF_PRINTER_SETTINGS, "nothing_is_there")) {
+        when (DPrefs.getString(PREF_PRINTER_SETTINGS, "nothing_is_there")) {
             PREF_VALUE_PRINT_DOWNLOAD -> {
                 receiptPdf = createPdf(binding, this)
                 receiptAlertDialog.apply {
@@ -884,7 +887,7 @@ class MainActivity : AppCompatActivity(), EasyPermissions.PermissionCallbacks,
     private fun handlePdfReceiptPrinting() {
         viewModel.showPrintDialog.observe(this) { event ->
             event.getContentIfNotHandled()?.let {
-                when (Prefs.getString(PREF_PRINTER_SETTINGS, "nothing_is_there")) {
+                when (DPrefs.getString(PREF_PRINTER_SETTINGS, "nothing_is_there")) {
                     PREF_VALUE_PRINT_DOWNLOAD -> {
                         receiptPdf = createPdf(binding, this)
                         receiptAlertDialog.apply {

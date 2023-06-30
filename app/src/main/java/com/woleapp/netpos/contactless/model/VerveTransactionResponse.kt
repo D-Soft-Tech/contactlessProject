@@ -11,7 +11,7 @@ data class VerveTransactionResponse(
     val orderId: String,
     val result: String,
     val status: String,
-    val transId: String
+    val transId: String,
 ) : Parcelable {
     fun mapToQrTransactionResponseModel() =
         QrTransactionResponseModel(
@@ -25,6 +25,6 @@ data class VerveTransactionResponse(
             orderId,
             result,
             status,
-            transId
+            transId,
         )
 }

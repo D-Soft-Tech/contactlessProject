@@ -30,6 +30,26 @@ object UtilityParam {
     private external fun getZenithBaseUrl(): String
     private external fun getStringNotificationBaseUrlNoApi(): String
 
+    // Test Config Data
+    private external fun getTestIp(): String
+    private external fun getTestPort(): String
+
+    // Test Keys
+    private external fun getTextKey1(): String
+    private external fun getTextKey2(): String
+
+    // Cert Keys
+    private external fun getCertKey1(): String
+    private external fun getCertKey2(): String
+
+    // Epms keys
+    private external fun getEmpsKey1(): String
+    private external fun getEmpsKey2(): String
+
+    // Pos Vas Keys
+    private external fun getPosVasKey1(): String
+    private external fun getPosVasKey2(): String
+
     val STRING_NOTIFICATION_BASE_URL_NO_API = getStringNotificationBaseUrlNoApi()
     val ZENITH_BASE_URL = getZenithBaseUrl()
     val SMS_BASE_URL = getSmsBaseUrl()
@@ -53,4 +73,24 @@ object UtilityParam {
     val VEND_PORT = getConfigurationDataPort()
     val APP_NAME = getAppName()
     val APP_PASSWORD = getAppPassword()
+
+    // Test config data
+    val TEST_IP = getTestIp()
+    val TEST_PORT = getTestPort()
+
+    // Test Keys
+    val TEST_KEY_1 = getTextKey1()
+    val TEST_KEY_2 = getTextKey2()
+
+    // Cert Keys
+    val CERT_KEY_1 = getCertKey1()
+    val CERT_KEY_2 = getCertKey2()
+
+    // EPMS Keys
+    val EPMS_KEY_1 = getEmpsKey1()
+    val EPMS_KEY_2 = getEmpsKey2()
+
+    // Pos Vas Keys
+    val POS_VAS_KEY_1 = getPosVasKey1()
+    val POS_VAS_KEY_2 = getPosVasKey2()
 }

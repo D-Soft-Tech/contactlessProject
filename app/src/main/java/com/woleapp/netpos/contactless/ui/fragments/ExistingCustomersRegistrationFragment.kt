@@ -1,7 +1,6 @@
 package com.woleapp.netpos.contactless.ui.fragments
 
 import android.app.AlertDialog
-import android.app.DatePickerDialog
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -13,6 +12,7 @@ import android.widget.Toast
 import androidx.core.widget.doOnTextChanged
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.activityViewModels
+import com.dsofttech.dprefs.utils.DPrefs
 import com.google.android.material.textfield.TextInputEditText
 import com.pixplicity.easyprefs.library.Prefs
 import com.woleapp.netpos.contactless.BuildConfig
@@ -20,7 +20,10 @@ import com.woleapp.netpos.contactless.R
 import com.woleapp.netpos.contactless.adapter.BranchAdapter
 import com.woleapp.netpos.contactless.adapter.StatesAdapter
 import com.woleapp.netpos.contactless.databinding.FragmentExisitingCustomersRegistrationBinding
-import com.woleapp.netpos.contactless.model.*
+import com.woleapp.netpos.contactless.model.ExistingAccountRegisterRequest
+import com.woleapp.netpos.contactless.model.FBNBranch
+import com.woleapp.netpos.contactless.model.FBNState
+import com.woleapp.netpos.contactless.model.RegistrationForExistingFBNUsersRequest
 import com.woleapp.netpos.contactless.util.AppConstants
 import com.woleapp.netpos.contactless.util.RandomPurposeUtil.alertDialog
 import com.woleapp.netpos.contactless.util.RandomPurposeUtil.getDeviceId
@@ -32,7 +35,6 @@ import com.woleapp.netpos.contactless.util.validatePasswordMismatch
 import com.woleapp.netpos.contactless.viewmodels.ContactlessRegViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.dialog_terms_and_conditions.view.*
-import java.util.*
 
 @AndroidEntryPoint
 class ExistingCustomersRegistrationFragment : BaseFragment() {
@@ -95,22 +97,22 @@ class ExistingCustomersRegistrationFragment : BaseFragment() {
             binding.email.isFocusableInTouchMode = true
         }
         initViews()
-        val newActNumber = Prefs.getString(AppConstants.SAVED_ACCOUNT_NUM_SIGNED_UP, "")
+        val newActNumber = DPrefs.getString(AppConstants.SAVED_ACCOUNT_NUM_SIGNED_UP, "")
         actNumber = newActNumber.substring(1, newActNumber.length - 1)
 
-        val newBusinessName = Prefs.getString(AppConstants.BUSINESS_NAME, "")
+        val newBusinessName = DPrefs.getString(AppConstants.BUSINESS_NAME, "")
         val businessName = newBusinessName.substring(1, newBusinessName.length - 1)
 
-        val newBusinessAddress = Prefs.getString(AppConstants.BUSINESS_ADDRESS, "")
+        val newBusinessAddress = DPrefs.getString(AppConstants.BUSINESS_ADDRESS, "")
         val businessAddress = newBusinessAddress.substring(1, newBusinessAddress.length - 1)
 
-        val newEmail = Prefs.getString(AppConstants.EMAIL_ADDRESS, "")
+        val newEmail = DPrefs.getString(AppConstants.EMAIL_ADDRESS, "")
         val email = newEmail.substring(1, newEmail.length - 1)
 
-        val newPhone = Prefs.getString(AppConstants.PHONE_NUMBER, "")
+        val newPhone = DPrefs.getString(AppConstants.PHONE_NUMBER, "")
         val phone = newPhone.substring(1, newPhone.length - 1)
 
-        val newContactInfo = Prefs.getString(AppConstants.FULL_NAME, "")
+        val newContactInfo = DPrefs.getString(AppConstants.FULL_NAME, "")
         val contactInfo =
             newContactInfo.substring(1, newContactInfo.length - 1).replace("\\u0026", "&")
 
@@ -178,7 +180,6 @@ class ExistingCustomersRegistrationFragment : BaseFragment() {
             submitBtn = btnSubmit
         }
     }
-
 
     private fun registerForFBN() {
         when {
@@ -459,5 +460,4 @@ class ExistingCustomersRegistrationFragment : BaseFragment() {
             )
         }
     }
-
 }

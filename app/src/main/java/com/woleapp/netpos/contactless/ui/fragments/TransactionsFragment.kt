@@ -321,8 +321,8 @@ class TransactionsFragment : BaseFragment() {
 
                 response?.let {
                     if (it.responseCode == "A3") {
-                        Prefs.remove(PREF_CONFIG_DATA)
-                        Prefs.remove(PREF_KEYHOLDER)
+                        DPrefs.removePref(PREF_CONFIG_DATA)
+                        DPrefs.removePref(PREF_KEYHOLDER)
                         NetPosTerminalConfig.init(
                             requireContext().applicationContext,
                             configureSilently = true,

@@ -139,7 +139,7 @@ class NipNotificationFragment : BaseFragment() {
         val bottomSheetDialog = BottomSheetDialog(requireContext(), R.style.SheetDialog)
         bottomSheetDialog.setCancelable(false)
         bottomSheetDialog.setContentView(bankDetailsBinding.root)
-        val user = Singletons.gson.fromJson(Prefs.getString(PREF_USER, ""), User::class.java)
+        val user = Singletons.gson.fromJson(DPrefs.getString(PREF_USER, ""), User::class.java)
         val bank = user.bank ?: ""
         val accountNumber = user.account_number ?: ""
         val accountName = user.business_name ?: ""

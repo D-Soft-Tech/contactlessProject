@@ -3,6 +3,7 @@ package com.woleapp.netpos.contactless.network
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.paging.PageKeyedDataSource
+import com.woleapp.netpos.contactless.BuildConfig
 import com.woleapp.netpos.contactless.model.LoadingState
 import com.woleapp.netpos.contactless.model.NetworkResource
 import com.woleapp.netpos.contactless.model.ZenithMCCDto
@@ -16,7 +17,7 @@ import timber.log.Timber
 
 class ZenithQrMCCDataSource(
     private val zenithMCCDto: ZenithMCCDto,
-    private val disposables: CompositeDisposable
+    private val disposables: CompositeDisposable,
 ) :
     PageKeyedDataSource<Int, ZenithMerchantCategory>() {
     private val zenithService = StormApiClient.getZenithQRServiceInstance()
@@ -34,15 +35,15 @@ class ZenithQrMCCDataSource(
 
     override fun loadInitial(
         params: LoadInitialParams<Int>,
-        callback: LoadInitialCallback<Int, ZenithMerchantCategory>
+        callback: LoadInitialCallback<Int, ZenithMerchantCategory>,
     ) {
         _networkResourceLiveData.postValue(Event(NetworkResource(LoadingState.LOADING_INITIAL)))
         val page = "1.20"
-        Timber.e(page)
-        val query = if (zenithMCCDto.filter.isNullOrEmpty())
+        val query = if (zenithMCCDto.filter.isNullOrEmpty()) {
             zenithService.getMerchantCategoryList(page)
-        else
+        } else {
             zenithService.getMerchantCategoryListWithFilter(zenithMCCDto.filter, page)
+        }
         query.retry(2).subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe { t1, t2 ->
@@ -51,21 +52,22 @@ class ZenithQrMCCDataSource(
                         _emptyResultLiveData.postValue(Event(true))
                         loadedAll = true
                     }
-                    Timber.e("list")
-                    Timber.e(it.merchantCategoryList.toString())
+                    if (BuildConfig.DEBUG) {
+                        Timber.e(it.merchantCategoryList.toString())
+                    }
 
                     _networkResourceLiveData.postValue(
                         Event(
-                            NetworkResource(LoadingState.LOADING_COMPLETE)
-                        )
+                            NetworkResource(LoadingState.LOADING_COMPLETE),
+                        ),
                     )
                     callback.onResult(it.merchantCategoryList, null, 2)
                 }
                 t2?.let {
                     _networkResourceLiveData.postValue(
                         Event(
-                            NetworkResource(LoadingState.LOADING_FAILED)
-                        )
+                            NetworkResource(LoadingState.LOADING_FAILED),
+                        ),
                     )
                 }
             }
@@ -74,43 +76,44 @@ class ZenithQrMCCDataSource(
 
     override fun loadBefore(
         params: LoadParams<Int>,
-        callback: LoadCallback<Int, ZenithMerchantCategory>
+        callback: LoadCallback<Int, ZenithMerchantCategory>,
     ) {
-
     }
 
     override fun loadAfter(
         params: LoadParams<Int>,
-        callback: LoadCallback<Int, ZenithMerchantCategory>
+        callback: LoadCallback<Int, ZenithMerchantCategory>,
     ) {
-        if (loadedAll)
+        if (loadedAll) {
             return
+        }
         _networkResourceLiveData.postValue(Event(NetworkResource(LoadingState.LOADING_MORE)))
         val page = "${params.key}.20"
-        Timber.e(page)
-        val query = if (zenithMCCDto.filter.isNullOrEmpty())
+        val query = if (zenithMCCDto.filter.isNullOrEmpty()) {
             zenithService.getMerchantCategoryList(page)
-        else
+        } else {
             zenithService.getMerchantCategoryListWithFilter(zenithMCCDto.filter, page)
+        }
         query.retry(2).subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe { t1, t2 ->
                 t1?.let {
-                    if (it.merchantCategoryList.isEmpty())
+                    if (it.merchantCategoryList.isEmpty()) {
                         loadedAll = true
+                    }
                     callback.onResult(it.merchantCategoryList, params.key + 1)
 
                     _networkResourceLiveData.postValue(
                         Event(
-                            NetworkResource(LoadingState.LOADING_COMPLETE)
-                        )
+                            NetworkResource(LoadingState.LOADING_COMPLETE),
+                        ),
                     )
                 }
                 t2?.let {
                     _networkResourceLiveData.postValue(
                         Event(
-                            NetworkResource(LoadingState.LOADING_FAILED)
-                        )
+                            NetworkResource(LoadingState.LOADING_FAILED),
+                        ),
                     )
                 }
             }

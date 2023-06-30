@@ -1,7 +1,7 @@
 package com.woleapp.netpos.contactless.network
 
 import android.content.Context
-import com.pixplicity.easyprefs.library.Prefs
+import com.dsofttech.dprefs.utils.DPrefs
 import com.woleapp.netpos.contactless.BuildConfig
 import com.woleapp.netpos.contactless.util.PREF_BILLS_TOKEN
 import com.woleapp.netpos.contactless.util.UtilityParam
@@ -38,7 +38,6 @@ object StormUtilitiesApiClient {
     }
 }
 
-
 fun getBillsOkHttpClient(context: Context): OkHttpClient = OkHttpClient.Builder()
     .callTimeout(60, TimeUnit.SECONDS)
     .connectTimeout(60, TimeUnit.SECONDS)
@@ -50,30 +49,50 @@ fun getBillsOkHttpClient(context: Context): OkHttpClient = OkHttpClient.Builder(
 
 class BillsTokenInterceptor(val context: Context) : Interceptor {
     override fun intercept(chain: Interceptor.Chain): Response {
-        val token: String? = Prefs.getString(PREF_BILLS_TOKEN, null)
+        val token: String? = if (DPrefs.getString(PREF_BILLS_TOKEN).isNotEmpty()) {
+            DPrefs.getString(
+                PREF_BILLS_TOKEN,
+            )
+        } else {
+            null
+        }
         val request = chain.request()
-        Timber.e(request.url.toString())
-        Timber.e(request.body.toString())
+        if (BuildConfig.DEBUG) {
+            Timber.e(request.url.toString())
+            Timber.e(request.body.toString())
+        }
         val method = request.method
         if (method == "POST" || method == "PUT") {
             val reqBody = request.body!!
             val contentLength = reqBody.contentLength()
-            Timber.e("$contentLength")
-        }
-        val response = chain.proceed(request.newBuilder().run {
-            token?.let {
-                Timber.e("Token: Bearer $it")
-                addHeader(
-                    "Authorization",
-                    "Bearer $it"
-                )
+            if (BuildConfig.DEBUG) {
+                Timber.e("$contentLength")
             }
-            build()
-        })
+        }
+        val response = chain.proceed(
+            request.newBuilder().run {
+                token?.let {
+                    if (BuildConfig.DEBUG) {
+                        Timber.e("Token: Bearer $it")
+                    }
+                    addHeader(
+                        "Authorization",
+                        "Bearer $it",
+                    )
+                }
+                build()
+            },
+        )
         val body = response.body
         val bodyString = body?.string()
-        Timber.e("response %s", bodyString!!)
-        return response.newBuilder().body(ResponseBody.create(body.contentType(), bodyString))
+        if (BuildConfig.DEBUG) {
+            Timber.e("response %s", bodyString!!)
+        }
+        return response.newBuilder().body(bodyString?.let {
+            ResponseBody.create(body.contentType(),
+                it
+            )
+        })
             .build()
     }
 }

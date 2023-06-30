@@ -13,14 +13,13 @@ typealias ZenithMCCClickListener = (item: ZenithMerchantCategory) -> Unit
 object ZenithMCCDiffUtil : DiffUtil.ItemCallback<ZenithMerchantCategory>() {
     override fun areItemsTheSame(
         oldItem: ZenithMerchantCategory,
-        newItem: ZenithMerchantCategory
+        newItem: ZenithMerchantCategory,
     ): Boolean = oldItem.merchantCategoryCode == newItem.merchantCategoryCode
 
     override fun areContentsTheSame(
         oldItem: ZenithMerchantCategory,
-        newItem: ZenithMerchantCategory
+        newItem: ZenithMerchantCategory,
     ): Boolean = oldItem.merchantCategoryCode == newItem.merchantCategoryCode
-
 }
 
 class ZenithQrMCCAdapter(private val clickListener: ZenithMCCClickListener) :
@@ -36,7 +35,6 @@ class ZenithQrMCCAdapter(private val clickListener: ZenithMCCClickListener) :
             holder.binding.root.setOnClickListener { _ -> clickListener.invoke(it) }
         }
     }
-
 }
 
 class ZenithQrMCCViewHolder private constructor(val binding: ItemMccBinding) :
@@ -47,8 +45,8 @@ class ZenithQrMCCViewHolder private constructor(val binding: ItemMccBinding) :
                 ItemMccBinding.inflate(
                     LayoutInflater.from(viewGroup.context),
                     viewGroup,
-                    false
-                )
+                    false,
+                ),
             )
         }
     }

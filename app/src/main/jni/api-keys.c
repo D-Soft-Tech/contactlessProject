@@ -126,3 +126,53 @@ Java_com_woleapp_netpos_contactless_util_UtilityParam_getStringNotificationBaseU
                                                                                         jobject thiz) {
     return (*env)->NewStringUTF(env, "https://netpos.netpluspay.com/");
 }
+
+JNIEXPORT jstring JNICALL
+Java_com_woleapp_netpos_contactless_util_UtilityParam_getTextKey1(JNIEnv *env, jobject thiz) {
+    return (*env)->NewStringUTF(env, "5D25072F04832A2329D93E4F91BA23A2");
+}
+
+JNIEXPORT jstring JNICALL
+Java_com_woleapp_netpos_contactless_util_UtilityParam_getTextKey2(JNIEnv *env, jobject thiz) {
+    return (*env)->NewStringUTF(env, "86CBCDE3B0A22354853E04521686863D");
+}
+
+JNIEXPORT jstring JNICALL
+Java_com_woleapp_netpos_contactless_util_UtilityParam_getCertKey1(JNIEnv *env, jobject thiz) {
+    return (*env)->NewStringUTF(env, "5D25072F04832A2329D93E4F91BA23A2");
+}
+
+JNIEXPORT jstring JNICALL
+Java_com_woleapp_netpos_contactless_util_UtilityParam_getCertKey2(JNIEnv *env, jobject thiz) {
+    return (*env)->NewStringUTF(env, "86CBCDE3B0A22354853E04521686863D");
+}
+
+JNIEXPORT jstring JNICALL
+Java_com_woleapp_netpos_contactless_util_UtilityParam_getEmpsKey1(JNIEnv *env, jobject thiz) {
+    return (*env)->NewStringUTF(env, "E6891F73948F16C4D6E979D68534D0F4");
+}
+
+JNIEXPORT jstring JNICALL
+Java_com_woleapp_netpos_contactless_util_UtilityParam_getEmpsKey2(JNIEnv *env, jobject thiz) {
+    return (*env)->NewStringUTF(env, "3D10EF707F98E3543E32B570E9E9AE86");
+}
+
+JNIEXPORT jstring JNICALL
+Java_com_woleapp_netpos_contactless_util_UtilityParam_getPosVasKey1(JNIEnv *env, jobject thiz) {
+    return (*env)->NewStringUTF(env, "9BF76D3E13ADD67A51549B7C3EB0E3AD");
+}
+
+JNIEXPORT jstring JNICALL
+Java_com_woleapp_netpos_contactless_util_UtilityParam_getPosVasKey2(JNIEnv *env, jobject thiz) {
+    return (*env)->NewStringUTF(env, "A4BAEC5E31BFD913919262C7A7A76D52");
+}
+
+JNIEXPORT jstring JNICALL
+Java_com_woleapp_netpos_contactless_util_UtilityParam_getTestIp(JNIEnv *env, jobject thiz) {
+    return (*env)->NewStringUTF(env, "196.6.103.10");
+}
+
+JNIEXPORT jstring JNICALL
+Java_com_woleapp_netpos_contactless_util_UtilityParam_getTestPort(JNIEnv *env, jobject thiz) {
+    return (*env)->NewStringUTF(env, "55533");
+}

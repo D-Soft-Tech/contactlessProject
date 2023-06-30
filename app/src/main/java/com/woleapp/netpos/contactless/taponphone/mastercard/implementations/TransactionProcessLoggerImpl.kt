@@ -1,11 +1,14 @@
-package com.oluwatayo.taponphone.implementations
+package com.woleapp.netpos.contactless.taponphone.mastercard.implementations
 
 import com.mastercard.terminalsdk.listeners.TransactionProcessLogger
+import com.woleapp.netpos.contactless.BuildConfig
 import timber.log.Timber
 
-class TransactionProcessLoggerImpl(val builder: StringBuilder): TransactionProcessLogger {
+class TransactionProcessLoggerImpl(val builder: StringBuilder) : TransactionProcessLogger {
     override fun logCryptoOperations(p0: String?) {
-        Timber.e("crypto operation")
+        if (BuildConfig.DEBUG) {
+            Timber.e("crypto operation")
+        }
         builder.append("CRYPTO OPERATIONS: ").append(p0).append("\n")
         p0?.let {
             Timber.e(it)
@@ -13,7 +16,9 @@ class TransactionProcessLoggerImpl(val builder: StringBuilder): TransactionProce
     }
 
     override fun logInternalOperation(p0: String?) {
-        Timber.e("internal operation")
+        if (BuildConfig.DEBUG) {
+            Timber.e("internal operation")
+        }
         builder.append("INTERNAL OPERATION: ").append(p0).append("\n")
         p0?.let {
             Timber.e(it)
@@ -22,7 +27,9 @@ class TransactionProcessLoggerImpl(val builder: StringBuilder): TransactionProce
 
     override fun logVerbose(p0: String?) {
         builder.append("VERBOSE: ").append(p0).append("\n")
-        Timber.e("verbose operation")
+        if (BuildConfig.DEBUG) {
+            Timber.e("verbose operation")
+        }
         p0?.let {
             Timber.v(it)
         }
@@ -30,57 +37,85 @@ class TransactionProcessLoggerImpl(val builder: StringBuilder): TransactionProce
 
     override fun logDebug(p0: String?) {
         builder.append("DEBUG: ").append(p0).append("\n")
-        Timber.e("debug operation")
+        if (BuildConfig.DEBUG) {
+            Timber.e("debug operation")
+        }
         p0?.let {
-            Timber.d(it)
+            if (BuildConfig.DEBUG) {
+                Timber.d(it)
+            }
         }
     }
 
     override fun logInfo(p0: String?) {
         builder.append("INFO: ").append(p0).append("\n")
-        Timber.e("info operation")
+        if (BuildConfig.DEBUG) {
+            Timber.e("info operation")
+        }
         p0?.let {
-            Timber.i(it)
+            if (BuildConfig.DEBUG) {
+                Timber.i(it)
+            }
         }
     }
 
     override fun logApduExchange(p0: String?) {
         builder.append("APDU EXCHANGE: ").append(p0).append("\n")
-        Timber.e("apdu exchange")
+        if (BuildConfig.DEBUG) {
+            Timber.e("apdu }exchange")
+        }
         p0?.let {
-            Timber.e(it)
+            if (BuildConfig.DEBUG) {
+                Timber.e(it)
+            }
         }
     }
 
     override fun logTlvParsing(p0: String?) {
         builder.append("TLV PARSING: ").append(p0).append("\n")
-        Timber.e("tlv parsing")
+        if (BuildConfig.DEBUG) {
+            Timber.e("tlv p}arsing")
+        }
         p0?.let {
-            Timber.e(it)
+            if (BuildConfig.DEBUG) {
+                Timber.e(it)
+            }
         }
     }
 
     override fun logStage(p0: String?) {
         builder.append("STAGE: ").append(p0).append("\n")
-        Timber.e("stage operation")
+        if (BuildConfig.DEBUG) {
+            Timber.e("stage operation")
+        }
         p0?.let {
-            Timber.e(it)
+            if (BuildConfig.DEBUG) {
+                Timber.e(it)
+            }
         }
     }
 
     override fun logWarning(p0: String?) {
         builder.append("WARNING: ").append(p0).append("\n")
-        Timber.e("warn operation")
+        if (BuildConfig.DEBUG) {
+            Timber.e("warn }operation")
+        }
         p0?.let {
-            Timber.w(it)
+            if (BuildConfig.DEBUG) {
+                Timber.w(it)
+            }
         }
     }
 
     override fun logError(p0: String?) {
         builder.append("ERROR: ").append(p0).append("\n")
-        Timber.e("error operation")
+        if (BuildConfig.DEBUG) {
+            Timber.e("error} operation")
+        }
         p0?.let {
-            Timber.e(it)
+            if (BuildConfig.DEBUG) {
+                Timber.e(it)
+            }
         }
     }
 }

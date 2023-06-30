@@ -18,7 +18,7 @@ import retrofit2.Response
 import timber.log.Timber
 
 fun checkBillsPaymentToken(): Boolean {
-    val billsToken = Prefs.getString(PREF_BILLS_TOKEN, null)
+    val billsToken = DPrefs.getString(PREF_BILLS_TOKEN, null)
     return !(billsToken.isNullOrEmpty() || JWTHelper.isExpired(billsToken))
 }
 
@@ -51,7 +51,7 @@ fun getBillsToken(stormApiService: StormApiService): LiveData<Event<Boolean>> {
                     liveData.value = Event(false)
                     return@let
                 } else {
-                    Prefs.putString(PREF_BILLS_TOKEN, it.token)
+                    DPrefs.putString(PREF_BILLS_TOKEN, it.token)
                     liveData.value = Event(true)
                 }
             }
@@ -64,7 +64,7 @@ fun getBillsToken(stormApiService: StormApiService): LiveData<Event<Boolean>> {
 }
 
 fun checkAppToken(): Boolean {
-    val appToken = Prefs.getString(PREF_USER_TOKEN, null)
+    val appToken = DPrefs.getString(PREF_USER_TOKEN, null)
     return !(appToken.isNullOrEmpty() || JWTHelper.isExpired(appToken))
 }
 
@@ -80,7 +80,7 @@ fun getAppToken(stormApiService: StormApiService): Single<Boolean> {
                 if (!it.success) {
                     false
                 } else {
-                    Prefs.putString(PREF_APP_TOKEN, it.token)
+                    DPrefs.putString(PREF_APP_TOKEN, it.token)
                     true
                 }
             )
@@ -94,7 +94,7 @@ private fun sendSmSReq(message: String, number: String): Single<Any> {
         addProperty("message", message)
     }
     Timber.e("payload: $map")
-    val auth = "Bearer ${Prefs.getString(PREF_USER_TOKEN, "")}"
+    val auth = "Bearer ${DPrefs.getString(PREF_USER_TOKEN, "")}"
     val body: RequestBody = map.toString()
         .toRequestBody("application/json; charset=utf-8".toMediaTypeOrNull())
     return StormApiClient.getSmsServiceInstance().sendSms(auth, body)

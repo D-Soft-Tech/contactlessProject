@@ -5,6 +5,7 @@ import android.util.Log;
 import com.mastercard.terminalsdk.exception.L1RSPException;
 import com.mastercard.terminalsdk.listeners.CardCommunicationProvider;
 import com.mastercard.terminalsdk.objects.ErrorIndication;
+import com.woleapp.netpos.contactless.BuildConfig;
 
 
 public class CardCommProviderStub implements CardCommunicationProvider {
@@ -13,13 +14,17 @@ public class CardCommProviderStub implements CardCommunicationProvider {
 
     @Override
     public byte[] sendReceive(byte[] bytes) throws L1RSPException {
-        Log.e(TAG, "sendReceive: Utilizing Stub Implementation of CardCommunicationProvider");
+        if (BuildConfig.DEBUG) {
+            Log.e(TAG, "sendReceive: Utilizing Stub Implementation of CardCommunicationProvider");
+        }
         throw new L1RSPException("Stub Reader", ErrorIndication.L1_Error_Code.TIMEOUT_ERROR);
     }
 
     @Override
     public ConnectionObject waitForCard() throws L1RSPException {
-        Log.e(TAG, "connectCard: Utilizing Stub Implementation of CardCommunicationProvider");
+        if (BuildConfig.DEBUG) {
+            Log.e(TAG, "connectCard: Utilizing Stub Implementation of CardCommunicationProvider");
+        }
         throw new L1RSPException("Stub Reader", ErrorIndication.L1_Error_Code.TIMEOUT_ERROR);
     }
 
@@ -30,7 +35,9 @@ public class CardCommProviderStub implements CardCommunicationProvider {
 
     @Override
     public boolean connectReader() throws L1RSPException {
-        Log.e(TAG, "connectReader: Utilizing Stub Implementation of CardCommunicationProvider");
+        if (BuildConfig.DEBUG) {
+            Log.e(TAG, "connectReader: Utilizing Stub Implementation of CardCommunicationProvider");
+        }
         throw new L1RSPException("Stub Reader", ErrorIndication.L1_Error_Code.PROTOCOL_ERROR);
     }
 
@@ -51,7 +58,9 @@ public class CardCommProviderStub implements CardCommunicationProvider {
 
     @Override
     public String getDescription() {
-        Log.w(TAG, "Utilizing Stub Implementation of CardCommunicationProvider");
+        if (BuildConfig.DEBUG) {
+            Log.w(TAG, "Utilizing Stub Implementation of CardCommunicationProvider");
+        }
         return "Reader Stub";
     }
 

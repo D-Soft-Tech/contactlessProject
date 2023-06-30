@@ -11,24 +11,20 @@ import com.woleapp.netpos.contactless.model.FBNState
 class StatesAdapter(
     categoryList: ArrayList<FBNState>,
     context: Context,
-    layoutId: Int
+    layoutId: Int,
 ) :
     ArrayAdapter<FBNState>(context, layoutId, categoryList) {
 
-
     override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
-
         val view = LayoutInflater.from(parent.context)
             .inflate(
                 android.R.layout.simple_expandable_list_item_1,
                 parent,
-                false
+                false,
             ) as TextView
 
         view.text = super.getItem(position)?.state
 
         return view
-
     }
-
 }

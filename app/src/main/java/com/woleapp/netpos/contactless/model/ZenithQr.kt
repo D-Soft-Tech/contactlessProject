@@ -8,7 +8,7 @@ data class ZenithQr(val qrCode: String)
 data class ZenithMerchantCategoryList(val merchantCategoryList: List<ZenithMerchantCategory>)
 data class ZenithMerchantCategory(
     val merchantCategoryCode: String,
-    val merchantCategoryDescription: String
+    val merchantCategoryDescription: String,
 )
 
 data class CreateZenithMerchantPayload(
@@ -16,7 +16,7 @@ data class CreateZenithMerchantPayload(
     var regionName: String? = null,
     var merchantCategoryCode: String? = null,
     var merchantCategoryDescription: String? = null,
-    var bvn: String? = null
+    var bvn: String? = null,
 )
 
 data class CreateZenithMerchantResponse(val message: String)
@@ -26,7 +26,7 @@ data class ZenithCity(
     val cityName: String,
     val cityCode: String,
     val regionCode: String,
-    val regionName: String
+    val regionName: String,
 )
 
 data class ZenithMCCDto(val filter: String? = null)
@@ -52,7 +52,7 @@ class PaginationHelper {
 
     constructor(
         networkResourceLiveData: LiveData<Event<NetworkResource>>,
-        data:LiveData<PagedList<ZenithMerchantCategory>>?
+        data: LiveData<PagedList<ZenithMerchantCategory>>?,
     ) {
         eventLiveData = networkResourceLiveData
         this.data = data
@@ -61,7 +61,7 @@ class PaginationHelper {
     constructor(
         networkResourceLiveData: LiveData<Event<NetworkResource>>,
         emptyResultLiveData: LiveData<Event<Boolean>>,
-        data: LiveData<PagedList<ZenithMerchantCategory>>?
+        data: LiveData<PagedList<ZenithMerchantCategory>>?,
     ) {
         this.eventLiveData = networkResourceLiveData
         this.emptyResultLiveData = emptyResultLiveData
@@ -73,5 +73,5 @@ enum class LoadingState {
     LOADING_INITIAL,
     LOADING_MORE,
     LOADING_COMPLETE,
-    LOADING_FAILED
+    LOADING_FAILED,
 }

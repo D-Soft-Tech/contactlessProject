@@ -8,10 +8,8 @@ class BootReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context?, intent: Intent?) {
         when (intent?.action) {
             Intent.ACTION_SHUTDOWN -> {
-
             }
             Intent.ACTION_BOOT_COMPLETED -> {
-
             }
         }
     }

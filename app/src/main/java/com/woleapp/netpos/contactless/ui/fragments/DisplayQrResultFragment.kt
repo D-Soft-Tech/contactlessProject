@@ -34,7 +34,7 @@ class DisplayQrResultFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         val displayQrResult =
-            Prefs.getString(AppConstants.PAYMENT_WITH_QR_STRING, "")
+            DPrefs.getString(AppConstants.PAYMENT_WITH_QR_STRING, "")
 
         val imageBytes = Base64.decode(displayQrResult, Base64.DEFAULT)
         val decodedImage = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.size)

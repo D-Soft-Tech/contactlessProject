@@ -8,7 +8,7 @@ import java.io.IOException
 class LiveNfcTransReceiver(
     private val log: StringBuilder,
     private val mTagCom: IsoDep?,
-    private var rawResponse: ByteArray? = null
+    private var rawResponse: ByteArray? = null,
 ) : NfcTransceiver {
     override fun transceive(pCommand: ByteArray?): ByteArray {
         log.append("=================<br/>")
@@ -22,7 +22,7 @@ class LiveNfcTransReceiver(
             throw IOException(e.message)
         }
         rawResponse = response
-        //iccData.append(BytesUtils.bytesToString(response))
+        // iccData.append(BytesUtils.bytesToString(response))
         log.append("<font color='blue'><b>resp:</b> " + com.woleapp.netpos.contactless.util.BytesUtils.bytesToString(response))
             .append("</font><br/>")
 //        Log.d(TAG, "resp: " + BytesUtils.bytesToString(response))
@@ -43,7 +43,6 @@ class LiveNfcTransReceiver(
     }
 
     override fun destroy() {
-
     }
 
     override fun isCardPresent(): Boolean {

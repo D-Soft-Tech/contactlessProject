@@ -9,10 +9,8 @@ import com.mastercard.terminalsdk.objects.ErrorIndication;
 import com.mastercard.terminalsdk.objects.OutcomeParameterSet;
 import com.mastercard.terminalsdk.objects.ReaderOutcome;
 import com.mastercard.terminalsdk.utility.ByteUtility;
-
+import com.woleapp.netpos.contactless.BuildConfig;
 import com.woleapp.netpos.contactless.taponphone.mastercard.listener.TransactionListener;
-import com.woleapp.netpos.contactless.taponphone.mastercard.listener.TransactionListener;
-
 
 import org.apache.commons.lang.StringUtils;
 
@@ -33,17 +31,23 @@ public class OutcomeObserver implements TransactionOutcomeObserver {
     @Override
     public void transactionOutcome(final ReaderOutcome readerOutcome) {
         mTransactionOutcome = readerOutcome;
-        Log.i(TAG, "Transaction Summary : " + mTransactionOutcome.toString());
+        if (BuildConfig.DEBUG) {
+            Log.i(TAG, "Transaction Summary : " + mTransactionOutcome.toString());
+        }
         builder.append("Transaction Summary : " + mTransactionOutcome.toString());
         OutcomeParameterSet.Status transactionStatus = readerOutcome.getOutcomeParameterSet().getStatus();
 
-        Timber.e(transactionStatus.getMessage());
+        if (BuildConfig.DEBUG) {
+            Timber.e(transactionStatus.getMessage());
+        }
         if (transactionStatus == OutcomeParameterSet.Status.END_APPLICATION) {
             //readerOutcome.
         }
         boolean isDataRecordPresent = readerOutcome.getOutcomeParameterSet().isDataRecordPresent();
 
-        Timber.e("data record present %s", isDataRecordPresent);
+        if (BuildConfig.DEBUG) {
+            Timber.e("data record present %s", isDataRecordPresent);
+        }
         builder.append("\ndata record present: " + isDataRecordPresent);
         String track2Data = "";
         String applicationPanSequenceNumber = "";
@@ -101,12 +105,16 @@ public class OutcomeObserver implements TransactionOutcomeObserver {
 //                    builder.append("\n" + new String(value.getBytes()));
 //                }
             }
-            Timber.e("track2Data is: %s", track2Data);
-            Timber.e("pan sequence is: %s", StringUtils.leftPad(applicationPanSequenceNumber, 3, '0'));
-            Timber.e("nibssicc is %s", nibssIccData.toString());
+            if (BuildConfig.DEBUG) {
+                Timber.e("track2Data is: %s", track2Data);
+                Timber.e("pan sequence is: %s", StringUtils.leftPad(applicationPanSequenceNumber, 3, '0'));
+                Timber.e("nibssicc is %s", nibssIccData.toString());
+            }
         }
 
-        Timber.e("reader outcome");
+        if (BuildConfig.DEBUG) {
+            Timber.e("reader outcome");
+        }
         builder.append("\nreader outcome");
         builder.append("\ntags size: " + readerOutcome.getDataRecordContents().size());
         builder.append("\ndataRecordTlv: " + readerOutcome.getDataRecordTlv().toString());
@@ -114,12 +122,15 @@ public class OutcomeObserver implements TransactionOutcomeObserver {
         builder.append("\nadditional information size: " + readerOutcome.getAdditionalInformation().size());
         builder.append("\ndis: " + readerOutcome.getDiscretionaryData().toTLV().toString());
         builder.append("\ndis size %s" + readerOutcome.getDiscretionaryData().getAdditionalInformation().size());
-        Timber.e("tags size: %s", readerOutcome.getDataRecordContents().size());
-        Timber.e("dataRecordTlv: %s", readerOutcome.getDataRecordTlv().toString());
-        Timber.e("CVM: %s", readerOutcome.getOutcomeParameterSet().getCvm());
-        Timber.e("additional information size %s", readerOutcome.getAdditionalInformation().size());
-        Timber.e("dis %s", readerOutcome.getDiscretionaryData().toTLV().toString());
-        Timber.e("dis size %s", readerOutcome.getDiscretionaryData().getAdditionalInformation().size());
+
+        if (BuildConfig.DEBUG) {
+            Timber.e("tags size: %s", readerOutcome.getDataRecordContents().size());
+            Timber.e("dataRecordTlv: %s", readerOutcome.getDataRecordTlv().toString());
+            Timber.e("CVM: %s", readerOutcome.getOutcomeParameterSet().getCvm());
+            Timber.e("additional information size %s", readerOutcome.getAdditionalInformation().size());
+            Timber.e("dis %s", readerOutcome.getDiscretionaryData().toTLV().toString());
+            Timber.e("dis size %s", readerOutcome.getDiscretionaryData().getAdditionalInformation().size());
+        }
         logOutcome(readerOutcome);
         mTransactionListenerForUI.logToScreen(builder.toString());
         // Process the outcome Returned from Library
@@ -140,8 +151,9 @@ public class OutcomeObserver implements TransactionOutcomeObserver {
 
 
     private void logOutcome(ReaderOutcome readerOutcome) {
-
-        Log.e("OUTCOME", "\nReceived Outcome :");
+        if (BuildConfig.DEBUG) {
+            Log.e("OUTCOME", "\nReceived Outcome :");
+        }
     }
 
     private void processOutcome(CardData cardData, String pan) {
@@ -152,20 +164,28 @@ public class OutcomeObserver implements TransactionOutcomeObserver {
             switch (mTransactionOutcome.getOutcomeParameterSet().getStatus()) {
 
                 case APPROVED:
-                    Timber.e("approved");
+                    if (BuildConfig.DEBUG) {
+                        Timber.e("approved");
+                    }
                     mTransactionListenerForUI.onOnlineReferral(cardData, pan);
                     break;
                 case ONLINE_REQUEST:
-                    Timber.e("online request");
+                    if (BuildConfig.DEBUG) {
+                        Timber.e("online request");
+                    }
                     mTransactionListenerForUI.onOnlineReferral(cardData, pan);
                     break;
                 case DECLINED:
-                    Timber.e("declined");
+                    if (BuildConfig.DEBUG) {
+                        Timber.e("declined");
+                    }
                     mTransactionListenerForUI.onOnlineReferral(cardData, pan);
                     break;
                 case END_APPLICATION:
                     ErrorIndication errorIndication = mTransactionOutcome.getDiscretionaryData().getErrorIndication();
-                    Timber.e(errorIndication.toString());
+                    if (BuildConfig.DEBUG) {
+                        Timber.e(errorIndication.toString());
+                    }
                     if (errorIndication.getL3Error() == ErrorIndication.L3_Error_Code.STOP)
                         mTransactionListenerForUI.onTransactionCancelled();
                     else

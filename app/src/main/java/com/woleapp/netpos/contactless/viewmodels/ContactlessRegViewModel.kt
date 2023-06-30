@@ -408,27 +408,27 @@ class ContactlessRegViewModel @Inject constructor(
         )
     }
     private fun savePhoneNumber(phoneNumber: String) {
-        Prefs.putString(AppConstants.SAVE_PHONE_NUMBER, gson.toJson(phoneNumber))
+        DPrefs.putString(AppConstants.SAVE_PHONE_NUMBER, gson.toJson(phoneNumber))
     }
 
     private fun saveAccountNumber(ActNumber: String) {
-        Prefs.putString(AppConstants.SAVED_ACCOUNT_NUM_SIGNED_UP, gson.toJson(ActNumber))
+        DPrefs.putString(AppConstants.SAVED_ACCOUNT_NUM_SIGNED_UP, gson.toJson(ActNumber))
     }
 
     private fun saveBusinessName(businessName: String) {
-        Prefs.putString(AppConstants.BUSINESS_NAME, gson.toJson(businessName))
+        DPrefs.putString(AppConstants.BUSINESS_NAME, gson.toJson(businessName))
     }
     private fun saveFullName(fullName: String) {
-        Prefs.putString(AppConstants.FULL_NAME, gson.toJson(fullName))
+        DPrefs.putString(AppConstants.FULL_NAME, gson.toJson(fullName))
     }
     private fun saveBusinessAddress(businessAddress: String) {
-        Prefs.putString(AppConstants.BUSINESS_ADDRESS, gson.toJson(businessAddress))
+        DPrefs.putString(AppConstants.BUSINESS_ADDRESS, gson.toJson(businessAddress))
     }
     private fun saveExistingPhoneNumber(phoneNumber: String) {
-        Prefs.putString(AppConstants.PHONE_NUMBER, gson.toJson(phoneNumber))
+        DPrefs.putString(AppConstants.PHONE_NUMBER, gson.toJson(phoneNumber))
     }
     private fun saveEmail(email: String) {
-        Prefs.putString(AppConstants.EMAIL_ADDRESS, gson.toJson(email))
+        DPrefs.putString(AppConstants.EMAIL_ADDRESS, gson.toJson(email))
     }
 
 

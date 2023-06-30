@@ -9,6 +9,7 @@ import com.danbamitale.epmslib.entities.* // ktlint-disable no-wildcard-imports
 import com.danbamitale.epmslib.processors.TransactionProcessor
 import com.danbamitale.epmslib.utils.IsoAccountType
 import com.danbamitale.epmslib.utils.MessageReasonCode
+import com.dsofttech.dprefs.utils.DPrefs
 import com.pixplicity.easyprefs.library.Prefs
 import com.woleapp.netpos.contactless.database.AppDatabase
 import com.woleapp.netpos.contactless.nibss.NetPosTerminalConfig
@@ -130,8 +131,8 @@ class SalesViewModel @Inject constructor() : ViewModel() {
             .flatMap {
                 it.amount = amountLong
                 if (it.responseCode == "A3") {
-                    Prefs.remove(PREF_CONFIG_DATA)
-                    Prefs.remove(PREF_KEYHOLDER)
+                    DPrefs.removePref(PREF_CONFIG_DATA)
+                    DPrefs.removePref(PREF_KEYHOLDER)
                     _shouldRefreshNibssKeys.postValue(Event(true))
                 }
                 it.cardHolder = customerName.value!!

@@ -53,7 +53,7 @@ class TokenInterceptor : Interceptor {
         var request = chain.request()
         val headersInReq = request.headers
         if (headersInReq["Authorization"].isNullOrEmpty()) {
-            Prefs.getString(PREF_USER_TOKEN, null)?.let {
+            DPrefs.getString(PREF_USER_TOKEN, null)?.let {
                 request = request.newBuilder().addHeader("Authorization", "Bearer $it").build()
             }
         }

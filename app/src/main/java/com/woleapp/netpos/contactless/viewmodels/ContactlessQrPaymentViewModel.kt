@@ -30,7 +30,7 @@ class ContactlessQrPaymentViewModel @Inject constructor(
             }
 
     private fun savePaymentWithQrResponse(data: String) {
-        Prefs.putString(AppConstants.PAYMENT_WITH_QR_STRING, gson.toJson(data))
+        DPrefs.putString(AppConstants.PAYMENT_WITH_QR_STRING, gson.toJson(data))
     }
 
     override fun onCleared() {

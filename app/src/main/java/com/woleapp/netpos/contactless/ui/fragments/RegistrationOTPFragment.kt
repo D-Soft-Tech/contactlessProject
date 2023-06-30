@@ -53,11 +53,11 @@ class RegistrationOTPFragment : BaseFragment() {
             }
         }
         val newPoneNumber =
-            Prefs.getString(AppConstants.SAVE_PHONE_NUMBER, "")
+            DPrefs.getString(AppConstants.SAVE_PHONE_NUMBER, "")
         val phoneNumber = newPoneNumber.substring(1, newPoneNumber.length - 1)
 
         val newActNumber =
-            Prefs.getString(AppConstants.SAVED_ACCOUNT_NUM_SIGNED_UP, "")
+            DPrefs.getString(AppConstants.SAVED_ACCOUNT_NUM_SIGNED_UP, "")
         newAccountNumber = newActNumber.substring(1, newActNumber.length - 1)
 
         loader = alertDialog(requireContext())

@@ -2,17 +2,17 @@ package com.woleapp.netpos.contactless.mqtt
 
 import android.content.Context
 import android.os.Build
+import com.dsofttech.dprefs.utils.DPrefs
 import com.hivemq.client.internal.mqtt.MqttClientSslConfigImpl
 import com.hivemq.client.internal.mqtt.MqttClientSslConfigImplBuilder
 import com.hivemq.client.mqtt.MqttClient
 import com.hivemq.client.mqtt.datatypes.MqttQos
 import com.hivemq.client.mqtt.mqtt3.Mqtt3RxClient
 import com.hivemq.client.mqtt.mqtt3.message.publish.Mqtt3Publish
-import com.pixplicity.easyprefs.library.Prefs
 import com.woleapp.netpos.contactless.BuildConfig
 import com.woleapp.netpos.contactless.database.AppDatabase
 import com.woleapp.netpos.contactless.database.dao.MqttLocalDao
-import com.woleapp.netpos.contactless.model.*
+import com.woleapp.netpos.contactless.model.* // ktlint-disable no-wildcard-imports
 import com.woleapp.netpos.contactless.util.PREF_LAST_LOCATION
 import com.woleapp.netpos.contactless.util.Singletons
 import com.woleapp.netpos.contactless.util.Singletons.gson
@@ -34,8 +34,9 @@ object MqttHelper {
     private var mqttLocalDao: MqttLocalDao? = null
 
     fun <T> init(context: Context, event: MqttEvent<T>? = null, topic: MqttTopics? = null) {
-        if (mqttLocalDao == null)
+        if (mqttLocalDao == null) {
             mqttLocalDao = AppDatabase.getDatabaseInstance(context).mqttLocalDao()
+        }
         if (client != null && client!!.state.isConnected) {
             checkDatabaseForFailedEvents(context)
             return
@@ -43,7 +44,9 @@ object MqttHelper {
         val user: User? = Singletons.getCurrentlyLoggedInUser()
         user?.let { u ->
             if (u.terminal_id.isNullOrEmpty()) {
-                Timber.e("Terminal ID Null")
+                if (BuildConfig.DEBUG) {
+                    Timber.e("Terminal ID Null")
+                }
                 return@let
             }
             val clientId = "${Build.MODEL}-${u.terminal_id!!}${(10000..999999999).random()}"
@@ -55,9 +58,13 @@ object MqttHelper {
                 .automaticReconnectWithDefaultConfig()
                 .addConnectedListener {
                     checkDatabaseForFailedEvents(context)
-                    Timber.e("Client $clientId Connected Successfully to $SERVER_HOST")
+                    if (BuildConfig.DEBUG) {
+                        Timber.e("Client $clientId Connected Successfully to $SERVER_HOST")
+                    }
                 }.addDisconnectedListener {
-                    Timber.e("Disconnected::cause - ${it.cause} ")
+                    if (BuildConfig.DEBUG) {
+                        Timber.e("Disconnected::cause - ${it.cause} ")
+                    }
                 }
             client = clientBuilder.useMqttVersion3().buildRx().apply {
 //                connect().subscribe { t1, t2 ->
@@ -79,14 +86,22 @@ object MqttHelper {
     fun disconnect() {
         Timber.e("disconnecting")
         if (client == null) {
-            Timber.e("Client is null or not connected")
+            if (BuildConfig.DEBUG) {
+                Timber.e("Client is null or not connected")
+            }
             return
         }
 
         client?.disconnect()?.subscribeOn(Schedulers.io())!!
             .observeOn(AndroidSchedulers.mainThread())
-            .subscribe({ Timber.e("Disconnected") }, {
-                Timber.e(it)
+            .subscribe({
+                if (BuildConfig.DEBUG) {
+                    Timber.e("Disconnected")
+                }
+            }, {
+                if (BuildConfig.DEBUG) {
+                    Timber.e(it)
+                }
             }).disposeWith(disposables)
         client = null
         disposables.clear()
@@ -95,7 +110,7 @@ object MqttHelper {
     private fun getMqttClientSSLConfigImpl(context: Context): MqttClientSslConfigImpl {
         return MqttClientSslConfigImplBuilder.Default()
             .apply {
-                //handshakeTimeout(60, TimeUnit.SECONDS)
+                // handshakeTimeout(60, TimeUnit.SECONDS)
                 hostnameVerifier { _, _ -> true }
                 trustManagerFactory(SSLUtil.getTrustManagerFactory(context))
                 keyManagerFactory(SSLUtil.getKeyMangerFactory(context))
@@ -105,24 +120,34 @@ object MqttHelper {
     fun <T> sendPayload(
         mqttTopic: MqttTopics,
         event: MqttEvent<T>? = null,
-        failedEvent: MqttEventsLocal? = null
+        failedEvent: MqttEventsLocal? = null,
     ) {
         if (event == null && failedEvent == null) {
-            Timber.e("Nothing to publish")
+            if (BuildConfig.DEBUG) {
+                Timber.e("Nothing to publish")
+            }
             return
         }
 
         event?.apply {
-            Timber.e(event.toString())
-            geo = Prefs.getString(PREF_LAST_LOCATION, "lat:6.5244 long:3.3792")
-            Timber.e("Sending to topic: ${mqttTopic.topic}")
-            //Timber.e(gson.toJson(event).toString())
+            if (BuildConfig.DEBUG) {
+                Timber.e(event.toString())
+            }
+            geo = DPrefs.getString(PREF_LAST_LOCATION, "lat:6.5244 long:3.3792")
+            if (BuildConfig.DEBUG) {
+                Timber.e("Sending to topic: ${mqttTopic.topic}")
+            }
+            // Timber.e(gson.toJson(event).toString())
         }
         client?.let { client ->
-            Timber.e("client state isConnected ${client.state.isConnected}")
-            Timber.e("client state isCorD ${client.state.isConnectedOrReconnect}")
+            if (BuildConfig.DEBUG) {
+                Timber.e("client state isConnected ${client.state.isConnected}")
+                Timber.e("client state isCorD ${client.state.isConnectedOrReconnect}")
+            }
             if (client.state.isConnected.not()) {
-                Timber.e("not connected, save")
+                if (BuildConfig.DEBUG) {
+                    Timber.e("not connected, save")
+                }
                 val local: MqttEventsLocal? =
                     event?.toLocal(mqttTopic.topic, "client not connected") ?: failedEvent
                 local?.let {
@@ -138,7 +163,7 @@ object MqttHelper {
                         .topic(mqttTopic.topic)
                         .qos(MqttQos.AT_LEAST_ONCE)
                         .payload(gson.toJson(event).toByteArray(Charset.forName("UTF-8")))
-                        .build()
+                        .build(),
                 )
             }
             failedEvent?.let { e ->
@@ -147,41 +172,52 @@ object MqttHelper {
                         .topic(e.topic)
                         .qos(MqttQos.AT_LEAST_ONCE)
                         .payload(e.data.toByteArray(Charset.forName("UTF-8")))
-                        .build()
+                        .build(),
                 )
             }
             client.publish(flowable!!).subscribe(
                 {
                     if (it.error.isPresent) {
-                        Timber.e("Error: ${it.error.get().localizedMessage}")
-                        Timber.e("There was an error while publishing to topic: ${it.publish.topic}; save")
+                        if (BuildConfig.DEBUG) {
+                            Timber.e("Error: ${it.error.get().localizedMessage}")
+                            Timber.e("There was an error while publishing to topic: ${it.publish.topic}; save")
+                        }
                         val failedPublish =
                             String(it.publish.payloadAsBytes, StandardCharsets.UTF_8)
                         savePayloadToLocalDatabase(
                             MqttEventsLocal(
                                 it.publish.topic.toString(),
                                 failedPublish,
-                                "error during publishing"
-                            )
+                                "error during publishing",
+                            ),
                         )
                     }
-                    Timber.e("Published")
-                    Timber.e(String(it.publish.payloadAsBytes, StandardCharsets.UTF_8))
+                    if (BuildConfig.DEBUG) {
+                        Timber.e("Published")
+                        Timber.e(String(it.publish.payloadAsBytes, StandardCharsets.UTF_8))
+                    }
                 },
                 {
-                    Timber.e("throwable; save")
+                    if (BuildConfig.DEBUG) {
+                        Timber.e("throwable; save")
+                    }
                     val local: MqttEventsLocal? =
                         event?.toLocal(mqttTopic.topic, it.localizedMessage) ?: failedEvent
                     local?.let {
                         savePayloadToLocalDatabase(local)
                     }
-                    Timber.e(it)
+                    if (BuildConfig.DEBUG) {
+                        Timber.e(it)
+                    }
                 },
-                { Timber.e("Completed") }).disposeWith(disposables)
+                { Timber.e("Completed") },
+            ).disposeWith(disposables)
             return@let
         }
         if (client == null) {
-            Timber.e("null, save")
+            if (BuildConfig.DEBUG) {
+                Timber.e("null, save")
+            }
             val local: MqttEventsLocal? =
                 event?.toLocal(mqttTopic.topic, "client is null") ?: failedEvent
             local?.let {
@@ -191,42 +227,52 @@ object MqttHelper {
     }
 
     private fun savePayloadToLocalDatabase(mqttEventsLocal: MqttEventsLocal) {
-        Timber.e("saving into local")
-//        if (mqttLocalDao == null)
-//            mqttLocalDao = AppDatabase.getDatabaseInstance(context).mqttLocalDao()
+        if (BuildConfig.DEBUG) {
+            Timber.e("saving into local")
+        }
         mqttLocalDao?.insertNewTransaction(mqttEventsLocal)?.subscribeOn(Schedulers.io())
             ?.observeOn(AndroidSchedulers.mainThread())
             ?.subscribe { t1, t2 ->
                 t1?.let {
-                    Timber.e("inserted into local: $it")
+                    if (BuildConfig.DEBUG) {
+                        Timber.e("inserted into local: $it")
+                    }
                 }
                 t2?.let {
-                    Timber.e("did not insert into local: $it")
+                    if (BuildConfig.DEBUG) {
+                        Timber.e("did not insert into local: $it")
+                    }
                 }
             }?.disposeWith(compositeDisposable = disposables)
     }
 
     private fun checkDatabaseForFailedEvents(context: Context) {
-        if (mqttLocalDao == null) mqttLocalDao =
-            AppDatabase.getDatabaseInstance(context).mqttLocalDao()
+        if (mqttLocalDao == null) {
+            mqttLocalDao =
+                AppDatabase.getDatabaseInstance(context).mqttLocalDao()
+        }
         mqttLocalDao?.apply {
             getLocalEvents().flatMap {
-                //NetPosWork.createNotification(context, "Failed Events", "Found ${it.size} failed events", null)
+                // NetPosWork.createNotification(context, "Failed Events", "Found ${it.size} failed events", null)
                 deleteAllEvents().toSingleDefault(it)
             }.subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe { t1, t2 ->
                     t1?.let {
                         it.forEach { localEvent ->
-                            Timber.e(getTopic(localEvent.topic).name)
+                            if (BuildConfig.DEBUG) {
+                                Timber.e(getTopic(localEvent.topic).name)
+                            }
                             sendPayload<Nothing>(
                                 getTopic(localEvent.topic),
-                                failedEvent = localEvent
+                                failedEvent = localEvent,
                             )
                         }
                     }
                     t2?.let {
-                        Timber.e(it)
+                        if (BuildConfig.DEBUG) {
+                            Timber.e(it)
+                        }
                     }
                 }
         }
@@ -234,8 +280,9 @@ object MqttHelper {
 
     private fun getTopic(string: String): MqttTopics {
         MqttTopics.values().forEach {
-            if (it.topic == string)
+            if (it.topic == string) {
                 return it
+            }
         }
         return MqttTopics.TRANSACTIONS
     }

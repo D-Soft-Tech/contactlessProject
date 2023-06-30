@@ -1,11 +1,10 @@
 package com.woleapp.netpos.contactless
 
-
 import com.danbamitale.epmslib.entities.AccountBalance
 import com.danbamitale.epmslib.entities.CardData
 import com.danbamitale.epmslib.entities.TransactionType
+import com.danbamitale.epmslib.utils.DataEncryptAndDecrypt
 import com.danbamitale.epmslib.utils.IsoAccountType
-import com.danbamitale.epmslib.utils.TripleDES
 import com.google.gson.Gson
 import com.woleapp.netpos.contactless.util.getBeginningOfDay
 import com.woleapp.netpos.contactless.util.getEndOfDayTimeStamp
@@ -13,7 +12,6 @@ import com.woleapp.netpos.contactless.util.xorHex
 import org.junit.Assert.assertEquals
 import org.junit.Test
 import java.text.SimpleDateFormat
-import java.util.*
 
 /**
  * Example local unit test, which will execute on the development machine (host).
@@ -23,13 +21,13 @@ import java.util.*
 class ExampleUnitTest {
     @Test
     fun addition_isCorrect() {
-        //println(HexDump.hexStr2Str("4A2F41444547424F5945"))
-        //println(HexDump.toHexString(java.lang.Byte.parseByte("${16/2}")))
-        //println("519911xxxxxx1994")
-        //println(StringUtils.overlay("5199118765421994", "xxxxxx", 6, 12))
-        //println(SimpleDateFormat("dd/MM/YYYY HH:mm a").format(Date(1601723293000)))
-        //println(playAround())
-        //println("78b4311d3e83a85c924edcc60dddc99d76fde9a21459e879fcd88878a31de8c5" == "78b4311d3e83a85c924edcc60dddc99d76fde9a21459e879fcd88878a31de8c5")
+        // println(HexDump.hexStr2Str("4A2F41444547424F5945"))
+        // println(HexDump.toHexString(java.lang.Byte.parseByte("${16/2}")))
+        // println("519911xxxxxx1994")
+        // println(StringUtils.overlay("5199118765421994", "xxxxxx", 6, 12))
+        // println(SimpleDateFormat("dd/MM/YYYY HH:mm a").format(Date(1601723293000)))
+        // println(playAround())
+        // println("78b4311d3e83a85c924edcc60dddc99d76fde9a21459e879fcd88878a31de8c5" == "78b4311d3e83a85c924edcc60dddc99d76fde9a21459e879fcd88878a31de8c5")
         println(SimpleDateFormat("y-MM-dd HH:mm:ss").format(getBeginningOfDay(1606290839000)))
         println(SimpleDateFormat("y-MM-dd HH:mm:ss").format(getEndOfDayTimeStamp(1606290839000)))
         println("11110010001111100000010010000101101011101100000010000110001000000000000000000000000000000000000000000000000000000000000000000000".length)
@@ -47,7 +45,7 @@ class ExampleUnitTest {
 
         println(
             "" +
-                    "{\"keyHolder\":{\"id\":1,\"masterKey\":\"5EA6CD6D32ADCF489D7FFF865F6CA6B3\",\"baseKey\":\"5EA6CD6D32ADCF489D7FFF865F6CA6B3\",\"posMode\":\"POSVAS\",\"sessionKey\":\"1F47BA2243D5B43A3A7F32B0CCF6B4C1\",\"pinKey\":\"FC29C6B601E597C1D6B071903AAF6066\",\"track2Key\":\"\",\"bdk\":\"\"},\"configData\":{\"id\":1,\"epmsDateTime\":\"20210228141827\",\"cardAcceptorIdCode\":\"2044LA310921764\",\"hostTimeOut\":\"60\",\"currencyCode\":\"566\",\"countryCode\":\"566\",\"callHomeTime\":\"01\",\"merchantNameLocation\":\"COSMIC INTELLIGENT L   OG           OGNG\",\"merchantCategoryCode\":\"6010\"}}".length
+                "{\"keyHolder\":{\"id\":1,\"masterKey\":\"5EA6CD6D32ADCF489D7FFF865F6CA6B3\",\"baseKey\":\"5EA6CD6D32ADCF489D7FFF865F6CA6B3\",\"posMode\":\"POSVAS\",\"sessionKey\":\"1F47BA2243D5B43A3A7F32B0CCF6B4C1\",\"pinKey\":\"FC29C6B601E597C1D6B071903AAF6066\",\"track2Key\":\"\",\"bdk\":\"\"},\"configData\":{\"id\":1,\"epmsDateTime\":\"20210228141827\",\"cardAcceptorIdCode\":\"2044LA310921764\",\"hostTimeOut\":\"60\",\"currencyCode\":\"566\",\"countryCode\":\"566\",\"callHomeTime\":\"01\",\"merchantNameLocation\":\"COSMIC INTELLIGENT L   OG           OGNG\",\"merchantCategoryCode\":\"6010\"}}".length,
         )
 
         println(
@@ -56,17 +54,19 @@ class ExampleUnitTest {
                     "5061840800158084537D2111601016422918",
                     "subset",
                     "000",
-                    "051"
+                    "051",
                 ).apply {
                     pinBlock = "a2abcdef93901"
-                })
+                },
+            ),
         )
         assertEquals(4, 2 + 2)
     }
 
     @Test
     fun testTripleDesEncrypt() {
-        val pib = TripleDES.encrypt("0420BDCBA669F8F9", "ab20ef34b9ea1c9425132c0816c22951")
+        val pib =
+            DataEncryptAndDecrypt.encrypt("0420BDCBA669F8F9", "ab20ef34b9ea1c9425132c0816c22951")
         println(pib)
         assertEquals("1631f8f70ecad7c3", pib)
     }
@@ -77,7 +77,7 @@ class ExampleUnitTest {
         println(balance.length)
         parseField54AdditionalAmount(balance).forEach { accountBalance ->
             println(
-                "account: " + accountBalance.accountType.name + " balance: " + accountBalance.amount / 100 + " amountSign: ${accountBalance.amountSign} currencyCode: ${accountBalance.currencyCode} amountType: ${accountBalance.amountType}"
+                "account: " + accountBalance.accountType.name + " balance: " + accountBalance.amount / 100 + " amountSign: ${accountBalance.amountSign} currencyCode: ${accountBalance.currencyCode} amountType: ${accountBalance.amountType}",
             )
         }
         assertEquals(4, 2 + 2)
@@ -87,7 +87,7 @@ class ExampleUnitTest {
         if (inputString.length < 20) error("Invalid string")
 
         val accountType = IsoAccountType.parseIntAccountType(inputString.substring(0, 2).toInt())
-        val amountType = inputString.substring(2, 4);
+        val amountType = inputString.substring(2, 4)
         val currencyCode = inputString.substring(4, 7)
         val amountSign = inputString[7]
         val amount = inputString.substring(8, 20).toLong()
@@ -99,10 +99,10 @@ class ExampleUnitTest {
         if (inputString.length < 20) return listOf()
 
         val list = ArrayList<AccountBalance>()
-        var count = 0;
+        var count = 0
         do {
             list.add(parseAdditionalAmountString(inputString.substring(count, count + 20)))
-            count += 20;
+            count += 20
         } while (count + 20 <= inputString.length)
 
         return list
@@ -127,7 +127,7 @@ class ExampleUnitTest {
         val pinblock = xorHex(pinCipher, cardNum)!!
         println(pinblock)
         val clearPinKey = "6943DD4434E0B3C0D808D0FE2A590CD9"
-        val pinblockToNibss = TripleDES.encrypt(pinblock, clearPinKey)
+        val pinblockToNibss = DataEncryptAndDecrypt.encrypt(pinblock, clearPinKey)
         println(pinblockToNibss)
         assert(pinblockToNibss.isBlank().not())
     }
@@ -141,18 +141,16 @@ class ExampleUnitTest {
         val pinblock = xorHex(pinCipher, cardNum)!!
         println(pinblock)
         val clearPinKey = "d9da8ace946e5b3ee31c9d298fba2f51"
-        val pinblockToNibss = TripleDES.encrypt(pinblock, clearPinKey)
+        val pinblockToNibss = DataEncryptAndDecrypt.encrypt(pinblock, clearPinKey)
         println(pinblockToNibss)
         assert(pinblockToNibss.isBlank().not())
     }
 
     @Test
-    fun testTripleDesire(){
+    fun testTripleDesire() {
         val key = "DC9AF23D991D39B406DA9EF38EFC8EFE"
         val enc = "8248D3753C19A425"
-        println(TripleDES.decrypt(enc, key))
+        println(DataEncryptAndDecrypt.decrypt(enc, key))
         assertEquals(4, 2 + 2)
     }
-
 }
-

@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.res.Resources;
 
 import com.mastercard.terminalsdk.listeners.ResourceProvider;
+import com.woleapp.netpos.contactless.BuildConfig;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -25,7 +26,9 @@ public class ResourceProviderImplementation implements ResourceProvider {
         try {
             return res.getAssets().open(fileName);
         } catch (IOException e) {
-            Timber.e("getResource: EXCEPTION %s", e.getMessage());
+            if (BuildConfig.DEBUG) {
+                Timber.e("getResource: EXCEPTION %s", e.getMessage());
+            }
         }
         return null;
     }

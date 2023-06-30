@@ -3,13 +3,17 @@ package com.woleapp.netpos.contactless.app
 import android.app.Activity
 import android.app.Application
 import android.content.ContextWrapper
+import com.dsofttech.dprefs.utils.DPrefs
 import com.mastercard.terminalsdk.ConfigurationInterface
 import com.mastercard.terminalsdk.TerminalSdk
 import com.mastercard.terminalsdk.TransactionInterface
-import com.oluwatayo.taponphone.implementations.TransactionProcessLoggerImpl
 import com.pixplicity.easyprefs.library.Prefs
 import com.visa.app.ttpkernel.ContactlessConfiguration
+import com.woleapp.netpos.contactless.BuildConfig
+import com.woleapp.netpos.contactless.app.loggers.DebugTree
+import com.woleapp.netpos.contactless.app.loggers.ReleaseTree
 import com.woleapp.netpos.contactless.taponphone.mastercard.implementations.* // ktlint-disable no-wildcard-imports
+import com.woleapp.netpos.contactless.taponphone.mastercard.implementations.TransactionProcessLoggerImpl
 import com.woleapp.netpos.contactless.taponphone.mastercard.implementations.nfc.NfcProvider
 import dagger.hilt.android.HiltAndroidApp
 import timber.log.Timber
@@ -36,22 +40,22 @@ class NetPosApp : Application() {
     override fun onCreate() {
         super.onCreate()
         assignInstance(this)
-        Timber.plant(Timber.DebugTree())
-        Prefs.Builder()
-            .setContext(this)
-            .setMode(ContextWrapper.MODE_PRIVATE)
-            .setPrefsName(packageName)
-            .setUseDefaultSharedPreference(true)
-            .build()
+        if (BuildConfig.DEBUG) {
+            Timber.plant(DebugTree())
+        } else {
+            Timber.plant(ReleaseTree())
+        }
+        DPrefs.initializeDPrefs(applicationContext)
         initVisaLib()
     }
 
     private fun initVisaLib() {
         val contactlessConfiguration = ContactlessConfiguration.getInstance()
         val myData = contactlessConfiguration.terminalData
-        Timber.e("data at start")
         myData.forEach {
-            Timber.e(it.key)
+            if (BuildConfig.DEBUG) {
+                Timber.e(it.key)
+            }
         }
         myData["9F1A"] = byteArrayOf(0x05, 0x66) // set terminal country code
         myData["5F2A"] = byteArrayOf(0x05, 0x66) // set currency code

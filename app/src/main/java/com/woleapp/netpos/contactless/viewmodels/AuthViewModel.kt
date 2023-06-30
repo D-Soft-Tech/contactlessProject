@@ -79,7 +79,7 @@ class AuthViewModel : ViewModel() {
                 val userToken = it.token
                 val stormId: String =
                     JWTHelper.getStormId(userToken) ?: throw Exception("Login Failed")
-                Prefs.putString(PREF_USER_TOKEN, userToken)
+                DPrefs.putString(PREF_USER_TOKEN, userToken)
                 val userTokenDecoded = JWT(userToken)
                 val user = User().apply {
                     this.netplusPayMid = if (userTokenDecoded.claims.containsKey("netplusPayMid")) {
@@ -151,8 +151,8 @@ class AuthViewModel : ViewModel() {
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe { res, error ->
                 res?.let {
-                    Prefs.putString(PREF_USER, gson.toJson(it))
-                    Prefs.putBoolean(PREF_AUTHENTICATED, true)
+                    DPrefs.putString(PREF_USER, gson.toJson(it))
+                    DPrefs.putBoolean(PREF_AUTHENTICATED, true)
                     _authDone.value = Event(true)
                 }
                 error?.let {
@@ -189,7 +189,7 @@ class AuthViewModel : ViewModel() {
         val payload = JsonObject().apply {
             addProperty("username", username)
         }
-        Prefs.putString(RESET_USERNAME, username)
+        DPrefs.putString(RESET_USERNAME, username)
         stormApiService!!.passwordReset(payload).subscribeOn(Schedulers.io())
             .doOnSubscribe {
                 passwordResetInProgress.postValue(true)
