@@ -21,7 +21,7 @@
 #-renamesourcefileattribute SourceFile
 # Remove all Log statements
 -optimizations !code/simplification/arithmetic
--keepattributes <em>Annotation</em>
+-keepattributes *Annotation*
 -keepattributes InnerClasses
 -keepattributes EnclosingMethod
 -keep class *.*.R$*
