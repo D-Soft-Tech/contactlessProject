@@ -20,6 +20,15 @@
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
 # Remove all Log statements
+-optimizations !code/simplification/arithmetic
+-keepattributes <em>Annotation</em>
+-keepattributes InnerClasses
+-keepattributes EnclosingMethod
+-keep class *.*.R$*
+-dontskipnonpubliclibraryclasses
+-forceprocessing
+-optimizationpasses 5
+-overloadaggressively
 -assumenosideeffects class android.util.Log {
     public static *** d(...);
     public static *** v(...);
@@ -27,5 +36,8 @@
     public static *** w(...);
     public static *** e(...);
 }
+-keep class com.crashlytics.* {  }
+-keep class com.crashlytics.android.**
+-keepattributes SourceFile,LineNumberTable
 
 

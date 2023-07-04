@@ -41,7 +41,7 @@
             android:exported="true"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustNothing"
-            android:launchMode="singleTask"
+            android:launchMode="singleInstance"
             android:taskAffinity="com.woleapp.netpos.contactless">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
